@@ -352,7 +352,7 @@ b90da0ce-095e-4919-ab66-003bf5b4c702,ＫＡＭＥＩＤＯＣＬＯＣＫ店,fas
 3fde431d-3548-4123-914c-5180f7107c87,WinStop,filipino_restaurant,restaurant|fast_food_restaurant,その他アジア料理,overture,filipino_restaurant,35.694128,139.817513,892.0,0.679,江東橋4-14-1,Overture|meta,CDLA-Permissive-2.0
 d2c9f540-bd17-439c-914b-32cdbd6ab37a,キッチン マニラ,filipino_restaurant,restaurant|diner,その他アジア料理,overture,filipino_restaurant,35.694077,139.816338,992.0,0.969,江東橋4丁目12-10,Overture|meta,CDLA-Permissive-2.0
 cb5e8d86-2b9f-4285-8a25-1272ba03987b,Grandpa Fish & Chips,fish_and_chips_restaurant,fast_food_restaurant,その他各国料理,overture,fish_and_chips_restaurant,35.701075,139.82621,420.0,0.971,東京都江東区亀戸５丁目１６−６,Overture|meta,CDLA-Permissive-2.0
-db416da2-b1ef-44e4-a328-e8aed0d4809a,しののめヌードル,food_and_drink,,ラーメン,claude,中: 「ヌードル」。ラーメン店の名前に多い,35.701696,139.821785,653.0,0.929,東京都江東区亀戸３丁目４５−１８,Overture|meta,CDLA-Permissive-2.0
+db416da2-b1ef-44e4-a328-e8aed0d4809a,しののめヌードル,food_and_drink,,ラーメン,osm,"node/10270699278 {""amenity"": ""fast_food"", ""cuisine"": ""ramen"", ""name"": ""しののめヌードル""}",35.701696,139.821785,653.0,0.929,東京都江東区亀戸３丁目４５−１８,Overture|meta,CDLA-Permissive-2.0
 a1754218-0e0c-4849-ac65-c203ce329870,墨田区錦糸町,food_and_drink,,対象外,excluded,地名だけのレコード,35.701185,139.816734,988.0,0.929,,Overture|meta,CDLA-Permissive-2.0
 dab89cd4-c50d-4dab-8656-c04158c91007,多肴,food_and_drink,japanese_restaurant|asian_restaurant,居酒屋,claude,中: 「肴」は酒のつまみ。居酒屋に多い名前,35.700672,139.823372,473.0,0.67,"Kameido, 2 Chome−41−1 ヴィラ宇都宮",Overture|meta,CDLA-Permissive-2.0
 118595ee-7a64-42c9-8a0c-ba464a3f94ab,東京 ノア レザン 亀戸販売所,food_and_drink,,パン,claude,高: ノアレザンはパン・洋菓子の製造販売,35.698397,139.825821,139.0,0.77,亀戸5丁目2-2,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
@@ -424,7 +424,7 @@ f84e0a9e-2392-4095-b2c9-45a4b50cd38c,Isataco,japanese_restaurant,restaurant,そ�
 6dccb04f-9118-4a88-a104-e81349615452,Kamenohe,japanese_restaurant,restaurant|bar,その他飲食（判定不能）,unresolved,japanese_restaurant,35.695902,139.824966,214.0,0.985,1 Chome-36-4 Kameido,Overture|meta,CDLA-Permissive-2.0
 ac66bbc2-798b-4e88-9142-dc845b0d155c,Koba Steakhouse,japanese_restaurant,steakhouse|restaurant,ステーキ・ハンバーグ,name,steak,35.695772,139.834267,715.0,0.947,"Kameido, 7 Chome−49−4 高庭ビル 1階",Overture|meta,CDLA-Permissive-2.0
 14f27419-50ce-406b-8597-2e319ba744b4,Meat,japanese_restaurant,bar|restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.699038,139.826317,194.0,0.241,亀戸5丁目13-2,Overture|meta,CDLA-Permissive-2.0
-cdb4b389-0b14-43ec-a537-2c894be24ec3,Onakanomikata,japanese_restaurant,restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.697235,139.815567,995.0,0.988,4 Chome-1-8 Kinshi,Overture|meta,CDLA-Permissive-2.0
+cdb4b389-0b14-43ec-a537-2c894be24ec3,Onakanomikata,japanese_restaurant,restaurant,焼肉・ホルモン,osm,"node/11811413371 {""amenity"": ""restaurant"", ""cuisine"": ""barbecue"", ""name"": ""焼肉 ONAKANO MIKATA""}",35.697235,139.815567,995.0,0.988,4 Chome-1-8 Kinshi,Overture|meta,CDLA-Permissive-2.0
 ead11767-f785-4168-b5f8-a3d56f8f3f52,Osamu,japanese_restaurant,bar|liquor_store,その他飲食（判定不能）,unresolved,japanese_restaurant,35.699011,139.82634,191.0,0.473,亀戸5丁目13-2,Overture|meta,CDLA-Permissive-2.0
 63f17348-7656-4e3c-beb7-f37d36cbbc56,PRONTO,japanese_restaurant,bar|restaurant,カフェ・喫茶,name,pronto,35.697283,139.825829,68.0,0.999,5 Chome-1-1 Kameido,Overture|meta,CDLA-Permissive-2.0
 c67333ea-f6d8-49c6-bb88-d0485cee06cd,Pupu's ほまれ屋,japanese_restaurant,buffet_restaurant|restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.697989,139.83654,902.0,0.326,亀戸7丁目12-13,Overture|meta,CDLA-Permissive-2.0
@@ -547,7 +547,7 @@ d8a2c9f0-a344-4f83-9ce4-979600bd7902,亀戸升本 本店,japanese_restaurant,res
 328a7ddd-1fcb-42c5-ac6e-8538ec5217cf,仙人鳥,japanese_restaurant,bar|restaurant,焼き鳥・やきとん,claude,中: 「鳥」を含む店名。別分類 bar,35.697016,139.827324,74.0,0.972,東京都江東区亀戸６丁目６１−６,Overture|meta,CDLA-Permissive-2.0
 6b78cd9a-d4b3-47f0-a61e-602b1abe9af0,伝説のすた丼屋亀戸店,japanese_restaurant,restaurant|diner,牛丼・丼,name,すた丼,35.69684,139.825996,74.0,0.966,亀戸6丁目59-12,Overture|meta,CDLA-Permissive-2.0
 c565ff01-662e-4039-b691-05ab27b3d0c9,偕楽,japanese_restaurant,restaurant|asian_restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.694761,139.828308,323.0,0.419,亀戸6丁目8-8,Overture|meta,CDLA-Permissive-2.0
-dc4415b4-68d6-4c17-9003-f95908fa0600,八べえ天神店,japanese_restaurant,restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.701849,139.820625,738.0,0.997,亀戸3丁目2-8,Overture|meta,CDLA-Permissive-2.0
+dc4415b4-68d6-4c17-9003-f95908fa0600,八べえ天神店,japanese_restaurant,restaurant,海鮮・魚料理,osm,"node/5273179916 {""amenity"": ""restaurant"", ""cuisine"": ""fish"", ""name"": ""八べえ""}",35.701849,139.820625,738.0,0.997,亀戸3丁目2-8,Overture|meta,CDLA-Permissive-2.0
 1e7fe9f6-b053-4eb4-bd82-08e95f5066ef,初代亀戸ホルモン吉田,japanese_restaurant,barbecue_restaurant|restaurant,焼肉・ホルモン,name,ホルモン,35.698107,139.828972,233.0,0.988,亀戸5丁目32-3,Overture|meta,CDLA-Permissive-2.0
 8cf62b38-5b1b-440c-8e88-019e05ff2b49,前野屋,japanese_restaurant,noodles_restaurant|restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.704409,139.822121,887.0,0.96,亀戸3丁目23-10,Overture|meta,CDLA-Permissive-2.0
 c03e7f1c-b77f-4415-a2c6-9371b64d8ea9,割烹若福,japanese_restaurant,restaurant|asian_restaurant,和食・割烹,name,割烹,35.702158,139.820442,774.0,0.997,亀戸3丁目6-4,Overture|meta,CDLA-Permissive-2.0
@@ -776,7 +776,7 @@ b9c4e060-adfd-479a-b646-7970c524c3c0,みんなの居酒屋 ありがとう 亀�
 73fc87a8-21fa-4dee-af29-f0ccc1749e4c,カレー屋キッチン 旅人,restaurant,japanese_restaurant|sushi_restaurant,カレー,name,カレー,35.697344,139.816231,935.0,0.211,錦糸4丁目5-6,Overture|meta,CDLA-Permissive-2.0
 0139a5e0-f6e5-48ed-8f3f-cfea18f769ca,クージー,restaurant,bar|pub,その他飲食（判定不能）,unresolved,restaurant,35.69412,139.817543,890.0,0.101,江東橋4丁目14-1,Overture|meta,CDLA-Permissive-2.0
 b936d390-56d3-481f-92e6-9e430ba259cd,シズラー 亀戸サンストリート店,restaurant,,洋食,name,シズラー,35.696543,139.828819,219.0,0.544,東京都江東区亀戸６丁目３１−１,Overture|meta,CDLA-Permissive-2.0
-cc0da3a5-a091-45a2-bdf6-eb5a468abe53,デリカップ,restaurant,cafe|coffee_shop,その他飲食（判定不能）,unresolved,restaurant,35.697866,139.816246,936.0,0.94,東京都墨田区錦糸４丁目１３−６,Overture|meta,CDLA-Permissive-2.0
+cc0da3a5-a091-45a2-bdf6-eb5a468abe53,デリカップ,restaurant,cafe|coffee_shop,カフェ・喫茶,osm,"node/4327495958 {""amenity"": ""cafe"", ""name"": ""デリカップ""}",35.697866,139.816246,936.0,0.94,東京都墨田区錦糸４丁目１３−６,Overture|meta,CDLA-Permissive-2.0
 a8441c58-461d-44f7-8b4b-562653ba3a6c,デリシャス,restaurant,indian_restaurant|asian_restaurant,その他飲食（判定不能）,unresolved,restaurant,35.69462,139.827484,310.0,0.735,亀戸6丁目10-8,Overture|meta,CDLA-Permissive-2.0
 abe58f2e-6671-417e-8acf-6a6ba28f0ae5,ニャットタン,restaurant,vietnamese_restaurant|asian_restaurant,ベトナム料理,claude,高: ベトナム語の店名と Overture 別分類 vietnamese,35.701113,139.818016,882.0,0.939,太平4丁目4-5,Overture|meta,CDLA-Permissive-2.0
 d25564bf-54e8-43ef-ab5d-6ad6f4d03b0e,ヒナイスタンド亀戸店,restaurant,,居酒屋,claude,中: 比内地鶏を出す酒場と判断,35.696875,139.827614,105.0,0.923,kameido6-61-5,Overture|meta,CDLA-Permissive-2.0
@@ -794,7 +794,7 @@ f576fa48-a55a-4e74-a7d2-ac6675f5da4b,亀戸いこい,restaurant,japanese_restaur
 813fa275-275a-4ba4-8e25-e4c3b04827cf,亀戸もんじゃ おこげ,restaurant,japanese_restaurant,お好み焼き・もんじゃ・たこ焼き,name,もんじゃ,35.698374,139.824425,228.0,0.984,東京都江東区亀戸２丁目２４−９,Overture|meta,CDLA-Permissive-2.0
 77f0f352-4568-446d-be73-faf4396dcf10,亀戸やきとん,restaurant,bar|diner,焼き鳥・やきとん,name,やきとん,35.696993,139.826256,46.0,0.839,亀戸6丁目60-3,Overture|meta,CDLA-Permissive-2.0
 d79b036a-8490-4cbe-a011-2f68e341670b,伊勢屋大島五の橋店,restaurant,japanese_restaurant|asian_restaurant,スイーツ・和菓子,claude,中: 「伊勢屋」は和菓子・団子店に多い名前,35.693182,139.82576,465.0,0.583,東京都江東区大島２丁目３２−１３,Overture|meta,CDLA-Permissive-2.0
-cb6f6be0-2968-4897-9e43-196d04cfaa35,侍亀戸店,restaurant,,その他飲食（判定不能）,unresolved,restaurant,35.69697,139.828583,184.0,0.77,亀戸6丁目57-22 サンポウビル2F,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+cb6f6be0-2968-4897-9e43-196d04cfaa35,侍亀戸店,restaurant,,カフェ・喫茶,osm,"node/4118333544 {""amenity"": ""cafe"", ""cuisine"": ""coffee_shop"", ""name"": ""侍 亀戸店""}",35.69697,139.828583,184.0,0.77,亀戸6丁目57-22 サンポウビル2F,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 cfbee577-53a7-4a0c-9091-e34cc4ee8014,北海道焼鳥 いただきコッコちゃん亀戸店,restaurant,chicken_restaurant|cocktail_bar,焼き鳥・やきとん,name,焼鳥,35.697702,139.825096,141.0,0.988,亀戸2-20-3 東洲ビル2F,Overture|meta,CDLA-Permissive-2.0
 c0420083-fa77-4bb7-ae07-5453f1962c90,升本フーズ,restaurant,home_goods_store|gardener,和食・割烹,name,升本,35.701231,139.825119,456.0,0.916,亀戸2丁目45-8,Overture|meta,CDLA-Permissive-2.0
 fc03b90b-e75a-4556-9abc-4b46e90ae665,嘉悦園,restaurant,chinese_restaurant|asian_restaurant,中華,claude,中: Overture 別分類 chinese_restaurant,35.694567,139.817467,878.0,0.875,東京都墨田区江東橋４丁目１５−１,Overture|meta,CDLA-Permissive-2.0
