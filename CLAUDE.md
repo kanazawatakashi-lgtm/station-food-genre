@@ -16,9 +16,48 @@
 |---|---|
 | 1. 駅の座標 | 済。35.697306, 139.826583（`scripts/common.py`）。Wikipedia/MapFan の値で、Overture の「JR 亀戸駅」POI と約10mで一致。S12 との照合はまだ |
 | 2. Overture 抽出 | 済。`data/kameido/overture_food.csv`、937件 |
-| 3. OpenPOI 取得と名寄せ | **次はここ。ローカルで実行する**（下記） |
-| 4. ジャンル判定 | 未着手 |
-| 5. 件数・構成比・LQ の表 | 未着手 |
+| 3. OpenPOI 取得と名寄せ | **未。ローカルで実行する**（下記） |
+| 4. ジャンル判定 | Overture 分は済（判定率 87.3%）。JFF 分はまだ |
+| 5. 件数・構成比・LQ の表 | Overture 分で第1版済。`docs/kameido_results.md` |
+
+### パイプライン
+
+```
+python scripts/fetch_overture.py kameido            # Overture から周辺の全 POI
+python scripts/extract_overture_food.py kameido     # 1km 圏の飲食 → overture_food.csv
+python scripts/classify_genre.py kameido            # ルール＋Overture＋genre_claude.csv → genre.csv
+python scripts/classify_with_claude.py kameido      # 判定不能の店を Claude API で判定（要 ANTHROPIC_API_KEY）
+python scripts/classify_genre.py kameido            # 反映
+python scripts/fetch_overture_area.py tokyo23       # 比較対象（23区 bbox）。data/areas/ は git 管理外
+PYTHONPATH=scripts python scripts/genre_table.py kameido tokyo23   # 件数・構成比・LQ
+```
+
+### ジャンル判定の仕組み
+
+1. 店名の正規表現（`scripts/genre_rules.py` の `NAME_RULES`、チェーン名を含む）。上から順に最初に当たったもの。
+   料理名を先、「居酒屋」「ダイニング」などの業態語を後に置く
+2. Overture の `taxonomy.primary` が細分類なら `OVERTURE_MAP` で対応付け。`japanese_restaurant` などの粗い分類は使わない
+3. それでも決まらない店は Claude が店名から判定（`data/<駅>/genre_claude.csv`）。確信度「高」「中」だけ採用、
+   「低」と「不明」は判定不能のまま。外部サイトは調べない
+4. 飲食店でないもの（ネットカフェ、コインランドリー、地名や住所だけのレコードなど）は `NOT_RESTAURANT*` で除外
+
+**亀戸の `genre_claude.csv` は API ではなく、作業セッション中の Claude（API キーが無かった）が同じ基準で
+手で判定したもの。** `classify_with_claude.py` は実 API で未実行。
+
+### 分かったこと（手順4・5）
+
+- 店名ルールと Overture 料理系細分類の両方がある168件で一致 88%。不一致の多くは Overture 側の誤り
+- Overture の cafe / coffee_shop / bar には飲食店以外がかなり混じる（23区の cafe 系サンプルにエステ、陶芸教室など）
+- Overture 内の同一店重複が亀戸で10〜15組（表記違いを含めるともっと多い）。LQ を数件単位で動かすので名寄せが必要
+- 居酒屋とバーの境界は分類方法でかなり動く。酒場系をまとめた LQ は 1.03 で、内訳の比較はまだ信頼できない
+- LQ は駅側・比較側とも同じ方法（ルール＋Overture）で計算する。Claude 判定を駅側だけに入れると比べられない
+
+### 次にやること
+
+- 手順3（ローカル）: OpenPOI 取得 → JFF の飲食店営業・喫茶店営業に絞る → Overture 内重複と JFF の名寄せ
+- 名寄せ後に genre_table を作り直す。重複除去は比較対象（23区）側にも同じ方法で掛ける
+- 乗降客1万人あたり店舗数: S12 の取得が必要（この環境からは nlftp.mlit.go.jp に届かない）
+- 近隣駅（錦糸町・平井・大島など）との比較。駅の座標は S12 から取る
 
 ## 手順3をローカルで実行する
 
