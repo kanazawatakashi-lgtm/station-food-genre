@@ -6,7 +6,8 @@
       data/areas/<area>_food.parquet（fetch_overture_area.py の出力）
 出力: data/<station>/genre_table.csv
 
-LQ の計算は駅側も比較対象側も「店名ルール＋Overture」だけで判定した結果を使う。
+LQ の計算は駅側も比較対象側も「Overture の店」を「店名ルール＋Overture」だけで判定した結果を使う。
+件数・構成比（count / share 列）は JFF から追加した店も含めた最終の結果。
 Claude の判定は比較対象側に無いので、混ぜると駅側だけ判定率が上がり比べられなくなる。
 構成比の分母は判定できた店だけ（判定不能を除く）。判定率の差が LQ に効かないようにするため。
 重複レコードは駅側・比較対象側とも dedupe.py の同じ条件でまとめてから数える（--no-dedupe で無効）。
@@ -54,7 +55,9 @@ def main(key, area, dedupe=True):
     rows = [r for r in csv.DictReader(open(f"data/{key}/genre.csv", encoding="utf-8")) if r["method"] != "excluded"]
     pos = [(float(r["lat"]), float(r["lng"]), r["name"]) for r in rows]
     final = count([(*p, r["genre"]) for p, r in zip(pos, rows)], dedupe)
-    rules_only = count([(*p, classify(r["name"], r["category"])[0]) for p, r in zip(pos, rows)], dedupe)
+    # LQ 用は Overture の店だけ（比較対象側に JFF が無いため）
+    ov = [(p, r) for p, r in zip(pos, rows) if r.get("source", "overture") == "overture"]
+    rules_only = count([(*p, classify(r["name"], r["category"])[0]) for p, r in ov], dedupe)
     rules_only.pop("対象外", None)
     area_recs = area_records(area)
     base = count(area_recs, dedupe)
@@ -80,7 +83,8 @@ def main(key, area, dedupe=True):
 
     st_rate = st_total / sum(rules_only.values())
     base_rate = base_total / sum(base.values())
-    print(f"{key}: 対象 {len(rows)} 件 → 重複除去後 {target} 件（最終判定率 {1 - final[UNRESOLVED_GENRE] / target:.1%}、ルールのみ {st_rate:.1%}）")
+    n_jff = sum(1 for r in rows if r.get("source") == "jff")
+    print(f"{key}: 対象 {len(rows)} 件（うち JFF 追加 {n_jff}）→ 重複除去後 {target} 件（最終判定率 {1 - final[UNRESOLVED_GENRE] / target:.1%}、ルールのみ {st_rate:.1%}）")
     print(f"{area}: 飲食 {len(area_recs)} 件 → 重複除去後 {sum(base.values())} 件（ルールのみ判定率 {base_rate:.1%}）")
     print(f"-> {out}")
 

@@ -16,15 +16,17 @@
 |---|---|
 | 1. 駅の座標 | 済。35.697306, 139.826583（`scripts/common.py`）。Wikipedia/MapFan の値で、Overture の「JR 亀戸駅」POI と約10mで一致。S12 との照合はまだ |
 | 2. Overture 抽出 | 済。`data/kameido/overture_food.csv`、937件 |
-| 3. OpenPOI 取得と名寄せ | **未。ローカルで実行する**（下記） |
-| 4. ジャンル判定 | Overture 分は済（判定率 87.1%、重複除去後 901 件）。JFF 分はまだ |
-| 5. 件数・構成比・LQ の表 | Overture 分で第1版済。`docs/kameido_results.md` |
+| 3. OpenPOI 取得と名寄せ | 済。JFF から 95 件追加（`scripts/merge_jff.py`、`data/kameido/jff_merge.csv`） |
+| 4. ジャンル判定 | 済（判定率 86.2%、重複除去後 996 件） |
+| 5. 件数・構成比・LQ の表 | 済。`docs/kameido_results.md`。LQ は Overture の店だけで計算 |
 
 ### パイプライン
 
 ```
 python scripts/fetch_overture.py kameido            # Overture から周辺の全 POI
 python scripts/extract_overture_food.py kameido     # 1km 圏の飲食 → overture_food.csv
+python scripts/fetch_openpoi.py kameido             # OpenPOI（JFF を含む）。ローカルのみ
+python scripts/merge_jff.py kameido                 # JFF と Overture の名寄せ → jff_merge.csv
 python scripts/fetch_osm.py kameido                 # OSM（Overpass）。ローカルのみ
 python scripts/apply_osm.py kameido                 # OSM と Overture を突き合わせ → osm_genre.csv
 python scripts/classify_genre.py kameido            # ルール＋Overture＋OSM＋genre_claude.csv → genre.csv
@@ -64,7 +66,11 @@ PYTHONPATH=scripts python scripts/genre_table.py kameido tokyo23   # 件数・�
   129GB）は読めるが stripe が全球にまたがっていて範囲を絞れないため断念した。スクリプトは偽データで試験済み、実データは未実行。
   実行後に確認すること: 判定不能 116 件のうち何件埋まったか、ルール判定との一致率、`osm_disagreements.txt` の中身。
   OSM は ODbL。OSM 由来のジャンルを含むデータを公開するときは出典表示と ODbL の条件に従う
-- 手順3（ローカル）: OpenPOI 取得 → JFF の飲食店営業・喫茶店営業に絞る → Overture 内重複と JFF の名寄せ
+- JFF の分かったこと: 亀戸 1km 圏で 313 件しかなく、全許可の一部（電子申請分と江東区の一覧）。Overture に無い飲食店を
+  95 件足せたが、OSM にあって Overture に無い店はほとんど拾えなかった。店の網羅にはまだ穴がある
+- Windows でスクリプトを動かすときの注意: ファイルを開くときは必ず encoding="utf-8" を付ける（付けないと cp932 になり、
+  絵文字などで書き込みが止まる。fetch_openpoi.py で実際に起きた）。PowerShell では `PYTHONPATH=scripts` の書き方は使えない
+- （済）手順3（ローカル）: OpenPOI 取得 → JFF の飲食店営業・喫茶店営業に絞る → Overture 内重複と JFF の名寄せ
 - 名寄せ後に genre_table を作り直す。重複除去は比較対象（23区）側にも同じ方法で掛ける
 - 乗降客1万人あたり店舗数: S12 の取得が必要（この環境からは nlftp.mlit.go.jp に届かない）
 - 近隣駅（錦糸町・平井・大島など）との比較。駅の座標は S12 から取る
