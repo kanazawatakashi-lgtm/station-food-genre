@@ -3,13 +3,13 @@
  "info": {
   "title": "OpenPOI API",
   "version": "1.0.0",
-  "summary": "���{�S����POI����API�BOverture Maps �ƐH�i�c�Ƌ��E�͏o�I�[�v���f�[�^�𓝍�������337�����������ł���API�ł��B",
-  "description": "���{�S����POI����API�BOverture Maps �ƐH�i�c�Ƌ��E�͏o�I�[�v���f�[�^�𓝍�������337�����������ł���API�ł��B",
+  "summary": "日本全国のPOI検索API。Overture Maps と食品営業許可・届出オープンデータを統合した約337万件を検索できるAPIです。",
+  "description": "日本全国のPOI検索API。Overture Maps と食品営業許可・届出オープンデータを統合した約337万件を検索できるAPIです。",
   "contact": {
    "name": "OpenPOI API"
   },
   "license": {
-   "name": "MIT (API) / ���f�[�^�͒񋟌����ƂɈقȂ郉�C�Z���X�i�v�o�T�\���B�ڍׂ�url�Q�Ɓj",
+   "name": "MIT (API) / 元データは提供元ごとに異なるライセンス（要出典表示。詳細はurl参照）",
    "url": "https://openpoiapi.com/attribution.html"
   }
  },
@@ -22,8 +22,8 @@
   "/v1/search": {
    "get": {
     "operationId": "searchFacilities",
-    "summary": "�{�݂���������",
-    "description": "�L�[���[�h�iq�j�E���ݒn�icenter�j�E��`�͈́ibbox�j�Ŏ{�݂��������܂��Bq / center / bbox �͂�������ȗ��ł��܂����A�ʏ�� q ���w�肵�Ă��������B�͈͂� bbox�Acenter+radius �̏��ɗD�悳��Acenter ���w�肵���Ƃ��������ʂ����S�ɋ߂����ɕ��т܂��B",
+    "summary": "施設を検索する",
+    "description": "キーワード（q）・現在地（center）・矩形範囲（bbox）で施設を検索します。q / center / bbox はいずれも省略できますが、通常は q を指定してください。範囲は bbox、center+radius の順に優先され、center を指定したときだけ結果が中心に近い順に並びます。",
     "parameters": [
      {
       "name": "q",
@@ -32,8 +32,8 @@
       "schema": {
        "type": "string"
       },
-      "description": "�����L�[���[�h�B�X�y�[�X��؂�ŕ�����i�e���OR�Ō����j�B�{�ݖ��E�J�i�E�s���{���E�s�撬���E�Z�������f�����B��: ���[�����A���c�J�� �J�t�F",
-      "example": "���[����"
+      "description": "検索キーワード。スペース区切りで複数語可（各語をORで検索）。施設名・カナ・都道府県・市区町村・住所を横断検索。例: ラーメン、世田谷区 カフェ",
+      "example": "ラーメン"
      },
      {
       "name": "center",
@@ -43,7 +43,7 @@
        "type": "string",
        "pattern": "^-?\\d+(\\.\\d+)?,-?\\d+(\\.\\d+)?$"
       },
-      "description": "���S���W�ulng,lat�v�i�o�x����j�B�w�肷��� radius ���ɍi��A���S�ɋ߂����ŕԂ��B�`�����Ⴄ�E�͈͊O�i�ܓx�}90�E�o�x�}180�j�̂Ƃ���400��Ԃ��ilat,lng �̏��ŏ����ƈܓx���͈͊O�ɂȂ�400�ɂȂ�j�B",
+      "description": "中心座標「lng,lat」（経度が先）。指定すると radius 内に絞り、中心に近い順で返す。形式が違う・範囲外（緯度±90・経度±180）のときは400を返す（lat,lng の順で書くと緯度が範囲外になり400になる）。",
       "example": "139.75,35.66"
      },
      {
@@ -54,7 +54,7 @@
        "type": "integer",
        "default": 50000
       },
-      "description": "center ����̔��a�i���[�g���j�Bcenter �ƕ��p�B���̐��łȂ��Ƃ���400��Ԃ��B"
+      "description": "center からの半径（メートル）。center と併用。正の数でないときは400を返す。"
      },
      {
       "name": "bbox",
@@ -64,7 +64,7 @@
        "type": "string",
        "pattern": "^(-?\\d+(\\.\\d+)?,){3}-?\\d+(\\.\\d+)?$"
       },
-      "description": "��`�͈́uminLng,minLat,maxLng,maxLat�v�B�w�莞�� center+radius ���D��B�`�����Ⴄ�E�͈͊O�EminLng>maxLng�EminLat>maxLat �̂Ƃ���400��Ԃ��B",
+      "description": "矩形範囲「minLng,minLat,maxLng,maxLat」。指定時は center+radius より優先。形式が違う・範囲外・minLng>maxLng・minLat>maxLat のときは400を返す。",
       "example": "139.6,35.5,139.9,35.8"
      },
      {
@@ -77,12 +77,12 @@
        "minimum": 1,
        "maximum": 200
       },
-      "description": "�Ԃ��ő匏���i1�`200�ɃN�����v�j�B"
+      "description": "返す最大件数（1～200にクランプ）。"
      }
     ],
     "responses": {
      "200": {
-      "description": "��������",
+      "description": "検索結果",
       "content": {
        "application/json": {
         "schema": {
@@ -92,7 +92,7 @@
       }
      },
      "400": {
-      "description": "�N�G���̎��s�G���[�A�܂��� center / bbox / radius �̎w�肪�s���i�`�����Ⴄ�E�ܓx�o�x���͈͊O�E�ܓx�ƌo�x���t�Ebbox �̑召���t�Eradius �����̐��łȂ��j�Berror �ɒ��������܂ރ��b�Z�[�W��Ԃ�",
+      "description": "クエリの実行エラー、または center / bbox / radius の指定が不正（形式が違う・緯度経度が範囲外・緯度と経度が逆・bbox の大小が逆・radius が正の数でない）。error に直し方を含むメッセージを返す",
       "content": {
        "application/json": {
         "schema": {
@@ -107,11 +107,11 @@
   "/v1/suggest": {
    "get": {
     "operationId": "suggestFacilities",
-    "summary": "���͓r���̃L�[���[�h��������o���i���͕⊮�j",
-    "description": "�����{�b�N�X�̓��͒��ɌĂԃG���h�|�C���g�ł��B�\�L���̋z���E�d�������E���ёւ����ς܂�������Ԃ��̂ŁA�󂯎�������ɂ��̂܂ܕ`��ł��܂��B�{�݌��ɉ����āA�J�e�S���E�u�����h�E�n���̌�b�ivocabulary�j�ƁA���͗��ɏd�˂ĕ\���ł���⊮������icompletion�j���Ԃ��܂��B",
+    "summary": "入力途中のキーワードから候補を出す（入力補完）",
+    "description": "検索ボックスの入力中に呼ぶエンドポイントです。表記ゆれの吸収・重複除去・並び替えを済ませた候補を返すので、受け取った順にそのまま描画できます。施設候補に加えて、カテゴリ・ブランド・地名の語彙（vocabulary）と、入力欄に重ねて表示できる補完文字列（completion）も返します。",
     "x-remarks": [
-     "�T���͈͂� bbox �̒�����ŁA0���̂Ƃ������S���ɍL���܂��B�ǂ�����g�������� scope �ŕ�����܂��B",
-     "2�����ȉ��̌ꂾ���̓��͂́Abbox �� center ���w�肵���Ƃ��������ʂ�Ԃ��܂��B"
+     "探す範囲は bbox の中が先で、0件のときだけ全国に広げます。どちらを使ったかは scope で分かります。",
+     "2文字以下の語だけの入力は、bbox か center を指定したときだけ結果を返します。"
     ],
     "parameters": [
      {
@@ -121,8 +121,8 @@
       "schema": {
        "type": "string"
       },
-      "description": "���͓r���̃L�[���[�h�B�X�y�[�X��؂�ŕ�����i�S���AND�ōi��j�B�{�ݖ��E�J�i�E�s���{���E�s�撬���E�Z�������f�����B�ȗ����i�󕶎��܂ށj�͌������s�킸�A`{ count: 0, scope: \"view\", suggestions: [], vocabulary: [], completion: null }` ��Ԃ��i�G���[�ɂ͂Ȃ�Ȃ��j�B",
-      "example": "�����[��"
+      "description": "入力途中のキーワード。スペース区切りで複数語可（全語をANDで絞る）。施設名・カナ・都道府県・市区町村・住所を横断検索。省略時（空文字含む）は検索を行わず、`{ count: 0, scope: \"view\", suggestions: [], vocabulary: [], completion: null }` を返す（エラーにはならない）。",
+      "example": "すたーば"
      },
      {
       "name": "bbox",
@@ -132,7 +132,7 @@
        "type": "string",
        "pattern": "^(-?\\d+(\\.\\d+)?,){3}-?\\d+(\\.\\d+)?$"
       },
-      "description": "�n�}�̕\���͈́uminLng,minLat,maxLng,maxLat�v�B�܂����̒��������T���B",
+      "description": "地図の表示範囲「minLng,minLat,maxLng,maxLat」。まずこの中から候補を探す。",
       "example": "139.6,35.5,139.9,35.8"
      },
      {
@@ -143,7 +143,7 @@
        "type": "string",
        "pattern": "^-?\\d+(\\.\\d+)?,-?\\d+(\\.\\d+)?$"
       },
-      "description": "�n�}���S�ulng,lat�v�i�o�x����j�B�߂����̕��ёւ��Ɏg���Bbbox �ȗ����� radius �Ƒg�ݍ��킹�ĕ\���͈͂����B",
+      "description": "地図中心「lng,lat」（経度が先）。近い順の並び替えに使う。bbox 省略時は radius と組み合わせて表示範囲を作る。",
       "example": "139.75,35.66"
      },
      {
@@ -154,7 +154,7 @@
        "type": "integer",
        "default": 50000
       },
-      "description": "center ����̔��a�i���[�g���j�Bbbox �������Ƃ������g���B"
+      "description": "center からの半径（メートル）。bbox が無いときだけ使う。"
      },
      {
       "name": "limit",
@@ -166,7 +166,7 @@
        "minimum": 1,
        "maximum": 20
       },
-      "description": "�Ԃ����̍ő匏���i1�`20�ɃN�����v�j�B"
+      "description": "返す候補の最大件数（1～20にクランプ）。"
      },
      {
       "name": "fields",
@@ -180,12 +180,12 @@
        ],
        "default": "full"
       },
-      "description": "\"minimal\" ���w�肷��ƁA���1�����Ƃ� category/business_type/source/licenses/attributions ���Ȃ����y�ʂȃ��X�|���X�iMinimalSuggestion�Blicenses/attributions �̓��X�|���X������1�񂾂��ڂ�j��Ԃ��B���w��E\"full\"�E�s���Ȓl�͂��ׂď]���ǂ���̊��S�ȃ��X�|���X�ɂȂ�i����݊��j�B"
+      "description": "\"minimal\" を指定すると、候補1件ごとの category/business_type/source/licenses/attributions を省いた軽量なレスポンス（MinimalSuggestion。licenses/attributions はレスポンス直下に1回だけ載る）を返す。未指定・\"full\"・不明な値はすべて従来どおりの完全なレスポンスになる（後方互換）。"
      }
     ],
     "responses": {
      "200": {
-      "description": "���i���̂܂܈ꗗ�ɏo������сj",
+      "description": "候補（そのまま一覧に出せる並び）",
       "content": {
        "application/json": {
         "schema": {
@@ -195,7 +195,7 @@
       }
      },
      "400": {
-      "description": "�N�G���̎��s�G���[",
+      "description": "クエリの実行エラー",
       "content": {
        "application/json": {
         "schema": {
@@ -212,49 +212,49 @@
   "schemas": {
    "Facility": {
     "type": "object",
-    "description": "�{��1���B1���R�[�h��1���̉c�Ƌ��E�͏o��\���i����{�݂��Ǝ�Ⴂ�ŕ������R�[�h�ɂȂ邱�Ƃ�����j",
+    "description": "施設1件。1レコードは1件の営業許可・届出を表す（同一施設が業種違いで複数レコードになることがある）",
     "properties": {
      "name": {
       "type": "string",
-      "description": "�{�ݖ�"
+      "description": "施設名"
      },
      "name_kana": {
       "type": "string",
-      "description": "�{�ݖ��J�i"
+      "description": "施設名カナ"
      },
      "prefecture": {
       "type": "string",
-      "description": "�s���{��"
+      "description": "都道府県"
      },
      "city": {
       "type": "string",
-      "description": "�s�撬���i���K���ς݁j"
+      "description": "市区町村（正規化済み）"
      },
      "address": {
       "type": "string",
-      "description": "���ݒn"
+      "description": "所在地"
      },
      "category": {
       "type": "string",
-      "description": "���K���J�e�S���i�����\�[�X������̓����b�j�B�f�[�^�񋟌��ŃJ�e�S����񂪖R�������R�[�h�ł� \"unknown\" �ɂȂ�"
+      "description": "正規化カテゴリ（複数ソース統合後の統一語彙）。データ提供元でカテゴリ情報が乏しいレコードでは \"unknown\" になる"
      },
      "business_type": {
       "type": "string",
-      "description": "�c�Ƌ��E�͏o�̋Ǝ�i��: ���H�X�c�Ɓj�Bcategory �Ɠ��l�i����݊��̂��ߎc���Ă���j"
+      "description": "営業許可・届出の業種（例: 飲食店営業）。category と同値（後方互換のため残している）"
      },
      "lat": {
       "type": [
        "number",
        "string"
       ],
-      "description": "�ܓx�iWGS84�j�B���W�������{�݂͋󕶎�"
+      "description": "緯度（WGS84）。座標が無い施設は空文字"
      },
      "lng": {
       "type": [
        "number",
        "string"
       ],
-      "description": "�o�x�iWGS84�j�B���W�������{�݂͋󕶎�"
+      "description": "経度（WGS84）。座標が無い施設は空文字"
      },
      "level": {
       "type": [
@@ -262,25 +262,25 @@
        "string",
        "null"
       ],
-      "description": "�W�I�R�[�f�B���O���x�i1=�s���{�� 2=�s�撬�� 3=������ 8=�X��E�n�ԁB�������قǑ�܂��j"
+      "description": "ジオコーディング精度（1=都道府県 2=市区町村 3=町丁目 8=街区・地番。小さいほど大まか）"
      },
      "source": {
       "type": "string",
-      "description": "��\���R�[�h�̏o���\�[�X���ʎq�i��: \"jff\" / \"overture\"�j�B�����\�[�X���������ꂽ�{�݂ł��l�͒P��̕�����i�z��ł͂Ȃ��j"
+      "description": "代表レコードの出所ソース識別子（例: \"jff\" / \"overture\"）。複数ソースが統合された施設でも値は単一の文字列（配列ではない）"
      },
      "licenses": {
       "type": "array",
       "items": {
        "type": "string"
       },
-      "description": "�o�����̃��C�Z���X�ꗗ�B�����\�[�X���������ꂽ�{�݂ł͘a�W���i�d�������ς݁j"
+      "description": "出所元のライセンス一覧。複数ソースが統合された施設では和集合（重複除去済み）"
      },
      "attributions": {
       "type": "array",
       "items": {
        "type": "string"
       },
-      "description": "�o�����̋A���\���i�Q�l���B��ʕ\���͕s�v�j�B�������ꂽ�{�݂ł͑S�\�[�X�����܂ށB�ۑ�����Ƃ��͂��̔z����ꏏ�ɕۑ����邱�ƁB�ڍׂ� https://openpoiapi.com/attribution.html"
+      "description": "出所元の帰属表示（参考情報。画面表示は不要）。統合された施設では全ソース分を含む。保存するときはこの配列も一緒に保存すること。詳細は https://openpoiapi.com/attribution.html"
      }
     }
    },
@@ -293,7 +293,7 @@
     "properties": {
      "count": {
       "type": "integer",
-      "description": "�Ԃ�������"
+      "description": "返した件数"
      },
      "results": {
       "type": "array",
@@ -305,7 +305,7 @@
    },
    "Suggestion": {
     "type": "object",
-    "description": "���͕⊮�̌��1���B�\���i���O�E�Z���j�ƒn�}�ړ��i�ܓx�o�x�j�ɕK�v�ȍ��ڂ����������A���W�������{�݂͊܂܂�Ȃ�",
+    "description": "入力補完の候補1件。表示（名前・住所）と地図移動（緯度経度）に必要な項目だけを持ち、座標が無い施設は含まれない",
     "required": [
      "name",
      "address",
@@ -315,73 +315,73 @@
     "properties": {
      "name": {
       "type": "string",
-      "description": "�{�ݖ�"
+      "description": "施設名"
      },
      "address": {
       "type": "string",
-      "description": "�Z���i�s���{������n�܂�`�ɂ��낦�Ă���B���̂܂�1�s�ŕ\���ł���j"
+      "description": "住所（都道府県から始まる形にそろえてある。そのまま1行で表示できる）"
      },
      "prefecture": {
       "type": "string",
-      "description": "�s���{��"
+      "description": "都道府県"
      },
      "city": {
       "type": "string",
-      "description": "�s�撬���i���K���ς݁j"
+      "description": "市区町村（正規化済み）"
      },
      "category": {
       "type": "string",
-      "description": "���K���J�e�S���i�����\�[�X������̓����b�j�B�f�[�^�񋟌��ŃJ�e�S����񂪖R�������R�[�h�ł� \"unknown\" �ɂȂ�"
+      "description": "正規化カテゴリ（複数ソース統合後の統一語彙）。データ提供元でカテゴリ情報が乏しいレコードでは \"unknown\" になる"
      },
      "business_type": {
       "type": "string",
-      "description": "�c�Ƌ��E�͏o�̋Ǝ�i��: ���H�X�c�Ɓj�Bcategory �Ɠ��l�i����݊��̂��ߎc���Ă���j"
+      "description": "営業許可・届出の業種（例: 飲食店営業）。category と同値（後方互換のため残している）"
      },
      "lat": {
       "type": "number",
-      "description": "�ܓx�iWGS84�j"
+      "description": "緯度（WGS84）"
      },
      "lng": {
       "type": "number",
-      "description": "�o�x�iWGS84�j"
+      "description": "経度（WGS84）"
      },
      "level": {
       "type": [
        "integer",
        "null"
       ],
-      "description": "�W�I�R�[�f�B���O���x�i1=�s���{�� 2=�s�撬�� 3=������ 8=�X��E�n�ԁB�s���� null�j"
+      "description": "ジオコーディング精度（1=都道府県 2=市区町村 3=町丁目 8=街区・地番。不明は null）"
      },
      "source": {
       "type": "string",
-      "description": "��\���R�[�h�̏o���\�[�X���ʎq�i��: \"jff\" / \"overture\"�j�B�����\�[�X���������ꂽ�{�݂ł��l�͒P��̕�����i�z��ł͂Ȃ��j"
+      "description": "代表レコードの出所ソース識別子（例: \"jff\" / \"overture\"）。複数ソースが統合された施設でも値は単一の文字列（配列ではない）"
      },
      "licenses": {
       "type": "array",
       "items": {
        "type": "string"
       },
-      "description": "�o�����̃��C�Z���X�ꗗ�B�����\�[�X���������ꂽ�{�݂ł͘a�W���i�d�������ς݁j"
+      "description": "出所元のライセンス一覧。複数ソースが統合された施設では和集合（重複除去済み）"
      },
      "attributions": {
       "type": "array",
       "items": {
        "type": "string"
       },
-      "description": "�o�����̋A���\���i�Q�l���B��ʕ\���͕s�v�j�B�������ꂽ�{�݂ł͑S�\�[�X�����܂ށB�ۑ�����Ƃ��͂��̔z����ꏏ�ɕۑ����邱�ƁB�ڍׂ� https://openpoiapi.com/attribution.html"
+      "description": "出所元の帰属表示（参考情報。画面表示は不要）。統合された施設では全ソース分を含む。保存するときはこの配列も一緒に保存すること。詳細は https://openpoiapi.com/attribution.html"
      },
      "matched": {
       "type": "array",
       "items": {
        "type": "string"
       },
-      "description": "���̌��� name �Ɋ܂܂�Ă������͌�i�\�L���𐳋K�����Ĕ��肵�A���͂��ꂽ�\�L�̂܂ܕԂ��j�B��v�����̋����\���ȂǂɎg����B�����̓W�J�ꂾ���œ���������͊܂܂Ȃ�"
+      "description": "この候補の name に含まれていた入力語（表記ゆれを正規化して判定し、入力された表記のまま返す）。一致部分の強調表示などに使える。辞書の展開語だけで当たった語は含まない"
      }
     }
    },
    "MinimalSuggestion": {
     "type": "object",
-    "description": "fields=minimal �̂Ƃ��̌��1���Bcategory/business_type/source/licenses/attributions �������Ȃ��i������ SuggestResponse ������ licenses/attributions ���Q�Ɓj",
+    "description": "fields=minimal のときの候補1件。category/business_type/source/licenses/attributions を持たない（それらは SuggestResponse 直下の licenses/attributions を参照）",
     "required": [
      "name",
      "address",
@@ -391,41 +391,41 @@
     "properties": {
      "name": {
       "type": "string",
-      "description": "�{�ݖ�"
+      "description": "施設名"
      },
      "address": {
       "type": "string",
-      "description": "�Z���i�s���{������n�܂�`�ɂ��낦�Ă���B���̂܂�1�s�ŕ\���ł���j"
+      "description": "住所（都道府県から始まる形にそろえてある。そのまま1行で表示できる）"
      },
      "prefecture": {
       "type": "string",
-      "description": "�s���{��"
+      "description": "都道府県"
      },
      "city": {
       "type": "string",
-      "description": "�s�撬���i���K���ς݁j"
+      "description": "市区町村（正規化済み）"
      },
      "lat": {
       "type": "number",
-      "description": "�ܓx�iWGS84�j"
+      "description": "緯度（WGS84）"
      },
      "lng": {
       "type": "number",
-      "description": "�o�x�iWGS84�j"
+      "description": "経度（WGS84）"
      },
      "level": {
       "type": [
        "integer",
        "null"
       ],
-      "description": "�W�I�R�[�f�B���O���x�i1=�s���{�� 2=�s�撬�� 3=������ 8=�X��E�n�ԁB�s���� null�j"
+      "description": "ジオコーディング精度（1=都道府県 2=市区町村 3=町丁目 8=街区・地番。不明は null）"
      },
      "matched": {
       "type": "array",
       "items": {
        "type": "string"
       },
-      "description": "���̌��� name �Ɋ܂܂�Ă������͌�i�\�L���𐳋K�����Ĕ��肵�A���͂��ꂽ�\�L�̂܂ܕԂ��j�B��v�����̋����\���ȂǂɎg����B�����̓W�J�ꂾ���œ���������͊܂܂Ȃ�"
+      "description": "この候補の name に含まれていた入力語（表記ゆれを正規化して判定し、入力された表記のまま返す）。一致部分の強調表示などに使える。辞書の展開語だけで当たった語は含まない"
      }
     }
    },
@@ -439,7 +439,7 @@
     "properties": {
      "count": {
       "type": "integer",
-      "description": "�Ԃ������̌���"
+      "description": "返した候補の件数"
      },
      "scope": {
       "type": "string",
@@ -447,11 +447,11 @@
        "view",
        "nationwide"
       ],
-      "description": "�ǂ͈̔͂Ō��������Bview = �w�肳�ꂽ�\���͈͂̒��Anationwide = �\���͈͂�0�����������ߑS���֍L����"
+      "description": "どの範囲で見つけたか。view = 指定された表示範囲の中、nationwide = 表示範囲で0件だったため全国へ広げた"
      },
      "suggestions": {
       "type": "array",
-      "description": "���i�ǂ����ɕ���ł���B�Ăяo�����ł̕��ёւ��͕s�v�j�Bfields=minimal �̂Ƃ��͊e�v�f�� MinimalSuggestion �ɂȂ�B",
+      "description": "候補（良い順に並んでいる。呼び出し側での並び替えは不要）。fields=minimal のときは各要素が MinimalSuggestion になる。",
       "items": {
        "oneOf": [
         {
@@ -465,7 +465,7 @@
      },
      "vocabulary": {
       "type": "array",
-      "description": "���͂ɑO����v�����J�e�S���E�u�����h�E�n���̌�b�i�ő�5���B�ǂ����j�B1�����̓��͂� suggestions ����̂Ƃ����Ԃ�",
+      "description": "入力に前方一致したカテゴリ・ブランド・地名の語彙（最大5件。良い順）。1文字の入力や suggestions が空のときも返す",
       "items": {
        "$ref": "#/components/schemas/VocabularyItem"
       }
@@ -475,27 +475,27 @@
        "string",
        "null"
       ],
-      "description": "���͂̑����Ƃ��ē��͗��ɔ����d�˂ďo����⊮������i�S�[�X�g�e�L�X�g�p�j�Bsuggestions �擪�� name ������ q �Ŏn�܂�΂��� name�A�����łȂ� vocabulary �擪�� label �� q �Ŏn�܂�΂��� label�A�ǂ����������� null�B��r�͐��K���O�̕�����̂܂܍s��"
+      "description": "入力の続きとして入力欄に薄く重ねて出せる補完文字列（ゴーストテキスト用）。suggestions 先頭の name が入力 q で始まればその name、そうでなく vocabulary 先頭の label が q で始まればその label、どちらも無ければ null。比較は正規化前の文字列のまま行う"
      },
      "licenses": {
       "type": "array",
       "items": {
        "type": "string"
       },
-      "description": "fields=minimal �̂Ƃ��������݂���B�Ԃ��� suggestions �S�����̃��C�Z���X�ꗗ�i�a�W���E�d�������ς݁j"
+      "description": "fields=minimal のときだけ存在する。返した suggestions 全件分のライセンス一覧（和集合・重複除去済み）"
      },
      "attributions": {
       "type": "array",
       "items": {
        "type": "string"
       },
-      "description": "fields=minimal �̂Ƃ��������݂���Bsuggestions �S�����̋A���\���i�a�W���E�d�������ς݁B�Q�l���ŉ�ʕ\���͕s�v�j"
+      "description": "fields=minimal のときだけ存在する。suggestions 全件分の帰属表示（和集合・重複除去済み。参考情報で画面表示は不要）"
      }
     }
    },
    "VocabularyItem": {
     "type": "object",
-    "description": "��b1���i�J�e�S���E�u�����h�E�n���j�Btype �Ō`���ς��Bplace �̂Ƃ����� prefecture/city/center/bbox/count ������",
+    "description": "語彙1件（カテゴリ・ブランド・地名）。type で形が変わる。place のときだけ prefecture/city/center/bbox/count を持つ",
     "required": [
      "type",
      "label",
@@ -509,23 +509,23 @@
        "brand",
        "place"
       ],
-      "description": "category = �Ǝ�E�J�e�S���i��: ���[�����j/ brand = �`�F�[���X���i��: �X�^�[�o�b�N�X�j/ place = �s���{���E�s�撬��"
+      "description": "category = 業種・カテゴリ（例: ラーメン）/ brand = チェーン店名（例: スターバックス）/ place = 都道府県・市区町村"
      },
      "label": {
       "type": "string",
-      "description": "�\����"
+      "description": "表示名"
      },
      "query": {
       "type": "string",
-      "description": "���̌�b���I�΂ꂽ�Ƃ��ɁA�����������̂Ɏg���΂悢������iq �ɂ��̂܂ܓn����j"
+      "description": "この語彙が選ばれたときに、検索し直すのに使えばよい文字列（q にそのまま渡せる）"
      },
      "prefecture": {
       "type": "string",
-      "description": "place �̂݁B�s���{��"
+      "description": "place のみ。都道府県"
      },
      "city": {
       "type": "string",
-      "description": "place �̂݁B�s�撬���i�s���{�����̂��̂̌�b�ł͋󕶎��j"
+      "description": "place のみ。市区町村（都道府県そのものの語彙では空文字）"
      },
      "center": {
       "type": "array",
@@ -534,7 +534,7 @@
       },
       "minItems": 2,
       "maxItems": 2,
-      "description": "place �̂݁B��\�_ [lng, lat]�i���̒n���ɑ�����{�ݍ��W�̕��ρj"
+      "description": "place のみ。代表点 [lng, lat]（その地名に属する施設座標の平均）"
      },
      "bbox": {
       "type": "array",
@@ -543,11 +543,11 @@
       },
       "minItems": 4,
       "maxItems": 4,
-      "description": "place �̂݁B�͈� [minLng, minLat, maxLng, maxLat]�i���̒n���ɑ�����{�ݍ��W�̍ŏ��E�ő�B���W�̊O��l������ƍL���邱�Ƃ�����j"
+      "description": "place のみ。範囲 [minLng, minLat, maxLng, maxLat]（その地名に属する施設座標の最小・最大。座標の外れ値があると広がることがある）"
      },
      "count": {
       "type": "integer",
-      "description": "place �̂݁B���̒n���ɑ�����{�݁i���W����j�̌���"
+      "description": "place のみ。その地名に属する施設（座標あり）の件数"
      }
     }
    },
@@ -556,7 +556,7 @@
     "properties": {
      "error": {
       "type": "string",
-      "description": "�G���[���b�Z�[�W"
+      "description": "エラーメッセージ"
      }
     }
    }

@@ -95,7 +95,7 @@ def main(key):
 
     spec_path = "data/openpoi_openapi.json"
     if not os.path.exists(spec_path):
-        with open(spec_path, "w") as f:
+        with open(spec_path, "w", encoding="utf-8") as f:
             json.dump(get_json("/openapi.json"), f, ensure_ascii=False, indent=1)
         print(f"API 定義を保存: {spec_path}")
 
@@ -113,10 +113,10 @@ def main(key):
             p["_dist_m"] = round(d)
             kept.append(p)
 
-    with open(f"data/{key}/openpoi_raw.jsonl", "w") as f:
+    with open(f"data/{key}/openpoi_raw.jsonl", "w", encoding="utf-8") as f:
         for p in kept:
             f.write(json.dumps(p, ensure_ascii=False) + "\n")
-    with open(f"data/{key}/openpoi_tiles.csv", "w", newline="") as f:
+    with open(f"data/{key}/openpoi_tiles.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["minLng", "minLat", "maxLng", "maxLat", "depth", "count", "status"])
         w.writerows(tiles)
