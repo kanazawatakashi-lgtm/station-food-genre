@@ -25,7 +25,9 @@
 ```
 python scripts/fetch_overture.py kameido            # Overture から周辺の全 POI
 python scripts/extract_overture_food.py kameido     # 1km 圏の飲食 → overture_food.csv
-python scripts/classify_genre.py kameido            # ルール＋Overture＋genre_claude.csv → genre.csv
+python scripts/fetch_osm.py kameido                 # OSM（Overpass）。ローカルのみ
+python scripts/apply_osm.py kameido                 # OSM と Overture を突き合わせ → osm_genre.csv
+python scripts/classify_genre.py kameido            # ルール＋Overture＋OSM＋genre_claude.csv → genre.csv
 python scripts/classify_with_claude.py kameido      # 判定不能の店を Claude API で判定（要 ANTHROPIC_API_KEY）
 python scripts/classify_genre.py kameido            # 反映
 python scripts/fetch_overture_area.py tokyo23       # 比較対象（23区 bbox）。data/areas/ は git 管理外
@@ -37,9 +39,12 @@ PYTHONPATH=scripts python scripts/genre_table.py kameido tokyo23   # 件数・�
 1. 店名の正規表現（`scripts/genre_rules.py` の `NAME_RULES`、チェーン名を含む）。上から順に最初に当たったもの。
    料理名を先、「居酒屋」「ダイニング」などの業態語を後に置く
 2. Overture の `taxonomy.primary` が細分類なら `OVERTURE_MAP` で対応付け。`japanese_restaurant` などの粗い分類は使わない
-3. それでも決まらない店は Claude が店名から判定（`data/<駅>/genre_claude.csv`）。確信度「高」「中」だけ採用、
+3. それでも決まらない店は OSM のタグ（`cuisine` など）を使う（`apply_osm.py`。80m 以内・店名一致の OSM 要素）。
+   人が付けたタグなので Claude 判定より優先。ルールで決まった店とも照合し、一致率と不一致一覧
+   （`osm_disagreements.txt`）を出す
+4. それでも決まらない店は Claude が店名から判定（`data/<駅>/genre_claude.csv`）。確信度「高」「中」だけ採用、
    「低」と「不明」は判定不能のまま。外部サイトは調べない
-4. 飲食店でないもの（ネットカフェ、コインランドリー、地名や住所だけのレコードなど）は `NOT_RESTAURANT*` で除外
+5. 飲食店でないもの（ネットカフェ、コインランドリー、地名や住所だけのレコードなど）は `NOT_RESTAURANT*` で除外
 
 **亀戸の `genre_claude.csv` は API ではなく、作業セッション中の Claude（API キーが無かった）が同じ基準で
 手で判定したもの。** `classify_with_claude.py` は実 API で未実行。
@@ -54,6 +59,11 @@ PYTHONPATH=scripts python scripts/genre_table.py kameido tokyo23   # 件数・�
 
 ### 次にやること
 
+- OSM（ローカル）: `fetch_osm.py` → `apply_osm.py` → `classify_genre.py` → `genre_table.py`。
+  クラウド環境からは Overpass・Geofabrik・OSM API・BigQuery のどれにも届かず、AWS の osm-pds（planet の ORC、
+  129GB）は読めるが stripe が全球にまたがっていて範囲を絞れないため断念した。スクリプトは偽データで試験済み、実データは未実行。
+  実行後に確認すること: 判定不能 116 件のうち何件埋まったか、ルール判定との一致率、`osm_disagreements.txt` の中身。
+  OSM は ODbL。OSM 由来のジャンルを含むデータを公開するときは出典表示と ODbL の条件に従う
 - 手順3（ローカル）: OpenPOI 取得 → JFF の飲食店営業・喫茶店営業に絞る → Overture 内重複と JFF の名寄せ
 - 名寄せ後に genre_table を作り直す。重複除去は比較対象（23区）側にも同じ方法で掛ける
 - 乗降客1万人あたり店舗数: S12 の取得が必要（この環境からは nlftp.mlit.go.jp に届かない）
