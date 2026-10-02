@@ -17,7 +17,7 @@
 | 1. 駅の座標 | 済。35.697306, 139.826583（`scripts/common.py`）。Wikipedia/MapFan の値で、Overture の「JR 亀戸駅」POI と約10mで一致。S12 との照合はまだ |
 | 2. Overture 抽出 | 済。`data/kameido/overture_food.csv`、937件 |
 | 3. OpenPOI 取得と名寄せ | **未。ローカルで実行する**（下記） |
-| 4. ジャンル判定 | Overture 分は済（判定率 87.3%）。JFF 分はまだ |
+| 4. ジャンル判定 | Overture 分は済（判定率 87.1%、重複除去後 901 件）。JFF 分はまだ |
 | 5. 件数・構成比・LQ の表 | Overture 分で第1版済。`docs/kameido_results.md` |
 
 ### パイプライン
@@ -48,8 +48,8 @@ PYTHONPATH=scripts python scripts/genre_table.py kameido tokyo23   # 件数・�
 
 - 店名ルールと Overture 料理系細分類の両方がある168件で一致 88%。不一致の多くは Overture 側の誤り
 - Overture の cafe / coffee_shop / bar には飲食店以外がかなり混じる（23区の cafe 系サンプルにエステ、陶芸教室など）
-- Overture 内の同一店重複が亀戸で10〜15組（表記違いを含めるともっと多い）。LQ を数件単位で動かすので名寄せが必要
-- 居酒屋とバーの境界は分類方法でかなり動く。酒場系をまとめた LQ は 1.03 で、内訳の比較はまだ信頼できない
+- Overture 内の同一店重複: `scripts/dedupe.py`（50m 以内・店名の中核一致／包含・同ジャンル）で亀戸9組、23区1.3%をまとめる。表記違い・距離の離れた重複は残る
+- 居酒屋とバーの境界は分類方法でかなり動く。酒場系をまとめた LQ は 1.04 で、内訳の比較はまだ信頼できない
 - LQ は駅側・比較側とも同じ方法（ルール＋Overture）で計算する。Claude 判定を駅側だけに入れると比べられない
 
 ### 次にやること
