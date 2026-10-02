@@ -120,10 +120,10 @@ def main(key):
                 r["genre"], r["method"], r["matched"] = "対象外", "excluded", c["reason"]
             elif c["genre"] != "不明" and c["confidence"] in ACCEPTED_CONFIDENCE:
                 r["genre"], r["method"], r["matched"] = c["genre"], "claude", f'{c["confidence"]}: {c["reason"]}'
-    # 飲食店か不確かな JFF レコードは、OSM か Claude 判定でジャンルが付いたときだけ店として残す
+    # 飲食店か不確かな JFF レコードは、店名ルール・OSM・Claude 判定でジャンルが付いたときだけ店として残す
     for r in rows:
         if r.get("source") == "jff_uncertain":
-            if r["method"] in ("osm", "claude"):
+            if r["method"] in ("name", "jff_name", "osm", "claude"):
                 r["source"] = "jff"
             elif r["method"] != "excluded":
                 r["genre"], r["method"], r["matched"] = "対象外", "excluded", "JFF: 飲食店か不明"

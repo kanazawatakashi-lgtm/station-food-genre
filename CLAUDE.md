@@ -10,7 +10,10 @@
 - 試作は JR 亀戸駅だけ。精度を確認してから広げる
 - 指標は特化係数（LQ）と乗降客1万人あたり店舗数。件数そのままでは比べない
 
-**多くの駅に広げるときのやり方は `docs/method.md` にまとめた（都内全域を一度に判定して駅ごとに切り出す）。**
+**多くの駅に広げるときのやり方は `docs/method.md` にまとめた（23区全域を一度に判定して駅ごとに切り出す）。進み具合も同じファイルの末尾。**
+
+23区全域の流れ: `fetch_overture_area.py tokyo23` → `classify_area.py tokyo23` → `classify_area_with_claude.py tokyo23 submit/collect`（ローカル）→ `classify_area.py tokyo23`（反映）。
+`data/areas/` は大きいので git 管理外。ただし `tokyo23_unresolved_names.csv` と `tokyo23_claude.csv` はローカルとの受け渡しのため管理する。
 
 ## 進み具合（亀戸）
 

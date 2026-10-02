@@ -1,4 +1,6 @@
 __pycache__/
 *.pyc
 .venv/
-data/areas/
+data/areas/*
+!data/areas/tokyo23_unresolved_names.csv
+!data/areas/tokyo23_claude.csv

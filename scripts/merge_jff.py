@@ -157,7 +157,9 @@ def match_score(ov_name, jff_name, jff_kana, dist):
 def main(key):
     raw = [json.loads(l) for l in open(f"data/{key}/openpoi_raw.jsonl", encoding="utf-8")]
     jff = [r for r in raw if is_jff(r) and r.get("lat") not in ("", None)]
-    ov = [r for r in csv.DictReader(open(f"data/{key}/genre.csv", encoding="utf-8")) if r["method"] != "excluded"]
+    # Overture の店とだけ照合する（genre.csv には前回追加した JFF の店も入っているため）
+    ov = [r for r in csv.DictReader(open(f"data/{key}/genre.csv", encoding="utf-8"))
+          if r["method"] != "excluded" and r.get("source", "overture") == "overture"]
 
     out = []
     for i, r in enumerate(jff):

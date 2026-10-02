@@ -178,12 +178,12 @@ e5d11ba3-be7c-479b-a405-caaf04df2a47,overture,Café むすび,cafe,,カフェ・
 f71189bd-baca-40dc-bfb7-8a8597102706,overture,Coffee Elementary School,cafe,coffee_shop|restaurant,カフェ・喫茶,name,coffee,35.697699,139.818016,775.0,0.996,"Kinshi, 4 Chome−9−9 宮本マンション２ 102",Overture|meta,CDLA-Permissive-2.0
 b1192f31-dbca-4262-8442-163715f39850,overture,EAT CAFE ANZU,cafe,,カフェ・喫茶,name,cafe,35.702063,139.823479,599.0,0.77,亀戸3丁目47-3,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 9ee31b35-b35f-42f8-86af-3f67add62eee,overture,Elektro-Shop Köck AT,cafe,coffee_shop|sandwich_shop,対象外,excluded,cafe,35.698824,139.823784,304.0,0.55,Linzer Str. ,Overture|meta,CDLA-Permissive-2.0
-2b78b9d5-cf7f-4a4c-b896-ba8368fed23f,overture,Excelsior Caffé,cafe,coffee_shop|restaurant,カフェ・喫茶,overture,cafe,35.698145,139.826141,101.0,0.995,"Kameido, 5 Chome−1−2 ＬＩＶ亀戸２ビル １Ｆ",Overture|meta,CDLA-Permissive-2.0
+2b78b9d5-cf7f-4a4c-b896-ba8368fed23f,overture,Excelsior Caffé,cafe,coffee_shop|restaurant,カフェ・喫茶,name,excelsior,35.698145,139.826141,101.0,0.995,"Kameido, 5 Chome−1−2 ＬＩＶ亀戸２ビル １Ｆ",Overture|meta,CDLA-Permissive-2.0
 58a72132-1466-4550-ab85-25130c75a85a,overture,Fugador Coffee,cafe,coffee_shop,カフェ・喫茶,name,coffee,35.699694,139.816765,925.0,0.925,錦4 Chome−15−1 ひがしんアリーナ 2階,Overture|meta,CDLA-Permissive-2.0
 b76717db-f8e2-402b-8b60-7470ef5de60a,overture,Kuramochi Coffee,cafe,coffee_shop|tea_room,カフェ・喫茶,name,coffee,35.704594,139.823402,860.0,0.445,3 Chome-50-5 Kameido,Overture|meta,CDLA-Permissive-2.0
 fd9183cb-43ca-4d79-887c-cc082675b4b2,overture,Penny Lane Cafe 亀戸,cafe,coffee_shop|restaurant,カフェ・喫茶,name,cafe,35.697489,139.832695,552.0,0.991,"Kameido, 6 Chome−55−10 レック亀戸グリーンマンション",Overture|meta,CDLA-Permissive-2.0
 ac978d23-d078-43d8-bbfb-083b71e3d73e,overture,Studio Cafe Jiggaji,cafe,coffee_shop|restaurant,カフェ・喫茶,name,cafe,35.694735,139.825752,296.0,0.402,亀戸1丁目31-7,Overture|meta,CDLA-Permissive-2.0
-24112cc4-49f5-4347-999c-a601f8e029b7,overture,Tully's Coffee,cafe,,カフェ・喫茶,name,coffee,35.697552,139.826225,42.0,0.77,亀戸5-1-1,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+24112cc4-49f5-4347-999c-a601f8e029b7,overture,Tully's Coffee,cafe,,カフェ・喫茶,name,tully,35.697552,139.826225,42.0,0.77,亀戸5-1-1,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 c96d56e2-acc3-4342-86da-2be00b1d6c22,overture,farside,cafe,,カフェ・喫茶,overture,cafe,35.695776,139.828072,217.0,0.77,亀戸6-20-8,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 c84b695c-ae64-4d06-9b00-bef40c01f62a,overture,fleur cafe,cafe,coffee_shop,カフェ・喫茶,name,cafe,35.696165,139.82663,127.0,0.805,亀戸6丁目27-1,Overture|meta,CDLA-Permissive-2.0
 ae083208-5840-4fa6-ad55-0ce870a4906d,overture,　山長　亀戸本店,cafe,mountain|candy_store,カフェ・喫茶,overture,cafe,35.699537,139.826591,248.0,0.951,亀戸3-60-21,Overture|meta,CDLA-Permissive-2.0
@@ -283,7 +283,7 @@ aa9e8fa0-34c1-452a-a731-f50df4c6477a,overture,Bar triangle,cocktail_bar,bar,バ�
 dc48f50a-164c-4f02-bc36-db2092076d5d,overture,ザ・カクテルショップ,cocktail_bar,bar,バー,overture,cocktail_bar,35.699007,139.824287,281.0,0.995,"Kameido, 2 Chome−29−8 フリーティアムK 2F-A",Overture|meta,CDLA-Permissive-2.0
 a09da945-41c4-45c4-9457-b8a42feb7644,overture,88 Plus,coffee_shop,cafe|restaurant,カフェ・喫茶,overture,coffee_shop,35.695013,139.825439,275.0,0.102,亀戸1丁目32-10,Overture|meta,CDLA-Permissive-2.0
 ed6119e7-b9df-4c02-bca6-c1d648c895b3,overture,HotHeart亀戸店,coffee_shop,,カフェ・喫茶,overture,coffee_shop,35.696985,139.828407,169.0,0.77,亀戸6丁目57-23,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-58b43228-b287-4083-bd06-cfbc48736999,overture,Tully's Coffee,coffee_shop,,カフェ・喫茶,name,coffee,35.700468,139.816536,973.0,0.77,太平4-1-2,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+58b43228-b287-4083-bd06-cfbc48736999,overture,Tully's Coffee,coffee_shop,,カフェ・喫茶,name,tully,35.700468,139.816536,973.0,0.77,太平4-1-2,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 6c90b3fd-7c0f-43fd-a24b-0d86a5bf0b1b,overture,いかり屋,coffee_shop,restaurant|bar,カフェ・喫茶,overture,coffee_shop,35.700155,139.826172,319.0,0.704,亀戸5丁目16-4,Overture|meta,CDLA-Permissive-2.0
 8dee7d6d-6f2d-433c-9dbf-aa3a2abe96cb,overture,たに珈琲店,coffee_shop,cafe,カフェ・喫茶,name,珈琲,35.699106,139.827583,220.0,0.763,亀戸5丁目10-7,Overture|meta,CDLA-Permissive-2.0
 244893a9-270b-45c2-bccb-26bfde5433cf,overture,やなか珈琲店 アトレ亀戸店,coffee_shop,cafe,カフェ・喫茶,name,珈琲,35.697783,139.826416,55.0,0.988,亀戸5丁目1-1,Overture|meta,CDLA-Permissive-2.0
@@ -605,7 +605,7 @@ a4d5157a-49b2-4163-aaae-63a96b3851d4,overture,時代や,japanese_restaurant,,居
 51c5e73d-5dff-40fe-b8bb-103f104a4a75,overture,有味福,japanese_restaurant,asian_restaurant|restaurant,中華,claude,中: 中華料理店に多い名前,35.701948,139.823959,568.0,0.547,亀戸3丁目47-14,Overture|meta,CDLA-Permissive-2.0
 d46ef53d-6891-4129-b8eb-79d83bb2b166,overture,東京担々麺,japanese_restaurant,asian_restaurant,ラーメン,name,担々麺,35.698145,139.828407,189.0,0.197,亀戸5丁目6-15,Overture|meta,CDLA-Permissive-2.0
 97658909-6cd9-417f-8579-df1891ad1efc,overture,松屋,japanese_restaurant,fast_food_restaurant|restaurant,牛丼・丼,name,松屋,35.697737,139.825233,131.0,1.0,亀戸2丁目20-4,Overture|meta,CDLA-Permissive-2.0
-f8a632b7-60a6-4d15-ba31-b87858af8afd,overture,松竹庵,japanese_restaurant,,その他飲食（判定不能）,unresolved,japanese_restaurant,35.698648,139.831276,449.0,0.77,亀戸5-38-33,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+f8a632b7-60a6-4d15-ba31-b87858af8afd,overture,松竹庵,japanese_restaurant,,そば・うどん,name,松竹庵,35.698648,139.831276,449.0,0.77,亀戸5-38-33,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 6fe0fe52-a514-454a-b6e6-ed6eca65d08a,overture,板 石山光一 四條司家御膳所,japanese_restaurant,restaurant,和食・割烹,name,御膳,35.70122,139.824821,463.0,0.99,"Kameido, 2 Chome−44−10 カブラギビル 一階 【ラインID itamaeishiyama】",Overture|meta,CDLA-Permissive-2.0
 d83a9f50-f95a-4885-956a-619f479330c3,overture,柳,japanese_restaurant,restaurant|asian_restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.695662,139.826729,183.0,0.844,亀戸6丁目23-10,Overture|meta,CDLA-Permissive-2.0
 1d4bfe86-b3e4-4d39-94e4-008d44f8b481,overture,株式会社 船橋屋,japanese_restaurant,desserts|food_beverage_service_distribution,スイーツ・和菓子,name,船橋屋,35.701601,139.820076,757.0,0.997,亀戸3-2-14,Overture|meta,CDLA-Permissive-2.0
@@ -857,8 +857,8 @@ d1857b99-fa50-4a2e-89b4-3ac6742bb06f,overture,醸造科 オリゼー(oryzae),sak
 03b3dd5c-8705-4aed-99b7-4695cadb2767,overture,鮨 酒 肴 杉玉 亀戸,sake_bar,,すし,name,鮨,35.696831,139.826546,53.0,0.77,亀戸6‐59‐7,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 d3503f00-44fc-4f5d-a154-2307fc74a5e3,overture,鳥貴族 亀戸店,sake_bar,,焼き鳥・やきとん,name,鳥貴族,35.699017,139.826256,192.0,0.77,亀戸5-13-2,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 d3206c23-b9f3-4469-bcea-78d746ae95d1,overture,Sizzler Kameido Sun Street,salad_bar,restaurant|barbecue_restaurant,洋食,overture,salad_bar,35.695498,139.828621,273.0,0.447,亀戸6丁目31-1,Overture|meta,CDLA-Permissive-2.0
-89947112-a4f3-497c-8c16-fc6b9dd33f9a,overture,SUBWAY,sandwich_shop,,パン,overture,sandwich_shop,35.700525,139.816505,978.0,0.77,太平4-1-5,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-6044f955-45e1-45f0-bd65-bdd9fd94a533,overture,SUBWAY,sandwich_shop,,パン,overture,sandwich_shop,35.696148,139.82914,264.0,0.77,,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+89947112-a4f3-497c-8c16-fc6b9dd33f9a,overture,SUBWAY,sandwich_shop,,ハンバーガー・ファストフード,name,subway,35.700525,139.816505,978.0,0.77,太平4-1-5,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+6044f955-45e1-45f0-bd65-bdd9fd94a533,overture,SUBWAY,sandwich_shop,,ハンバーガー・ファストフード,name,subway,35.696148,139.82914,264.0,0.77,,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 9374a9d1-fc1a-4766-83e5-81da741fd1f1,overture,カナリアサンドイッチ 亀戸店,sandwich_shop,,パン,overture,sandwich_shop,35.702555,139.823112,662.0,0.77,亀戸3-44-11,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 b0e62936-a5b8-4819-a64b-74b81692e172,overture,うに崎トゲ蔵,seafood_restaurant,bar|shoe_store,海鮮・魚料理,overture,seafood_restaurant,35.695036,139.816879,912.0,0.844,東京都墨田区江東橋４丁目２１−６,Overture|meta,CDLA-Permissive-2.0
 ff956135-8ac1-4ac5-a4ea-e706f4644670,overture,さかな道楽亀戸店,seafood_restaurant,japanese_restaurant|asian_restaurant,海鮮・魚料理,name,さかな,35.697716,139.825371,119.0,0.983,亀戸2丁目20-7,Overture|meta,CDLA-Permissive-2.0
@@ -961,7 +961,7 @@ jff:45,jff,スナック　青葉,,スナック　アオバ,スナック・パブ
 jff:46,jff,モドゥラン,,モドゥラン,韓国料理,claude,中: 韓国語の店名（모두랑）。錦糸町ハイタウン内,35.695051,139.817,901,,東京都墨田区江東橋四丁目２１番６号 錦糸町ハイタウン１１９号,jff,"公共データ利用規約（第1.0版, PDL1.0）"
 jff:48,jff,元祖どないや　錦糸町店,,ガンソドナイヤ　キンシチョウテン,お好み焼き・もんじゃ・たこ焼き,claude,高: どないや（たこ焼きのチェーン）,35.695234,139.817016,894,,東京都墨田区江東橋四丁目２１番６号 錦糸町ハイタウン１２０,jff,"公共データ利用規約（第1.0版, PDL1.0）"
 jff:49,jff,さろん高遠,,サロンタカトウ,その他飲食（判定不能）,unresolved,,35.695051,139.817,901,,東京都墨田区江東橋四丁目２１番６号 錦糸町ハイタウン１階（１３１号）,jff,"公共データ利用規約（第1.0版, PDL1.0）"
-jff:51,jff,そじ坊,,ソジボウ,そば・うどん,claude,高: そじ坊（そばのチェーン）,35.696311,139.81566,993,,東京都墨田区江東橋四丁目２７番１４号 楽天地ビル１Ｆ,jff,"公共データ利用規約（第1.0版, PDL1.0）"
+jff:51,jff,そじ坊,,ソジボウ,そば・うどん,name,そじ坊,35.696311,139.81566,993,,東京都墨田区江東橋四丁目２７番１４号 楽天地ビル１Ｆ,jff,"公共データ利用規約（第1.0版, PDL1.0）"
 jff:54,jff_uncertain,株式会社コボコボ,,カブシキガイシャコボコボ,対象外,excluded,JFF: 飲食店か不明,35.696311,139.81566,993,,東京都墨田区江東橋4-27-14 錦糸町パルコ,jff,"公共データ利用規約（第1.0版, PDL1.0）"
 jff:56,jff,ＧＯＫＵ　ＧＯＫＵ,,ゴクゴク,その他飲食（判定不能）,unresolved,,35.696309,139.815865,974,,東京都墨田区江東橋四丁目２７番１号 錦糸町ＰＡＲＣＯ１階フードホール内,jff,"公共データ利用規約（第1.0版, PDL1.0）"
 jff:59,jff_uncertain,麥乃,,ムギノ,対象外,excluded,JFF: 飲食店か不明,35.696311,139.81566,993,,東京都墨田区江東橋4丁目27番14号 錦糸町PARCO１階,jff,"公共データ利用規約（第1.0版, PDL1.0）"
@@ -1003,7 +1003,7 @@ jff:134,jff_uncertain,三友フレッシュフーズ Ｄ＆Ｄ,,サンユウフ�
 jff:135,jff,肉のヤマ牛亀戸,,ニクノヤマギュウカメイド,その他飲食（判定不能）,unresolved,,35.6969,139.827449,90,,東京都江東区亀戸6-58-13,jff,"CDLA-Permissive-2.0|公共データ利用規約（第1.0版, PDL1.0）"
 jff:139,jff,手羽だるま 亀戸店,,テバダルマ カメイドテン,とんかつ・揚げ物,claude,中: 手羽先（から揚げ）の店と判断,35.697181,139.828769,198,,東京都江東区亀戸六丁目62-82F,jff,CC BY 4.0
 jff:140,jff,PONCOTTU,,ポンコッツ,その他飲食（判定不能）,unresolved,,35.697072,139.828106,140,,東京都江東区亀戸6-61-2 第2渡辺ビル2階,jff,"公共データ利用規約（第1.0版, PDL1.0）"
-jff:142,jff,舎鈴 亀戸駅東口店,,シャリン カメイドエキヒガシグチテン,ラーメン,claude,高: 舎鈴（つけ麺のチェーン）,35.696957,139.828509,178,,東京都江東区亀戸六丁目57-22サンポービル1F,jff,CC BY 4.0
+jff:142,jff,舎鈴 亀戸駅東口店,,シャリン カメイドエキヒガシグチテン,ラーメン,name,舎鈴,35.696957,139.828509,178,,東京都江東区亀戸六丁目57-22サンポービル1F,jff,CC BY 4.0
 jff:143,jff_uncertain,和泉家吉之助,,イズミヤキチノスケ,対象外,excluded,JFF: 飲食店か不明,35.695029,139.829422,360,,東京都江東区亀戸6-31-6 カメイドクロック　B1催事場,jff,"公共データ利用規約（第1.0版, PDL1.0）"
 jff:144,jff_uncertain,京やきぐり,,キョウヤキグリ,対象外,excluded,JFF: 飲食店か不明,35.695029,139.829422,360,,東京都江東区亀戸6-31-6 KAMEIDO CLOCK B1イベントスペース,jff,"公共データ利用規約（第1.0版, PDL1.0）"
 jff:145,jff,本庄鮮魚 亀戸店 寿司作業室,,ホンジョウセンギョ カメイドテン スシサギョウシツ,すし,name,寿司,35.695473,139.829063,303,,東京都江東区亀戸六丁目31-6カメイドクロックB1階,jff,CC BY 4.0
