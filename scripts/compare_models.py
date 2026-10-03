@@ -40,6 +40,8 @@ def build_prompt(chunk):
 
 
 def call(client, key, chunk):
+    import anthropic
+
     model = MODELS[key]
     params = {
         "model": model,
@@ -54,7 +56,12 @@ def call(client, key, chunk):
             with client.messages.stream(**params) as stream:
                 msg = stream.get_final_message()
             break
-        except Exception as e:  # 一時的な失敗は少し待って再試行
+        except (anthropic.AuthenticationError, anthropic.PermissionDeniedError, anthropic.BadRequestError,
+                anthropic.NotFoundError) as e:
+            # キーの誤り・権限・リクエストの誤りは再試行しても直らないので止める
+            raise SystemExit(f"{key}: {type(e).__name__}: {e}\n"
+                             "API キー（ANTHROPIC_API_KEY）が正しいか、クレジットがあるかを確認してください")
+        except Exception as e:  # 一時的な失敗（混雑・通信エラーなど）は少し待って再試行
             print(f"  {key}: {type(e).__name__}: {e}。再試行", file=sys.stderr)
             time.sleep(5 * (attempt + 1))
     else:
