@@ -20,111 +20,111 @@ e0365154-ab76-4b1e-8ad6-4e88eac1d61f,overture,ワインとパンと美味しい�
 e4bfda94-1b3d-4240-8a5c-d78a2f8bb429,overture,下町のパン工房亀戸店,bakery,cafe,パン,name,パン,35.697802,139.826225,64.0,0.391,亀戸5丁目1-1,Overture|meta,CDLA-Permissive-2.0
 bf62f729-7c89-497c-9b47-c5e5becd89c0,overture,内野ベーカリー,bakery,smoothie_juice_bar|restaurant,パン,name,ベーカリー,35.698391,139.836777,928.0,0.859,東京都江東区亀戸７丁目１９−６,Overture|meta,CDLA-Permissive-2.0
 060fcc02-eb73-4952-84bc-aff63fb4e9f3,overture,洋菓子処 ましゅまろ亭,bakery,desserts,スイーツ・和菓子,name,洋菓子,35.695642,139.82737,198.0,0.91,亀戸6丁目22-8,Overture|meta,CDLA-Permissive-2.0
-104a0ce7-1d34-45f5-87de-a6fed5ba4bf3,overture,-BBQ & Smoke Dining- CHARCOAL チャコール 亀戸店,bar,,居酒屋,name,dining,35.698673,139.826988,156.0,0.77,亀戸5丁目5-4 2F,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-9d0b9211-cb59-4d96-ab02-479c5fc75057,overture,Afrobeat Kameido Store,bar,restaurant,バー,overture,bar,35.697643,139.825081,141.0,0.693,亀戸2丁目20-3,Overture|meta,CDLA-Permissive-2.0
+104a0ce7-1d34-45f5-87de-a6fed5ba4bf3,overture,-BBQ & Smoke Dining- CHARCOAL チャコール 亀戸店,bar,,バー,name,dining,35.698673,139.826988,156.0,0.77,亀戸5丁目5-4 2F,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+9d0b9211-cb59-4d96-ab02-479c5fc75057,overture,Afrobeat Kameido Store,bar,restaurant,その他飲食（判定不能）,unresolved,bar,35.697643,139.825081,141.0,0.693,亀戸2丁目20-3,Overture|meta,CDLA-Permissive-2.0
 0cde02e1-9095-4e13-9193-5a14edef5cd3,overture,Amusement Karaoke Bar G-style Kameido,bar,lounge,バー,name,bar,35.694584,139.826988,305.0,0.771,"Kameido, 6 Chome−11−9 ⅡビルB1 コスモ亀戸",Overture|meta,CDLA-Permissive-2.0
 dc89d795-8f63-4326-8ee5-d643e876c505,overture,BAR BRICK,bar,cocktail_bar|music_venue,バー,name,bar,35.69692,139.828133,146.0,0.913,"Kameido, 6 Chome−58−10 5F",Overture|meta,CDLA-Permissive-2.0
-298c9393-711c-43a8-9af3-e3863158489d,overture,BUZZ HOUSE,bar,pub|arts_and_entertainment,バー,overture,bar,35.68926,139.825584,899.0,0.983,大島1丁目30-4,Overture|meta,CDLA-Permissive-2.0
-a041d745-d0c0-4ed3-9d73-b0fe77727dcb,overture,BabyRock,bar,music_venue|arts_and_entertainment,バー,overture,bar,35.69792,139.816536,910.0,0.724,4 Chome-12-2 Kinshi,Overture|meta,CDLA-Permissive-2.0
+298c9393-711c-43a8-9af3-e3863158489d,overture,BUZZ HOUSE,bar,pub|arts_and_entertainment,バー,osm,"node/6945186982 {""amenity"": ""bar"", ""name"": ""Buzz House""}",35.68926,139.825584,899.0,0.983,大島1丁目30-4,Overture|meta,CDLA-Permissive-2.0
+a041d745-d0c0-4ed3-9d73-b0fe77727dcb,overture,BabyRock,bar,music_venue|arts_and_entertainment,その他飲食（判定不能）,unresolved,bar,35.69792,139.816536,910.0,0.724,4 Chome-12-2 Kinshi,Overture|meta,CDLA-Permissive-2.0
 0cca5a45-8228-4be6-8350-af06e11d2557,overture,Bar Afro-Zamurai,bar,cafe|eat_and_drink,バー,name,bar,35.694086,139.826347,359.0,0.604,6 Chome-3-1 Kameido,Overture|meta,CDLA-Permissive-2.0
 a5dd9ec1-6afc-4b6b-b49d-3a03a597c430,overture,Bar Chiaro,bar,cocktail_bar|lounge,バー,name,bar,35.701408,139.824226,503.0,0.984,2 Chome-43-8 Kameido,Overture|meta,CDLA-Permissive-2.0
 72964799-593b-46a3-9354-ab3efad3ae0c,overture,Cafe Bar ニコハナ,bar,,カフェ・喫茶,name,cafe,35.696981,139.828133,145.0,0.77,亀戸6-61-2,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-0fa16e29-2248-4982-a2c7-deeb29149999,overture,Coccoちゃん,bar,restaurant|pub,バー,overture,bar,35.695063,139.816895,910.0,0.648,江東橋4丁目21-6,Overture|meta,CDLA-Permissive-2.0
+0fa16e29-2248-4982-a2c7-deeb29149999,overture,Coccoちゃん,bar,restaurant|pub,その他飲食（判定不能）,unresolved,bar,35.695063,139.816895,910.0,0.648,江東橋4丁目21-6,Overture|meta,CDLA-Permissive-2.0
 cfa70675-6752-483c-ab9e-a34544483d51,overture,Cusina Filipina,bar,,その他アジア料理,name,filipin,35.699308,139.826027,228.0,0.638,Kotu-ku Kameido 5-14-10-2f,Overture|meta,CDLA-Permissive-2.0
 65df8272-d740-4d9a-b39c-bf925bd59ec3,overture,Darts 処愛矢,bar,arts_and_entertainment|restaurant,バー,name,darts,35.688768,139.826149,950.0,0.656,大島1丁目33-13,Overture|meta,CDLA-Permissive-2.0
 5893a277-036c-4d41-b084-9a540d7fa37f,overture,Darts&Bar Delightful,bar,restaurant,バー,name,darts,35.698816,139.827423,184.0,0.966,亀戸5丁目10-1 302,Overture|Microsoft,CDLA-Permissive-2.0
-01159527-8cac-4132-b7d7-716a7d733001,overture,EVERGREEN,bar,pub|cafe,バー,overture,bar,35.694752,139.817513,867.0,0.321,東京都墨田区江東橋４丁目１５−４,Overture|meta,CDLA-Permissive-2.0
-f67f499d-e264-44f7-9b4f-4d4ef69f98d4,overture,Furbo,bar,pub,バー,overture,bar,35.69768,139.816566,905.0,0.315,4 Chome-8-2 Kinshi,Overture|meta,CDLA-Permissive-2.0
-b11dcfb9-04c9-4c53-b96e-9af1deb364c8,overture,Gadget.1,bar,japanese_restaurant|restaurant,バー,overture,bar,35.698669,139.827003,156.0,0.763,亀戸5丁目5-4,Overture|meta,CDLA-Permissive-2.0
-ba19fa80-f3e7-45a1-a7dc-a0f92df34ee9,overture,High Five,bar,bar_and_grill_restaurant|restaurant,バー,overture,bar,35.69412,139.817528,891.0,0.463,江東橋4丁目14-1,Overture|meta,CDLA-Permissive-2.0
-4b52a4de-001f-43ae-96aa-5f29ef250078,overture,Ienomi バル日和,bar,,居酒屋,name,バル,35.699347,139.824196,313.0,0.973,亀戸2丁目30-10,Overture|meta,CDLA-Permissive-2.0
+01159527-8cac-4132-b7d7-716a7d733001,overture,EVERGREEN,bar,pub|cafe,その他飲食（判定不能）,unresolved,bar,35.694752,139.817513,867.0,0.321,東京都墨田区江東橋４丁目１５−４,Overture|meta,CDLA-Permissive-2.0
+f67f499d-e264-44f7-9b4f-4d4ef69f98d4,overture,Furbo,bar,pub,その他飲食（判定不能）,unresolved,bar,35.69768,139.816566,905.0,0.315,4 Chome-8-2 Kinshi,Overture|meta,CDLA-Permissive-2.0
+b11dcfb9-04c9-4c53-b96e-9af1deb364c8,overture,Gadget.1,bar,japanese_restaurant|restaurant,その他飲食（判定不能）,unresolved,bar,35.698669,139.827003,156.0,0.763,亀戸5丁目5-4,Overture|meta,CDLA-Permissive-2.0
+ba19fa80-f3e7-45a1-a7dc-a0f92df34ee9,overture,High Five,bar,bar_and_grill_restaurant|restaurant,その他飲食（判定不能）,unresolved,bar,35.69412,139.817528,891.0,0.463,江東橋4丁目14-1,Overture|meta,CDLA-Permissive-2.0
+4b52a4de-001f-43ae-96aa-5f29ef250078,overture,Ienomi バル日和,bar,,バー,name,バル,35.699347,139.824196,313.0,0.973,亀戸2丁目30-10,Overture|meta,CDLA-Permissive-2.0
 15a0b407-715f-40eb-815d-2aa51605e76d,overture,Leon's bar,bar,bar_and_grill_restaurant|arts_and_entertainment,バー,name,bar,35.691904,139.81913,902.0,0.604,,Overture|meta,CDLA-Permissive-2.0
-8153840b-beeb-442b-bc91-7b0c3207fdbe,overture,NOdoubt,bar,,バー,overture,bar,35.694761,139.816032,994.0,0.77,江東橋4-18-7,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+8153840b-beeb-442b-bc91-7b0c3207fdbe,overture,NOdoubt,bar,,バー,osm,"node/11795195991 {""amenity"": ""bar"", ""name"": ""BAR Nodoubt""}",35.694761,139.816032,994.0,0.77,江東橋4-18-7,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 d9b7fead-9d64-4927-821a-d799eae7f5ac,overture,Poom BAR,bar,restaurant,バー,name,bar,35.695072,139.816895,909.0,0.331,江東橋4丁目21-6,Overture|meta,CDLA-Permissive-2.0
-b7e633b9-d480-4960-b52c-c9639df8b646,overture,REPLAY,bar,pub,バー,overture,bar,35.69499,139.816002,990.0,0.912,"Kotobashi, 4 Chome−20−12 ウッディビル 3階",Overture|meta,CDLA-Permissive-2.0
+b7e633b9-d480-4960-b52c-c9639df8b646,overture,REPLAY,bar,pub,その他飲食（判定不能）,unresolved,bar,35.69499,139.816002,990.0,0.912,"Kotobashi, 4 Chome−20−12 ウッディビル 3階",Overture|meta,CDLA-Permissive-2.0
 61d305cc-9122-40c7-919d-eeaef1b4579e,overture,Snack Natsu 72,bar,pub|dance_club,スナック・パブ,name,snack,35.698965,139.823677,321.0,0.391,"Kameido, 2 Chome−31−9 山田ビル",Overture|meta,CDLA-Permissive-2.0
 c149bc9f-b886-4ffa-987d-6c04363fabaa,overture,Thaibarえーむ,bar,,タイ料理,name,thai,35.693609,139.816811,974.0,0.946,東京都墨田区江東橋4-6-15-1F,Overture|meta,CDLA-Permissive-2.0
-7c9b9232-2e66-46f2-a23a-b6493e5be561,overture,The Fish Club,bar,seafood_restaurant|restaurant,バー,overture,bar,35.695339,139.826134,222.0,0.213,亀戸6丁目14-3,Overture|meta,CDLA-Permissive-2.0
+7c9b9232-2e66-46f2-a23a-b6493e5be561,overture,The Fish Club,bar,seafood_restaurant|restaurant,その他飲食（判定不能）,unresolved,bar,35.695339,139.826134,222.0,0.213,亀戸6丁目14-3,Overture|meta,CDLA-Permissive-2.0
 a0c8acc4-7e77-4622-9a41-81ce49731f55,overture,WINE BAR BRUNELLO,bar,,バー,name,wine,35.69589,139.826477,158.0,0.77,亀戸6丁目24-7 エリア: 亀戸,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-2af72928-dcc9-4348-a81b-fe5b0af7abde,overture,ant,bar,restaurant|karaoke,バー,overture,bar,35.695234,139.816772,915.0,0.832,江東橋4丁目21-6,Overture|meta,CDLA-Permissive-2.0
+2af72928-dcc9-4348-a81b-fe5b0af7abde,overture,ant,bar,restaurant|karaoke,その他飲食（判定不能）,unresolved,bar,35.695234,139.816772,915.0,0.832,江東橋4丁目21-6,Overture|meta,CDLA-Permissive-2.0
 b80095a0-7834-40a9-8704-ecc90dd0671d,overture,bar AZITO,bar,pub|travel_services,バー,name,bar,35.698812,139.823601,317.0,0.599,"Kameido, 2 Chome−25−3 小黒ビル 3階",Overture|meta,CDLA-Permissive-2.0
 7bc03189-a971-460b-b4b4-25df9c47e1cb,overture,bar U.N.逢縁(オーエン),bar,cocktail_bar,バー,name,bar,35.697092,139.831108,409.0,0.975,"Kameido, 6 Chome−56−8 中銀亀戸マンシオン",Overture|meta,CDLA-Permissive-2.0
 ddf44fe1-ebfe-4fc6-a7bd-52ecc0ef229f,overture,sm bar ミラージュ,bar,,バー,name,bar,35.694103,139.817207,919.0,0.77,13-13 江東橋4丁目,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-bb7668bc-e749-4f0c-9b70-ffa2e96c6957,overture,あつん家,bar,japanese_restaurant,バー,overture,bar,35.689802,139.828575,854.0,0.839,大島3丁目14-10,Overture|meta,CDLA-Permissive-2.0
-8cbf73d4-b76a-4dca-8486-04aa18db8f51,overture,いぐち式,bar,sake_bar,バー,overture,bar,35.695566,139.826546,193.0,0.971,"Kameido, 6 Chome−24−8 ニューハウス亀戸 102",Overture|meta,CDLA-Permissive-2.0
-70ac7b1e-626e-42f5-ac62-556a4dc53e49,overture,うずまき,bar,restaurant|pub,バー,overture,bar,35.695627,139.826317,188.0,0.941,亀戸6丁目24-1,Overture|meta,CDLA-Permissive-2.0
-2db6549d-b9e8-4bce-b257-56e1bd0c283f,overture,おいてけ堀,bar,,バー,overture,bar,35.694956,139.816521,945.0,0.955,4 Chome-17 Kotobashi,Overture|meta,CDLA-Permissive-2.0
-3595a518-7a80-4fb4-abd8-0604a786cf7b,overture,かおり,bar,restaurant|accommodation,バー,overture,bar,35.697111,139.830391,345.0,0.529,亀戸6丁目56-3,Overture|meta,CDLA-Permissive-2.0
-0a338891-1e96-469d-8efd-e1971a12b23c,overture,くいのみ家 ふう,bar,pub,バー,overture,bar,35.699652,139.828697,323.0,0.718,亀戸5丁目29-4,Overture|meta,CDLA-Permissive-2.0
-4f8b59dc-a44b-4409-939b-82d1b58b6e9f,overture,こん平,bar,japanese_restaurant|sake_bar,バー,overture,bar,35.691107,139.826019,691.0,0.913,大島2丁目38-9,Overture|meta,CDLA-Permissive-2.0
-383eda16-e2bf-40fe-975e-156cd5e8115e,overture,ごごチキン,bar,chicken_restaurant|korean_restaurant,バー,overture,bar,35.702244,139.824501,580.0,0.951,亀戸3丁目60-16,Overture|meta,CDLA-Permissive-2.0
+bb7668bc-e749-4f0c-9b70-ffa2e96c6957,overture,あつん家,bar,japanese_restaurant,その他飲食（判定不能）,unresolved,bar,35.689802,139.828575,854.0,0.839,大島3丁目14-10,Overture|meta,CDLA-Permissive-2.0
+8cbf73d4-b76a-4dca-8486-04aa18db8f51,overture,いぐち式,bar,sake_bar,その他飲食（判定不能）,unresolved,bar,35.695566,139.826546,193.0,0.971,"Kameido, 6 Chome−24−8 ニューハウス亀戸 102",Overture|meta,CDLA-Permissive-2.0
+70ac7b1e-626e-42f5-ac62-556a4dc53e49,overture,うずまき,bar,restaurant|pub,その他飲食（判定不能）,unresolved,bar,35.695627,139.826317,188.0,0.941,亀戸6丁目24-1,Overture|meta,CDLA-Permissive-2.0
+2db6549d-b9e8-4bce-b257-56e1bd0c283f,overture,おいてけ堀,bar,,その他飲食（判定不能）,unresolved,bar,35.694956,139.816521,945.0,0.955,4 Chome-17 Kotobashi,Overture|meta,CDLA-Permissive-2.0
+3595a518-7a80-4fb4-abd8-0604a786cf7b,overture,かおり,bar,restaurant|accommodation,その他飲食（判定不能）,unresolved,bar,35.697111,139.830391,345.0,0.529,亀戸6丁目56-3,Overture|meta,CDLA-Permissive-2.0
+0a338891-1e96-469d-8efd-e1971a12b23c,overture,くいのみ家 ふう,bar,pub,その他飲食（判定不能）,unresolved,bar,35.699652,139.828697,323.0,0.718,亀戸5丁目29-4,Overture|meta,CDLA-Permissive-2.0
+4f8b59dc-a44b-4409-939b-82d1b58b6e9f,overture,こん平,bar,japanese_restaurant|sake_bar,その他飲食（判定不能）,unresolved,bar,35.691107,139.826019,691.0,0.913,大島2丁目38-9,Overture|meta,CDLA-Permissive-2.0
+383eda16-e2bf-40fe-975e-156cd5e8115e,overture,ごごチキン,bar,chicken_restaurant|korean_restaurant,その他飲食（判定不能）,unresolved,bar,35.702244,139.824501,580.0,0.951,亀戸3丁目60-16,Overture|meta,CDLA-Permissive-2.0
 76a3c6a3-07ce-4979-bc03-1876174c1a6b,overture,さかな処いっちゃん,bar,restaurant|japanese_restaurant,海鮮・魚料理,name,さかな,35.698572,139.823814,287.0,0.975,亀戸2丁目24-5 大塚ビル101,Overture|meta,CDLA-Permissive-2.0
-aa906837-53ff-45ef-9e73-5de2930ea1b5,overture,ざうお亀戸駅前店,bar,,バー,overture,bar,35.700174,139.825279,340.0,0.77,亀戸2丁目36-11 2F,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-3d9ecf68-884c-4896-b913-eb4a5c1e3766,overture,でかんしょ,bar,sake_bar|restaurant,バー,overture,bar,35.699352,139.82621,230.0,0.807,亀戸5丁目13-4,Overture|meta,CDLA-Permissive-2.0
-399b91fb-8fc8-4d44-993e-b3435f423ae6,overture,なごみBAR　Moris,bar,lounge|japanese_restaurant,バー,overture,bar,35.697618,139.816185,940.0,0.997,東京都墨田区錦糸４丁目７−３,Overture|meta,CDLA-Permissive-2.0
-5c26f256-1d44-499a-aebb-411148edd329,overture,ふじかつ,bar,restaurant|eat_and_drink,バー,overture,bar,35.696997,139.826012,62.0,0.853,亀戸6丁目60-4,Overture|meta,CDLA-Permissive-2.0
-0188b00e-4a66-485a-8a00-69feb783af21,overture,ぼけなす,bar,beer_bar|pub,バー,overture,bar,35.69198,139.822121,716.0,0.237,大島2丁目10-2,Overture|meta,CDLA-Permissive-2.0
-533651d2-16b5-4e94-83d1-eaa207d1029a,overture,まだら,bar,sake_bar|restaurant,バー,overture,bar,35.696321,139.824837,192.0,0.982,亀戸1丁目39-1,Overture|meta,CDLA-Permissive-2.0
-eaf94bc5-935e-4b42-8fb8-87d52b8512d0,overture,みちくさ,bar,,バー,overture,bar,35.695955,139.826744,151.0,0.77,亀戸6丁目23-2 エリア: 亀戸,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-0a0a6413-99b9-4fa2-8dd5-6542496f6c60,overture,みつぼし村,bar,sake_bar,バー,overture,bar,35.697687,139.815956,961.0,0.972,"Kinshi, 4 Chome−7−2 共栄ビル",Overture|meta,CDLA-Permissive-2.0
-e093a1b3-00d8-4c7a-8c8b-8fc4f44d1082,overture,もぐら,bar,,バー,overture,bar,35.693628,139.816856,969.0,0.77,江東橋4-6-15,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-9b6d0c1a-920c-4e62-82e7-32dec5d3c630,overture,もんもん,bar,sake_bar,バー,overture,bar,35.700161,139.825722,327.0,0.257,亀戸5丁目15-4,Overture|meta,CDLA-Permissive-2.0
-780774d6-bc88-47de-af03-7c139f119fdd,overture,ウワシマ酒店バル,bar,,居酒屋,name,バル,35.69515,139.816002,985.0,0.996,江東橋4丁目20-5,Overture|meta,CDLA-Permissive-2.0
-f0935a71-b037-4de2-9ebe-bd077ce72a48,overture,エーム เอม,bar,pub|beer_garden,バー,overture,bar,35.69355,139.81678,979.0,0.764,,Overture|meta,CDLA-Permissive-2.0
-27cb32ef-1020-4814-afd0-c771c443ccb9,overture,オダヅモッコ,bar,japanese_restaurant|restaurant,バー,overture,bar,35.689867,139.82859,847.0,0.853,大島3丁目14-10,Overture|meta,CDLA-Permissive-2.0
+aa906837-53ff-45ef-9e73-5de2930ea1b5,overture,ざうお亀戸駅前店,bar,,その他飲食（判定不能）,unresolved,bar,35.700174,139.825279,340.0,0.77,亀戸2丁目36-11 2F,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+3d9ecf68-884c-4896-b913-eb4a5c1e3766,overture,でかんしょ,bar,sake_bar|restaurant,その他飲食（判定不能）,unresolved,bar,35.699352,139.82621,230.0,0.807,亀戸5丁目13-4,Overture|meta,CDLA-Permissive-2.0
+399b91fb-8fc8-4d44-993e-b3435f423ae6,overture,なごみBAR　Moris,bar,lounge|japanese_restaurant,バー,name,bar,35.697618,139.816185,940.0,0.997,東京都墨田区錦糸４丁目７−３,Overture|meta,CDLA-Permissive-2.0
+5c26f256-1d44-499a-aebb-411148edd329,overture,ふじかつ,bar,restaurant|eat_and_drink,その他飲食（判定不能）,unresolved,bar,35.696997,139.826012,62.0,0.853,亀戸6丁目60-4,Overture|meta,CDLA-Permissive-2.0
+0188b00e-4a66-485a-8a00-69feb783af21,overture,ぼけなす,bar,beer_bar|pub,その他飲食（判定不能）,unresolved,bar,35.69198,139.822121,716.0,0.237,大島2丁目10-2,Overture|meta,CDLA-Permissive-2.0
+533651d2-16b5-4e94-83d1-eaa207d1029a,overture,まだら,bar,sake_bar|restaurant,その他飲食（判定不能）,unresolved,bar,35.696321,139.824837,192.0,0.982,亀戸1丁目39-1,Overture|meta,CDLA-Permissive-2.0
+eaf94bc5-935e-4b42-8fb8-87d52b8512d0,overture,みちくさ,bar,,その他飲食（判定不能）,unresolved,bar,35.695955,139.826744,151.0,0.77,亀戸6丁目23-2 エリア: 亀戸,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+0a0a6413-99b9-4fa2-8dd5-6542496f6c60,overture,みつぼし村,bar,sake_bar,その他飲食（判定不能）,unresolved,bar,35.697687,139.815956,961.0,0.972,"Kinshi, 4 Chome−7−2 共栄ビル",Overture|meta,CDLA-Permissive-2.0
+e093a1b3-00d8-4c7a-8c8b-8fc4f44d1082,overture,もぐら,bar,,その他飲食（判定不能）,unresolved,bar,35.693628,139.816856,969.0,0.77,江東橋4-6-15,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+9b6d0c1a-920c-4e62-82e7-32dec5d3c630,overture,もんもん,bar,sake_bar,その他飲食（判定不能）,unresolved,bar,35.700161,139.825722,327.0,0.257,亀戸5丁目15-4,Overture|meta,CDLA-Permissive-2.0
+780774d6-bc88-47de-af03-7c139f119fdd,overture,ウワシマ酒店バル,bar,,バー,name,バル,35.69515,139.816002,985.0,0.996,江東橋4丁目20-5,Overture|meta,CDLA-Permissive-2.0
+f0935a71-b037-4de2-9ebe-bd077ce72a48,overture,エーム เอม,bar,pub|beer_garden,その他飲食（判定不能）,unresolved,bar,35.69355,139.81678,979.0,0.764,,Overture|meta,CDLA-Permissive-2.0
+27cb32ef-1020-4814-afd0-c771c443ccb9,overture,オダヅモッコ,bar,japanese_restaurant|restaurant,その他飲食（判定不能）,unresolved,bar,35.689867,139.82859,847.0,0.853,大島3丁目14-10,Overture|meta,CDLA-Permissive-2.0
 31e27fd5-7177-44f5-ac95-b617e188f51f,overture,カジュアルバー&ダーツ　 N.S.B,bar,pub,バー,name,バー,35.698729,139.826988,162.0,0.624,亀戸5‐5‐4‐2F,Overture|meta,CDLA-Permissive-2.0
-af6bd9c2-fedd-4b08-ab0c-56b1b6c9e780,overture,クラクション,bar,pub|cocktail_bar,バー,overture,bar,35.693892,139.817757,883.0,0.473,4-chōme-5 Kōtōbashi,Overture|meta,CDLA-Permissive-2.0
-f90a3317-e444-4e71-9d50-2f3570737541,overture,シャルルボイル,bar,restaurant|pub,バー,overture,bar,35.695681,139.827263,191.0,0.935,亀戸6丁目22-10,Overture|meta,CDLA-Permissive-2.0
-627da3a1-e808-492c-8c08-5833858b5e36,overture,ジョイント,bar,cocktail_bar,バー,overture,bar,35.694748,139.816963,914.0,0.997,江東橋4丁目16-4,Overture|meta,CDLA-Permissive-2.0
+af6bd9c2-fedd-4b08-ab0c-56b1b6c9e780,overture,クラクション,bar,pub|cocktail_bar,その他飲食（判定不能）,unresolved,bar,35.693892,139.817757,883.0,0.473,4-chōme-5 Kōtōbashi,Overture|meta,CDLA-Permissive-2.0
+f90a3317-e444-4e71-9d50-2f3570737541,overture,シャルルボイル,bar,restaurant|pub,その他飲食（判定不能）,unresolved,bar,35.695681,139.827263,191.0,0.935,亀戸6丁目22-10,Overture|meta,CDLA-Permissive-2.0
+627da3a1-e808-492c-8c08-5833858b5e36,overture,ジョイント,bar,cocktail_bar,バー,jff_name,Ｂａｒ　ＪｏｙｎＴ: bar,35.694748,139.816963,914.0,0.997,江東橋4丁目16-4,Overture|meta,CDLA-Permissive-2.0
 10d9e787-4d82-474f-a0ad-19f031579526,overture,スクエア三報ビル,bar,restaurant,対象外,excluded,bar,35.69902,139.826302,192.0,0.838,亀戸５－１３－２,Overture|meta,CDLA-Permissive-2.0
 ffb9170d-6e1d-4c21-93c4-5f8e90aa9a6c,overture,スナック アガシ,bar,,スナック・パブ,name,スナック,35.697638,139.815804,974.0,0.419,"Kinshi, 4 Chome−6−7 万正オンダビル 201",Overture|meta,CDLA-Permissive-2.0
 62fc09be-c8a2-422a-abe4-7963419a62cb,overture,スナック 絹,bar,,スナック・パブ,name,スナック,35.694141,139.816841,948.0,0.97,"Kotobashi, 4 Chome−13−14 プラザG5 4階",Overture|meta,CDLA-Permissive-2.0
 4bd78cd2-cd79-4040-b8e7-2a621f5ca1fe,overture,スポーツバーオアシス634,bar,restaurant|diner,バー,name,バー,35.699274,139.816841,907.0,0.458,錦糸4丁目15-1,Overture|meta,CDLA-Permissive-2.0
-04a4592b-d389-48a7-9a1e-058963011712,overture,タコラバンバ,bar,sake_bar|cocktail_bar,バー,overture,bar,35.697489,139.817307,838.0,0.656,錦糸4丁目3-3,Overture|meta,CDLA-Permissive-2.0
-50ba4fbe-e9ac-459f-97be-bc1a6c5f2775,overture,タベルナ アミコ,bar,italian_restaurant|restaurant,バー,overture,bar,35.694742,139.827248,291.0,0.491,亀戸6丁目10-2,Overture|meta,CDLA-Permissive-2.0
+04a4592b-d389-48a7-9a1e-058963011712,overture,タコラバンバ,bar,sake_bar|cocktail_bar,その他飲食（判定不能）,unresolved,bar,35.697489,139.817307,838.0,0.656,錦糸4丁目3-3,Overture|meta,CDLA-Permissive-2.0
+50ba4fbe-e9ac-459f-97be-bc1a6c5f2775,overture,タベルナ アミコ,bar,italian_restaurant|restaurant,その他飲食（判定不能）,unresolved,bar,35.694742,139.827248,291.0,0.491,亀戸6丁目10-2,Overture|meta,CDLA-Permissive-2.0
 dad3c655-2a9c-4088-8e90-a0ac6953ac90,overture,ネパール居酒屋シティマート東京店,bar,himalayan_nepalese_restaurant|restaurant,インド・ネパール料理,name,ネパール,35.688475,139.826653,982.0,0.961,大島4丁目3-12,Overture|meta,CDLA-Permissive-2.0
 07704059-13b2-4c68-a7ab-fd8cb5edc92b,overture,ハンバーガー ベースメント,bar,burger_restaurant|lounge,ハンバーガー・ファストフード,name,バーガー,35.695078,139.825462,268.0,0.859,亀戸1丁目32-10,Overture|meta,CDLA-Permissive-2.0
-dbe1cafe-4179-40e6-86f8-cae054ba707d,overture,バル&カラオケマール,bar,karaoke|arts_and_entertainment,居酒屋,name,バル,35.698523,139.826363,137.0,0.654,亀戸5丁目3-3,Overture|meta,CDLA-Permissive-2.0
+dbe1cafe-4179-40e6-86f8-cae054ba707d,overture,バル&カラオケマール,bar,karaoke|arts_and_entertainment,バー,name,バル,35.698523,139.826363,137.0,0.654,亀戸5丁目3-3,Overture|meta,CDLA-Permissive-2.0
 6c37f4bd-050d-4b73-82ac-df8f29daa23e,overture,バーセピア,bar,,バー,name,バー,35.695143,139.815994,986.0,0.391,江東橋4丁目20-5,Overture|meta,CDLA-Permissive-2.0
 68e248ec-9650-447c-9122-a3b83603c9f0,overture,バーニーズ,bar,cocktail_bar,バー,name,バー,35.703171,139.823257,718.0,0.957,亀戸3丁目49-3,Overture|meta,CDLA-Permissive-2.0
-34e3dc32-c829-4a62-b357-20088045fcd7,overture,パピーズ,bar,music_venue|restaurant,バー,overture,bar,35.694094,139.816933,942.0,0.994,江東橋4丁目13-13,Overture|meta,CDLA-Permissive-2.0
-fbcececd-dc8c-4fb9-ba73-ae096b16d857,overture,ヒトシん家,bar,karaoke|restaurant,バー,overture,bar,35.694073,139.826485,360.0,0.697,6 Chome-3-10 Kameido,Overture|meta,CDLA-Permissive-2.0
-d74dfaac-a116-4bf3-a194-3ce47161ad87,overture,ベビーロック,bar,,バー,overture,bar,35.697884,139.816589,905.0,0.77,錦糸4丁目12-2 鈴木ビル2F,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-f89b707e-8603-4623-a317-fd817925b2d7,overture,メゼババ,bar,italian_restaurant|restaurant,バー,overture,bar,35.696249,139.826241,122.0,0.97,亀戸6丁目26-5,Overture|meta,CDLA-Permissive-2.0
-25ec9e5f-e917-4a54-811b-74aa383529ad,overture,ワイド ビクトリー,bar,,バー,overture,bar,35.694757,139.816811,927.0,0.74,江東橋3-5-2,Overture|meta,CDLA-Permissive-2.0
+34e3dc32-c829-4a62-b357-20088045fcd7,overture,パピーズ,bar,music_venue|restaurant,その他飲食（判定不能）,unresolved,bar,35.694094,139.816933,942.0,0.994,江東橋4丁目13-13,Overture|meta,CDLA-Permissive-2.0
+fbcececd-dc8c-4fb9-ba73-ae096b16d857,overture,ヒトシん家,bar,karaoke|restaurant,その他飲食（判定不能）,unresolved,bar,35.694073,139.826485,360.0,0.697,6 Chome-3-10 Kameido,Overture|meta,CDLA-Permissive-2.0
+d74dfaac-a116-4bf3-a194-3ce47161ad87,overture,ベビーロック,bar,,その他飲食（判定不能）,unresolved,bar,35.697884,139.816589,905.0,0.77,錦糸4丁目12-2 鈴木ビル2F,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+f89b707e-8603-4623-a317-fd817925b2d7,overture,メゼババ,bar,italian_restaurant|restaurant,その他飲食（判定不能）,unresolved,bar,35.696249,139.826241,122.0,0.97,亀戸6丁目26-5,Overture|meta,CDLA-Permissive-2.0
+25ec9e5f-e917-4a54-811b-74aa383529ad,overture,ワイド ビクトリー,bar,,その他飲食（判定不能）,unresolved,bar,35.694757,139.816811,927.0,0.74,江東橋3-5-2,Overture|meta,CDLA-Permissive-2.0
 887fa3b9-c2e6-4088-a9d5-f37d4ed63a73,overture,ワイン酒場あるびぃ,bar,pub,居酒屋,name,酒場,35.701385,139.824318,498.0,0.996,"Kameido, 2 Chome−44−2 メゾンドール亀戸",Overture|meta,CDLA-Permissive-2.0
-0970ecc0-2730-409f-99d0-85fc4020679e,overture,亀Hameha,bar,sake_bar|restaurant,バー,overture,bar,35.699017,139.826241,193.0,0.889,亀戸5丁目13-2,Overture|meta,CDLA-Permissive-2.0
+0970ecc0-2730-409f-99d0-85fc4020679e,overture,亀Hameha,bar,sake_bar|restaurant,その他飲食（判定不能）,unresolved,bar,35.699017,139.826241,193.0,0.889,亀戸5丁目13-2,Overture|meta,CDLA-Permissive-2.0
 b78a83b1-8e9e-4778-be33-58c08d61dda4,overture,亀戸5-7-3,bar,sake_bar,対象外,excluded,bar,35.698347,139.828621,217.0,0.991,亀戸5-7-3,Overture|meta,CDLA-Permissive-2.0
 0de0822c-81ec-46dc-ac7a-ab1e0ce7a1a3,overture,亀戸台湾　美鍋食堂,bar,restaurant|diner,鍋・しゃぶしゃぶ,name,鍋,35.698824,139.823784,304.0,0.666,亀戸2−25−4,Overture|meta,CDLA-Permissive-2.0
-c66ffe09-c472-413d-8e8f-bb7d4d484c5f,overture,二升五合,bar,comfort_food_restaurant|japanese_restaurant,バー,overture,bar,35.699282,139.823143,380.0,0.915,亀戸2丁目12-1,Overture|meta,CDLA-Permissive-2.0
-38165588-f059-41c2-a28b-84190ff88127,overture,俺んち,bar,restaurant|eat_and_drink,バー,overture,bar,35.700151,139.826195,318.0,0.193,亀戸5丁目16-4,Overture|meta,CDLA-Permissive-2.0
-d426b53d-48d1-4761-b485-f6027f6d1bf4,overture,博多どんたく 亀戸店,bar,japanese_restaurant|sake_bar,バー,overture,bar,35.696993,139.826714,37.0,0.996,亀戸6丁目61-9,Overture|meta,CDLA-Permissive-2.0
-857e2c54-5ea4-4837-8a9e-d6f55737ef82,overture,味一番,bar,japanese_restaurant|sushi_restaurant,バー,overture,bar,35.698812,139.823647,314.0,0.973,亀戸2丁目25-3,Overture|meta,CDLA-Permissive-2.0
-e8e4520a-86fe-45bb-888b-927a08f8ffe2,overture,喜九蔵,bar,asian_restaurant|japanese_restaurant,バー,overture,bar,35.699059,139.825218,231.0,0.502,亀戸2丁目27-15,Overture|meta,CDLA-Permissive-2.0
+c66ffe09-c472-413d-8e8f-bb7d4d484c5f,overture,二升五合,bar,comfort_food_restaurant|japanese_restaurant,その他飲食（判定不能）,unresolved,bar,35.699282,139.823143,380.0,0.915,亀戸2丁目12-1,Overture|meta,CDLA-Permissive-2.0
+38165588-f059-41c2-a28b-84190ff88127,overture,俺んち,bar,restaurant|eat_and_drink,その他飲食（判定不能）,unresolved,bar,35.700151,139.826195,318.0,0.193,亀戸5丁目16-4,Overture|meta,CDLA-Permissive-2.0
+d426b53d-48d1-4761-b485-f6027f6d1bf4,overture,博多どんたく 亀戸店,bar,japanese_restaurant|sake_bar,その他飲食（判定不能）,unresolved,bar,35.696993,139.826714,37.0,0.996,亀戸6丁目61-9,Overture|meta,CDLA-Permissive-2.0
+857e2c54-5ea4-4837-8a9e-d6f55737ef82,overture,味一番,bar,japanese_restaurant|sushi_restaurant,その他飲食（判定不能）,unresolved,bar,35.698812,139.823647,314.0,0.973,亀戸2丁目25-3,Overture|meta,CDLA-Permissive-2.0
+e8e4520a-86fe-45bb-888b-927a08f8ffe2,overture,喜九蔵,bar,asian_restaurant|japanese_restaurant,その他飲食（判定不能）,unresolved,bar,35.699059,139.825218,231.0,0.502,亀戸2丁目27-15,Overture|meta,CDLA-Permissive-2.0
 14812bbe-0549-46cf-aae1-80a8bb823050,overture,土間土間亀戸店,bar,restaurant|japanese_restaurant,居酒屋,name,土間土間,35.698038,139.826225,88.0,0.853,亀戸5丁目1-2,Overture|meta,CDLA-Permissive-2.0
-20f2992b-7bd2-4ba3-b174-efaff93abd51,overture,大吉大島銀座通り,bar,restaurant|shopping_center,バー,overture,bar,35.691353,139.825394,671.0,0.861,大島2丁目37-15,Overture|meta,CDLA-Permissive-2.0
+20f2992b-7bd2-4ba3-b174-efaff93abd51,overture,大吉大島銀座通り,bar,restaurant|shopping_center,その他飲食（判定不能）,unresolved,bar,35.691353,139.825394,671.0,0.861,大島2丁目37-15,Overture|meta,CDLA-Permissive-2.0
 e94e37be-95b5-40b2-9394-f631fc0b0d14,overture,大衆居酒屋 わがまま,bar,japanese_restaurant,居酒屋,name,大衆,35.699221,139.82605,218.0,0.737,5 Chome-14-11 Kameido,Overture|meta,CDLA-Permissive-2.0
 53006239-6a36-4926-8ec7-07fc6bab4060,overture,大衆酒場 したぢ屋亀戸店,bar,sake_bar|japanese_restaurant,居酒屋,name,大衆,35.700178,139.825989,324.0,0.963,亀戸5丁目16-5,Overture|meta,CDLA-Permissive-2.0
-0bbd5536-66d3-4a2c-8197-e94fd1c5d04c,overture,奥のほそみち,bar,restaurant|japanese_restaurant,バー,overture,bar,35.697695,139.824928,156.0,0.741,亀戸2丁目20-2,Overture|meta,CDLA-Permissive-2.0
+0bbd5536-66d3-4a2c-8197-e94fd1c5d04c,overture,奥のほそみち,bar,restaurant|japanese_restaurant,その他飲食（判定不能）,unresolved,bar,35.697695,139.824928,156.0,0.741,亀戸2丁目20-2,Overture|meta,CDLA-Permissive-2.0
 cdafc314-65dd-4b4b-8741-080e1008922e,overture,居酒屋 たけむら,bar,sake_bar,居酒屋,name,居酒屋,35.694315,139.816887,937.0,0.259,江東橋4丁目13-5,Overture|meta,CDLA-Permissive-2.0
 e9f0a3b4-cf09-4b2b-b51c-d7b272ee41ae,overture,居酒屋・晴,bar,pub,居酒屋,name,居酒屋,35.696199,139.824883,197.0,0.39,亀戸1丁目39-1,Overture|meta,CDLA-Permissive-2.0
 18f906fd-3b1f-4ed5-95c5-4ac89bfbc00e,overture,居酒屋松ちゃん,bar,sake_bar|japanese_restaurant,居酒屋,name,居酒屋,35.700796,139.824471,432.0,0.929,亀戸2丁目38-2,Overture|meta,CDLA-Permissive-2.0
 a3f2fd82-63ab-465a-847a-33f78267db64,overture,居酒屋秀の家,bar,pub|restaurant,居酒屋,name,居酒屋,35.693613,139.816872,968.0,0.918,江東橋4丁目6-15,Overture|meta,CDLA-Permissive-2.0
-e05729d4-290a-4175-b2af-b07abbf698b4,overture,愚導楽,bar,,バー,overture,bar,35.695049,139.827965,280.0,0.485,東京都江東区亀戸６丁目９−７,Overture|meta,CDLA-Permissive-2.0
-119e18c3-ea63-46d3-ab7d-14eb93c2f6b3,overture,株式会社いこいフーズ,bar,restaurant|pub,バー,overture,bar,35.694979,139.830864,465.0,0.647,亀戸5-6-21,Overture|meta,CDLA-Permissive-2.0
+e05729d4-290a-4175-b2af-b07abbf698b4,overture,愚導楽,bar,,その他飲食（判定不能）,unresolved,bar,35.695049,139.827965,280.0,0.485,東京都江東区亀戸６丁目９−７,Overture|meta,CDLA-Permissive-2.0
+119e18c3-ea63-46d3-ab7d-14eb93c2f6b3,overture,株式会社いこいフーズ,bar,restaurant|pub,その他飲食（判定不能）,unresolved,bar,35.694979,139.830864,465.0,0.647,亀戸5-6-21,Overture|meta,CDLA-Permissive-2.0
 f305cf6c-5a73-404c-ba29-b67b7ffbf4da,overture,海産物居酒屋さくら水産宴会受付センター,bar,seafood_restaurant|barbecue_restaurant,海鮮・魚料理,name,海産,35.694601,139.823708,397.0,0.428,東京都江東区亀戸１丁目１８−９,Overture|meta,CDLA-Permissive-2.0
-3c9557cf-9767-4706-8aae-5fc5bc63318c,overture,炎丸亀戸店,bar,asian_restaurant|japanese_restaurant,バー,overture,bar,35.698874,139.825172,216.0,0.506,亀戸2丁目26-6,Overture|meta,CDLA-Permissive-2.0
+3c9557cf-9767-4706-8aae-5fc5bc63318c,overture,炎丸亀戸店,bar,asian_restaurant|japanese_restaurant,その他飲食（判定不能）,unresolved,bar,35.698874,139.825172,216.0,0.506,亀戸2丁目26-6,Overture|meta,CDLA-Permissive-2.0
 5c06a8af-5f84-48f0-92b4-55c0463b6edb,overture,炭火焼居酒屋時代や,bar,restaurant|japanese_restaurant,居酒屋,name,居酒屋,35.699408,139.826164,237.0,0.96,亀戸5丁目13-6,Overture|meta,CDLA-Permissive-2.0
 3fe16f2d-d5c0-48ee-a890-3404f5e0f660,overture,立ち呑み粋亀戸店,bar,sake_bar,居酒屋,name,立ち呑,35.699354,139.82621,230.0,0.956,亀戸5丁目13-4,Overture|meta,CDLA-Permissive-2.0
-12e7bda8-1941-48e9-9f2e-26f13983d18a,overture,肉バル ブラチョーラ,bar,barbecue_restaurant|japanese_restaurant,居酒屋,name,バル,35.698526,139.82708,143.0,0.336,亀戸5丁目5-8,Overture|meta,CDLA-Permissive-2.0
-a7bea110-4015-47d5-b75a-2856e760214c,overture,薩摩のむら屋牛翔,bar,american_restaurant|barbecue_restaurant,バー,overture,bar,35.696707,139.826485,67.0,0.612,東京都江東区亀戸６丁目２８−５,Overture|meta,CDLA-Permissive-2.0
+12e7bda8-1941-48e9-9f2e-26f13983d18a,overture,肉バル ブラチョーラ,bar,barbecue_restaurant|japanese_restaurant,バー,name,バル,35.698526,139.82708,143.0,0.336,亀戸5丁目5-8,Overture|meta,CDLA-Permissive-2.0
+a7bea110-4015-47d5-b75a-2856e760214c,overture,薩摩のむら屋牛翔,bar,american_restaurant|barbecue_restaurant,その他飲食（判定不能）,unresolved,bar,35.696707,139.826485,67.0,0.612,東京都江東区亀戸６丁目２８−５,Overture|meta,CDLA-Permissive-2.0
 02d08a82-99d0-45db-ae72-4154e490cc60,overture,語らい処 坐・和民 Jr亀戸駅前店,bar,chicken_restaurant,居酒屋,name,和民,35.697598,139.826057,57.0,0.705,亀戸5-1-1,Overture|meta,CDLA-Permissive-2.0
-2e675e69-567b-41b0-8822-172a06009215,overture,酒彩 縁,bar,japanese_restaurant|sushi_restaurant,バー,overture,bar,35.697069,139.827766,110.0,0.602,亀戸6丁目61-4,Overture|meta,CDLA-Permissive-2.0
-4ec29e2a-553d-4b16-a0c5-4823e221484b,overture,酒菜家和,bar,restaurant|diner,バー,overture,bar,35.698999,139.826897,190.0,0.754,亀戸5丁目12-10 ,Overture|meta,CDLA-Permissive-2.0
-4cbdb16d-adbb-4266-93e9-e29c31a5ecaa,overture,銀河,bar,,バー,overture,bar,35.698996,139.827324,199.0,0.885,"Kameido, 5 Chome−10−2 豊マンション",Overture|meta,CDLA-Permissive-2.0
+2e675e69-567b-41b0-8822-172a06009215,overture,酒彩 縁,bar,japanese_restaurant|sushi_restaurant,その他飲食（判定不能）,unresolved,bar,35.697069,139.827766,110.0,0.602,亀戸6丁目61-4,Overture|meta,CDLA-Permissive-2.0
+4ec29e2a-553d-4b16-a0c5-4823e221484b,overture,酒菜家和,bar,restaurant|diner,その他飲食（判定不能）,unresolved,bar,35.698999,139.826897,190.0,0.754,亀戸5丁目12-10 ,Overture|meta,CDLA-Permissive-2.0
+4cbdb16d-adbb-4266-93e9-e29c31a5ecaa,overture,銀河,bar,,その他飲食（判定不能）,unresolved,bar,35.698996,139.827324,199.0,0.885,"Kameido, 5 Chome−10−2 豊マンション",Overture|meta,CDLA-Permissive-2.0
 80f60497-465a-468d-9a97-c6d7bc81cb42,overture,銘酒居酒屋浜よし,bar,restaurant|japanese_restaurant,居酒屋,name,居酒屋,35.695433,139.826988,211.0,0.534,亀戸6丁目16-5,Overture|meta,CDLA-Permissive-2.0
-f62daf63-dc9c-4cdf-b9da-47ad371704d5,overture,隠れ家ダイニングThreeBrothers,bar,,居酒屋,name,ダイニング,35.694147,139.826424,352.0,0.77,亀戸6丁目3-1 ソレイユ ル ボン 1階 2号室,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-99dcd38c-02b3-4875-8ba0-2453f923e852,overture,風の音,bar,restaurant|fast_food_restaurant,バー,overture,bar,35.689253,139.825584,900.0,0.859,大島1丁目30-4,Overture|meta,CDLA-Permissive-2.0
+f62daf63-dc9c-4cdf-b9da-47ad371704d5,overture,隠れ家ダイニングThreeBrothers,bar,,バー,name,ダイニング,35.694147,139.826424,352.0,0.77,亀戸6丁目3-1 ソレイユ ル ボン 1階 2号室,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+99dcd38c-02b3-4875-8ba0-2453f923e852,overture,風の音,bar,restaurant|fast_food_restaurant,その他飲食（判定不能）,unresolved,bar,35.689253,139.825584,900.0,0.859,大島1丁目30-4,Overture|meta,CDLA-Permissive-2.0
 b55b2701-1604-4fdb-886a-bb84be523da9,overture,養老乃瀧亀戸駅前店,bar,restaurant|japanese_restaurant,居酒屋,name,養老乃瀧,35.697697,139.825294,124.0,0.98,亀戸2丁目20-7,Overture|meta,CDLA-Permissive-2.0
 eeda8ac8-704a-4034-9be8-6d6c2823ae2e,overture,魚がし金三,bar,japanese_restaurant|restaurant,海鮮・魚料理,name,魚,35.697443,139.8162,938.0,0.7,錦糸4丁目7-7,Overture|meta,CDLA-Permissive-2.0
 a3509b9b-b937-4561-a7a6-35f98d135702,overture,Grill Ukai,bar_and_grill_restaurant,eat_and_drink,対象外,excluded,住所が千代田区丸の内。位置情報の誤りと判断,35.695837,139.823921,291.0,0.823,千代田区丸ノ内2-6-1,Overture|meta,CDLA-Permissive-2.0
@@ -278,7 +278,7 @@ c44fd0af-1b57-4b1b-9c42-290f38b3426d,overture,麼麼咋咋 モーモーチャー
 63505200-7444-4a8d-94df-91ae92efb5f3,overture,ゴディバ アトレ亀戸,chocolatier,,スイーツ・和菓子,overture,chocolatier,35.697821,139.826241,65.0,0.954,"1F, 東京都江東区亀戸５－１－１",Overture|AllThePlaces,CDLA-Permissive-2.0|CC0-1.0
 09ae901b-be59-4d96-869d-b7530c171e41,overture,リンツ ショコラ ブティック,chocolatier,,スイーツ・和菓子,overture,chocolatier,35.695833,139.828865,263.0,0.77,亀戸6-31-6,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 aa9e8fa0-34c1-452a-a731-f50df4c6477a,overture,Bar triangle,cocktail_bar,bar,バー,name,bar,35.698839,139.823624,317.0,0.647,"Kameido, 2 Chome−25−3 小黒ビル 401号室",Overture|meta,CDLA-Permissive-2.0
-3af7f37e-6e95-425d-98c2-860b2791a7a3,overture,Dining Bar Shula,cocktail_bar,,居酒屋,name,dining,35.693617,139.816872,968.0,0.77,江東橋4丁目6-15 YSビル 4F,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+3af7f37e-6e95-425d-98c2-860b2791a7a3,overture,Dining Bar Shula,cocktail_bar,,バー,name,dining,35.693617,139.816872,968.0,0.77,江東橋4丁目6-15 YSビル 4F,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 8c009120-5291-4dc9-add8-84f130407363,overture,Speakeasy 99,cocktail_bar,bar,バー,overture,cocktail_bar,35.698889,139.824104,285.0,0.986,2 Chome-25-6 Kameido,Overture|meta,CDLA-Permissive-2.0
 dc48f50a-164c-4f02-bc36-db2092076d5d,overture,ザ・カクテルショップ,cocktail_bar,bar,バー,overture,cocktail_bar,35.699007,139.824287,281.0,0.995,"Kameido, 2 Chome−29−8 フリーティアムK 2F-A",Overture|meta,CDLA-Permissive-2.0
 a09da945-41c4-45c4-9457-b8a42feb7644,overture,88 Plus,coffee_shop,cafe|restaurant,カフェ・喫茶,overture,coffee_shop,35.695013,139.825439,275.0,0.102,亀戸1丁目32-10,Overture|meta,CDLA-Permissive-2.0
@@ -409,18 +409,18 @@ a147072b-f642-4ca2-9611-e1694a369c93,overture,ピッツェリアグランデバ�
 6a54a28d-5ea7-4cf7-911b-d11f932bdbfc,overture,ポポラマーマ 西大島店,italian_restaurant,,イタリアン,overture,italian_restaurant,35.690226,139.826103,788.0,0.77,大島2-41-13,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 ca6b494d-5e97-4391-aa1b-1d2d8ec9feb1,overture,リンシエメ,italian_restaurant,,イタリアン,overture,italian_restaurant,35.694735,139.825874,293.0,0.77,亀戸1-31-7,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 33598a92-9ba9-4832-af54-dfa8567ebff0,overture,ワイン&産地直送イタリアン ラ ルピカイア,italian_restaurant,steakhouse|restaurant,イタリアン,name,イタリア,35.698175,139.823677,280.0,0.983,亀戸2丁目23-13,Overture|meta,CDLA-Permissive-2.0
-7c080949-1268-4978-a3f0-ce684bace23d,overture,洋風ダイニング シエル,italian_restaurant,restaurant|diner,居酒屋,name,ダイニング,35.6957,139.827843,212.0,0.871,亀戸6丁目21-9,Overture|meta,CDLA-Permissive-2.0
+7c080949-1268-4978-a3f0-ce684bace23d,overture,洋風ダイニング シエル,italian_restaurant,restaurant|diner,バー,name,ダイニング,35.6957,139.827843,212.0,0.871,亀戸6丁目21-9,Overture|meta,CDLA-Permissive-2.0
 656b13c1-a8cc-46c5-b1d2-68992c5bdafc,overture,鎌倉パスタ,italian_restaurant,,イタリアン,name,パスタ,35.69636,139.815956,965.0,0.77,江東橋4-27-14,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 deb068b3-454d-4456-90a3-ef8b5073a9b7,overture,Amanogawa,japanese_restaurant,indian_restaurant|sushi_restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.695177,139.815872,996.0,0.952,江東橋4丁目20-4 ,Overture|meta,CDLA-Permissive-2.0
 37eb8a65-cb89-4d85-add6-9c6f3a701fd9,overture,Base Camp Tokyo Kinshicho,japanese_restaurant,,その他飲食（判定不能）,unresolved,japanese_restaurant,35.692898,139.81707,989.0,0.989,2 Chome-10-12 Mori,Overture|meta,CDLA-Permissive-2.0
 977b031b-e7ac-4af8-8648-fb96d0ae10db,overture,CoCo Ichibanya,japanese_restaurant,asian_restaurant|restaurant,カレー,name,coco ichibanya,35.689175,139.82518,913.0,1.0,"Ojima, 1 Chome−29−10 椎名マンション １階",Overture|meta,CDLA-Permissive-2.0
 7799c18c-ea61-4797-b176-191713e9d871,overture,CoCo壱番屋,japanese_restaurant,asian_restaurant|restaurant,カレー,name,coco壱,35.696898,139.827538,97.0,1.0,亀戸6丁目58-13,Overture|meta,CDLA-Permissive-2.0
-32608a15-059c-493d-b9ce-b6c51296ff68,overture,Dining Bar Sakiha,japanese_restaurant,bar|restaurant,居酒屋,name,dining,35.695051,139.816704,927.0,0.78,"Kotobashi, 4 Chome−21−6 錦糸町ハイタウン 1階126号",Overture|meta,CDLA-Permissive-2.0
-83739eb8-8d6e-424b-8f4c-631c94380cc3,overture,HAN Yaki Dining,japanese_restaurant,bar|restaurant,居酒屋,name,dining,35.696035,139.824951,204.0,0.97,1 Chome-39-1 Kameido,Overture|meta,CDLA-Permissive-2.0
+32608a15-059c-493d-b9ce-b6c51296ff68,overture,Dining Bar Sakiha,japanese_restaurant,bar|restaurant,バー,name,dining,35.695051,139.816704,927.0,0.78,"Kotobashi, 4 Chome−21−6 錦糸町ハイタウン 1階126号",Overture|meta,CDLA-Permissive-2.0
+83739eb8-8d6e-424b-8f4c-631c94380cc3,overture,HAN Yaki Dining,japanese_restaurant,bar|restaurant,バー,name,dining,35.696035,139.824951,204.0,0.97,1 Chome-39-1 Kameido,Overture|meta,CDLA-Permissive-2.0
 641a9982-a50a-4bd8-99b3-84da77a2ae5e,overture,Hana,japanese_restaurant,restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.6984,139.823677,289.0,0.642,亀戸2丁目24-3,Overture|meta,CDLA-Permissive-2.0
 8d69bac9-e5f6-4f4d-abd6-3ae292df5819,overture,Hokkaido,japanese_restaurant,restaurant|asian_restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.695637,139.816002,973.0,0.669,"Kotobashi, 4 Chome−26−5 東京トラフィック錦糸町ビル 2F",Overture|meta,CDLA-Permissive-2.0
 f84e0a9e-2392-4095-b2c9-45a4b50cd38c,overture,Isataco,japanese_restaurant,restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.699245,139.824348,295.0,0.945,2 Chome-30-9 Kameido,Overture|meta,CDLA-Permissive-2.0
-6656da9d-4da6-4388-ac01-17d154a5f593,overture,Japanese luxury Dining 月の奏,japanese_restaurant,restaurant,居酒屋,name,dining,35.695385,139.817238,871.0,0.514,江東橋4丁目25-15,Overture|meta,CDLA-Permissive-2.0
+6656da9d-4da6-4388-ac01-17d154a5f593,overture,Japanese luxury Dining 月の奏,japanese_restaurant,restaurant,バー,name,dining,35.695385,139.817238,871.0,0.514,江東橋4丁目25-15,Overture|meta,CDLA-Permissive-2.0
 6dccb04f-9118-4a88-a104-e81349615452,overture,Kamenohe,japanese_restaurant,restaurant|bar,その他飲食（判定不能）,unresolved,japanese_restaurant,35.695902,139.824966,214.0,0.985,1 Chome-36-4 Kameido,Overture|meta,CDLA-Permissive-2.0
 ac66bbc2-798b-4e88-9142-dc845b0d155c,overture,Koba Steakhouse,japanese_restaurant,steakhouse|restaurant,ステーキ・ハンバーグ,name,steak,35.695772,139.834267,715.0,0.947,"Kameido, 7 Chome−49−4 高庭ビル 1階",Overture|meta,CDLA-Permissive-2.0
 14f27419-50ce-406b-8597-2e319ba744b4,overture,Meat,japanese_restaurant,bar|restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.699038,139.826317,194.0,0.241,亀戸5丁目13-2,Overture|meta,CDLA-Permissive-2.0
@@ -505,12 +505,12 @@ b2c0da62-a530-4f51-a7a3-c06ffcbaad62,overture,らーめんブッ豚,japanese_res
 701d3875-1412-42af-9860-9ca6759908be,overture,らーめん潤亀戸店,japanese_restaurant,asian_restaurant|noodles_restaurant,ラーメン,name,らーめん,35.694063,139.826088,363.0,0.997,亀戸6丁目2-1,Overture|meta,CDLA-Permissive-2.0
 91f7e3c4-df90-4574-86f0-fe1bc7da4814,overture,わいがや西大島店,japanese_restaurant,restaurant|diner,居酒屋,claude,中: 「わいがや」は居酒屋に多い名前,35.689219,139.827919,907.0,0.706,大島1ー33ー13　今井ビル１階,Overture|meta,CDLA-Permissive-2.0
 5f748bb8-2e57-4594-a94f-901934023cf9,overture,わが家の食堂亀戸店,japanese_restaurant,restaurant|diner,定食・食堂,name,食堂,35.701307,139.825134,464.0,0.993,亀戸2丁目45-8,Overture|meta,CDLA-Permissive-2.0
-60dab592-deb1-4b84-96f5-670deb61b855,overture,ダイニングルーム オリーブ,japanese_restaurant,restaurant|diner,居酒屋,name,ダイニング,35.694174,139.817726,872.0,0.697,江東橋4丁目14-7,Overture|meta,CDLA-Permissive-2.0
+60dab592-deb1-4b84-96f5-670deb61b855,overture,ダイニングルーム オリーブ,japanese_restaurant,restaurant|diner,バー,name,ダイニング,35.694174,139.817726,872.0,0.697,江東橋4丁目14-7,Overture|meta,CDLA-Permissive-2.0
 52c22d2f-f236-4d9c-ad54-8675e057fac4,overture,ディッシャーズ錦糸町楽天地ビル店,japanese_restaurant,restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.695953,139.815956,971.0,0.934,"Kotobashi, 4 Chome−27−14 楽天地ビル 1F",Overture|meta,CDLA-Permissive-2.0
 f56209bf-10ec-48be-84f2-2f5c06322458,overture,トンテキ食堂,japanese_restaurant,steakhouse|restaurant,定食・食堂,name,食堂,35.700167,139.825722,327.0,0.997,亀戸5丁目15-4,Overture|meta,CDLA-Permissive-2.0
 a5c36718-613d-4f49-80f5-4e11b6a61ce5,overture,ニク肉亭,japanese_restaurant,asian_restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.699125,139.826202,205.0,0.194,亀戸5丁目13-5,Overture|meta,CDLA-Permissive-2.0
 16040fed-611f-487b-a5c4-91efedc464a8,overture,ハッスルラーメンホンマ,japanese_restaurant,noodles_restaurant|asian_restaurant,ラーメン,name,ラーメン,35.701887,139.826866,510.0,0.999,亀戸4丁目35-16,Overture|meta,CDLA-Permissive-2.0
-d5624760-af98-4c96-8faf-9151ac256752,overture,バル ムーンボウ,japanese_restaurant,barbecue_restaurant|restaurant,居酒屋,name,バル,35.698706,139.826607,156.0,0.429,亀戸5丁目4-6,Overture|meta,CDLA-Permissive-2.0
+d5624760-af98-4c96-8faf-9151ac256752,overture,バル ムーンボウ,japanese_restaurant,barbecue_restaurant|restaurant,バー,name,バル,35.698706,139.826607,156.0,0.429,亀戸5丁目4-6,Overture|meta,CDLA-Permissive-2.0
 1f602387-f02c-49e2-b971-f6b02a8d2b93,overture,ビストロ オハナ,japanese_restaurant,restaurant|diner,フレンチ・ビストロ,name,ビストロ,35.701536,139.824425,509.0,0.414,亀戸2丁目44-2,Overture|meta,CDLA-Permissive-2.0
 7eea0de8-6447-4d0f-8936-20b689f2be3a,overture,プアンタイ,japanese_restaurant,asian_restaurant|restaurant,タイ料理,name,プアンタイ,35.693619,139.816612,989.0,0.986,江東橋4丁目7-9,Overture|meta,CDLA-Permissive-2.0
 1494f45f-9f0c-4b74-b7c0-4b011996074c,overture,ホルモン天狗亀戸店,japanese_restaurant,barbecue_restaurant|restaurant,焼肉・ホルモン,name,ホルモン,35.699358,139.826202,231.0,0.902,亀戸5丁目13-6,Overture|meta,CDLA-Permissive-2.0
@@ -527,8 +527,8 @@ cb8804d2-1a01-4d51-8c60-393ea845e0e1,overture,リンガーハット 亀戸駅前
 3fdc3e63-6e59-4d0c-8f30-c0af8ad922e1,overture,三代目 まる天,japanese_restaurant,sushi_restaurant|restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.698561,139.830925,416.0,0.996,亀戸5丁目33-12,Overture|meta,CDLA-Permissive-2.0
 070089d1-b896-40ad-9ce2-ef86435311bd,overture,三千里,japanese_restaurant,korean_restaurant|barbecue_restaurant,焼肉・ホルモン,claude,中: Overture 別分類が korean/barbecue,35.698637,139.826607,148.0,0.991,亀戸5丁目4-3,Overture|meta,CDLA-Permissive-2.0
 d2d30c13-8d79-4fec-a10e-8cb16586350b,overture,三原堂本店,japanese_restaurant,,スイーツ・和菓子,name,三原堂,35.697641,139.826225,49.0,0.77,亀戸5-1-1,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-56280b17-fa87-4a0d-8f36-af70db2cf0c8,overture,下町ダイニング 和,japanese_restaurant,restaurant|diner,居酒屋,name,ダイニング,35.700989,139.824211,462.0,0.978,"Kameido, 2 Chome−39−9 土橋ビル",Overture|meta,CDLA-Permissive-2.0
-9c2fd037-d9fa-4196-b2b3-594a3c80db0b,overture,世界名酒和香食ダイニング將義,japanese_restaurant,restaurant|bar,居酒屋,name,ダイニング,35.69964,139.824226,336.0,0.59,亀戸2丁目30-5,Overture|meta,CDLA-Permissive-2.0
+56280b17-fa87-4a0d-8f36-af70db2cf0c8,overture,下町ダイニング 和,japanese_restaurant,restaurant|diner,バー,name,ダイニング,35.700989,139.824211,462.0,0.978,"Kameido, 2 Chome−39−9 土橋ビル",Overture|meta,CDLA-Permissive-2.0
+9c2fd037-d9fa-4196-b2b3-594a3c80db0b,overture,世界名酒和香食ダイニング將義,japanese_restaurant,restaurant|bar,バー,name,ダイニング,35.69964,139.824226,336.0,0.59,亀戸2丁目30-5,Overture|meta,CDLA-Permissive-2.0
 21c4482c-023f-421a-b33f-2cbfda1da3f5,overture,中華ソバ専門店赤坂味一,japanese_restaurant,asian_restaurant,ラーメン,name,中華ソバ,35.69895,139.823799,311.0,0.933,亀戸2丁目31-8,Overture|meta,CDLA-Permissive-2.0
 7a5f0327-2dca-486d-b208-534e3516d5da,overture,串かつ でんがな 亀戸店,japanese_restaurant,restaurant,串かつ・串揚げ,name,串かつ,35.698687,139.826279,156.0,0.981,亀戸5丁目3-4,Overture|meta,CDLA-Permissive-2.0
 03cfc389-5ae1-4dd6-94c4-1a4293ad09d2,overture,串カツ田中亀戸店,japanese_restaurant,restaurant|diner,串かつ・串揚げ,name,串カツ,35.696264,139.823921,267.0,1.0,亀戸1丁目21-5,Overture|meta,CDLA-Permissive-2.0
@@ -552,7 +552,7 @@ dc4415b4-68d6-4c17-9003-f95908fa0600,overture,八べえ天神店,japanese_restau
 8cf62b38-5b1b-440c-8e88-019e05ff2b49,overture,前野屋,japanese_restaurant,noodles_restaurant|restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.704409,139.822121,887.0,0.96,亀戸3丁目23-10,Overture|meta,CDLA-Permissive-2.0
 c03e7f1c-b77f-4415-a2c6-9371b64d8ea9,overture,割烹若福,japanese_restaurant,restaurant|asian_restaurant,和食・割烹,name,割烹,35.702158,139.820442,774.0,0.997,亀戸3丁目6-4,Overture|meta,CDLA-Permissive-2.0
 f203f033-1a57-4552-9cb5-a08d5f870e35,overture,割烹馬目 Japanese Restaurant Manome,japanese_restaurant,restaurant|diner,和食・割烹,name,割烹,35.695169,139.831383,494.0,0.713,6 Chome-38-8 Kameido,Overture|meta,CDLA-Permissive-2.0
-4b743024-2071-4996-8e3c-ccf03ead1442,overture,創作隠れ家ダイニング,japanese_restaurant,restaurant,居酒屋,name,ダイニング,35.695036,139.827721,273.0,0.603,亀戸6丁目9-7,Overture|meta,CDLA-Permissive-2.0
+4b743024-2071-4996-8e3c-ccf03ead1442,overture,創作隠れ家ダイニング,japanese_restaurant,restaurant,バー,name,ダイニング,35.695036,139.827721,273.0,0.603,亀戸6丁目9-7,Overture|meta,CDLA-Permissive-2.0
 5f44ee1f-d68b-4ebe-a269-ac35afb666b7,overture,勝手串花火錦糸町本店,japanese_restaurant,restaurant,焼き鳥・やきとん,claude,中: 「串」を冠した店名。串焼き店と判断,35.694349,139.816551,964.0,0.996,江東橋4丁目12-5,Overture|meta,CDLA-Permissive-2.0
 81f38b13-66b5-4a26-afcb-0d7d0949e10b,overture,北海道らーめん ひむろ 亀戸店,japanese_restaurant,asian_restaurant|noodles_restaurant,ラーメン,name,らーめん,35.696838,139.827065,68.0,0.947,亀戸6丁目58-15,Overture|meta,CDLA-Permissive-2.0
 96b0fb2a-5320-4509-90ee-2b0e04ff69fc,overture,北海道キッチンYoshimi,japanese_restaurant,restaurant,その他飲食（判定不能）,unresolved,japanese_restaurant,35.696146,139.815834,979.0,0.954,東京都墨田区江東橋４丁目２７−１４,Overture|meta,CDLA-Permissive-2.0
@@ -723,15 +723,15 @@ ad32b33c-07f2-46a4-9efc-271d2c393463,overture,ドミノ・ピザ,pizza_restauran
 7618aebe-ec93-4e74-912d-9be05f533464,overture,ナポリの窯大島店,pizza_restaurant,,イタリアン,overture,pizza_restaurant,35.689138,139.825539,913.0,0.77,大島1-30-4,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 f5a50d28-feba-490c-81aa-36c6d2ff8a7e,overture,ピザハット,pizza_restaurant,,イタリアン,name,ピザ,35.701374,139.822762,569.0,0.77,亀戸2-8-11,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 d08a495d-b376-4e12-b9a4-76c798834d5e,overture,リトリート 亀戸,pizza_restaurant,cafe,イタリアン,overture,pizza_restaurant,35.698183,139.825432,143.0,0.899,,Overture|meta,CDLA-Permissive-2.0
-2aa7a5f0-c60f-4ada-be0a-ad817323df6a,overture,The British Pub Kinshicho,pub,bar|transportation,スナック・パブ,overture,pub,35.698156,139.816582,908.0,0.735,錦糸4丁目6-1 ロッテシティホテル錦糸町B1,Overture|meta,CDLA-Permissive-2.0
+2aa7a5f0-c60f-4ada-be0a-ad817323df6a,overture,The British Pub Kinshicho,pub,bar|transportation,バー,name,british pub,35.698156,139.816582,908.0,0.735,錦糸4丁目6-1 ロッテシティホテル錦糸町B1,Overture|meta,CDLA-Permissive-2.0
 6c59dddd-3483-41a7-a099-d8578d0e5340,overture,ニューハーフパブ 笑いの大学,pub,,スナック・パブ,name,パブ,35.698435,139.826103,133.0,0.77,亀戸5-2-13,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 9fd156ce-3f77-4a10-830b-72834cd4c8e0,overture,バー スランジ Bar Slainge,pub,bar|restaurant,バー,name,バー,35.698591,139.817619,822.0,0.966,錦糸3丁目8-5,Overture|Microsoft,CDLA-Permissive-2.0
 d52f069e-82bc-4b7d-95f7-c4fba1502bab,overture,パブ白鳥,pub,bar|tea_room,スナック・パブ,name,パブ,35.700819,139.824928,418.0,0.693,亀戸2丁目37-2,Overture|meta,CDLA-Permissive-2.0
 89746a54-2109-49ed-8cfc-aa8fcd5c1b82,overture,フィリピン居酒屋勇 2号,pub,restaurant|bar,その他アジア料理,name,フィリピン,35.699018,139.826286,192.0,0.903,東京都江東区亀戸５丁目１３−２,Overture|meta,CDLA-Permissive-2.0
-faef5d1d-59fe-4997-8888-dbda45bf5751,overture,ラ·ロンド,pub,bar|restaurant,スナック・パブ,overture,pub,35.698778,139.826714,164.0,0.823,"Kameido, 5 Chome−4−6 亀戸ダイヤモンドマンション",Overture|meta,CDLA-Permissive-2.0
-5888e59a-17f1-4190-b961-632d1a7dcca9,overture,小池屋,pub,bar|sake_bar,スナック・パブ,overture,pub,35.702314,139.823097,640.0,0.974,亀戸3丁目46-10,Overture|meta,CDLA-Permissive-2.0
+faef5d1d-59fe-4997-8888-dbda45bf5751,overture,ラ·ロンド,pub,bar|restaurant,その他飲食（判定不能）,unresolved,pub,35.698778,139.826714,164.0,0.823,"Kameido, 5 Chome−4−6 亀戸ダイヤモンドマンション",Overture|meta,CDLA-Permissive-2.0
+5888e59a-17f1-4190-b961-632d1a7dcca9,overture,小池屋,pub,bar|sake_bar,その他飲食（判定不能）,unresolved,pub,35.702314,139.823097,640.0,0.974,亀戸3丁目46-10,Overture|meta,CDLA-Permissive-2.0
 2bdcdbe6-4b94-42b2-b4f2-6dd34bba41c2,overture,居酒屋-343-,pub,japanese_restaurant|asian_restaurant,居酒屋,name,居酒屋,35.692179,139.826241,571.0,0.646,東京都江東区大島3-4-3,Overture|meta,CDLA-Permissive-2.0
-9945e458-8264-4721-a533-6de507801212,overture,酒様,pub,,スナック・パブ,overture,pub,35.699083,139.826317,199.0,0.77,東京都亀戸5-13-2,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+9945e458-8264-4721-a533-6de507801212,overture,酒様,pub,,その他飲食（判定不能）,unresolved,pub,35.699083,139.826317,199.0,0.77,東京都亀戸5-13-2,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 558bf4d1-fe38-43d6-8471-11de2fc5160b,overture,どうとんぼり神座 KAMEIDO CLOCK店,ramen_restaurant,,ラーメン,overture,ramen_restaurant,35.696501,139.828957,232.0,0.77,亀戸6-31-6,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 82c991a0-e092-4dc1-a7d0-136c65393c30,overture,亀戸やきそば,ramen_restaurant,japanese_restaurant|asian_restaurant,お好み焼き・もんじゃ・たこ焼き,name,やきそば,35.697117,139.830193,327.0,0.975,東京都江東区亀戸６丁目５６−３,Overture|meta,CDLA-Permissive-2.0
 75c753bb-2513-4f2f-ac8f-7437e7da8f55,overture,亀戸刀削麺,ramen_restaurant,chinese_restaurant,ラーメン,overture,ramen_restaurant,35.699633,139.826088,263.0,0.98,5 Chome-16-21 Kameido,Overture|meta,CDLA-Permissive-2.0
@@ -746,7 +746,7 @@ d617af43-b8a2-4fbb-8c4b-8e688411121d,overture,Briller parfum,restaurant,,その�
 984db4dd-b39d-4c1b-823c-f8c395e0b8ad,overture,CFクレヨン,restaurant,caterer,その他飲食（判定不能）,unresolved,restaurant,35.699324,139.822395,440.0,0.678,亀戸2丁目6-1,Overture|meta,CDLA-Permissive-2.0
 82bf65d4-2e2b-4e8e-9a5e-c5b52431398f,overture,Chang Thai (チャーンタイ)【錦糸町】,restaurant,thai_restaurant|asian_restaurant,タイ料理,name,thai,35.697958,139.817757,800.0,0.946,"錦糸4丁目11番6号 佐々木ビル1,2F",Overture|meta,CDLA-Permissive-2.0
 9e32bfde-8cf7-45d4-a31f-693f9d0e73eb,overture,Da Rocchi,restaurant,italian_restaurant,イタリアン,claude,高: イタリア語の店名と Overture 別分類 italian,35.692049,139.826012,587.0,0.767,2 Chome-35-9 Ojima,Overture|meta,CDLA-Permissive-2.0
-bdf77b03-7dce-4775-bcff-85e4f1b62471,overture,Dining Bar Bloom,restaurant,bar,居酒屋,name,dining,35.697344,139.836296,877.0,0.701,亀戸7丁目12-19,Overture|meta,CDLA-Permissive-2.0
+bdf77b03-7dce-4775-bcff-85e4f1b62471,overture,Dining Bar Bloom,restaurant,bar,バー,name,dining,35.697344,139.836296,877.0,0.701,亀戸7丁目12-19,Overture|meta,CDLA-Permissive-2.0
 0c4e974f-f8ff-4fad-a9a1-14ea2bebffff,overture,Ebi bali エビバリ,restaurant,,その他アジア料理,name,bali,35.694761,139.816803,927.0,0.956,江東橋4丁目16-3,Overture|meta,CDLA-Permissive-2.0
 18eaa9ad-b959-43e1-b84c-db7b24bb2dfc,overture,Gyusei Kameido,restaurant,fast_food_restaurant,焼肉・ホルモン,name,gyusei,35.699072,139.825714,211.0,0.551,,Overture|meta,CDLA-Permissive-2.0
 7244c389-5123-4518-906a-5847d90504e4,overture,Ienomi Stand Biyori,restaurant,european_restaurant|gastropub,居酒屋,claude,高: 同じ店の別レコード「Ienomi バル日和」がある,35.697813,139.816917,875.0,0.969,"Kinshi, 4 Chome−12−6 1階",Overture|meta,CDLA-Permissive-2.0
@@ -827,7 +827,7 @@ cf1f4829-8bb4-4e90-834a-4cce1d26334a,overture,にくまる 錦糸町店,sake_bar
 d48da7e4-7a99-4e8d-8c33-ed12fb4763de,overture,ぶた鉄,sake_bar,,居酒屋,overture,sake_bar,35.696226,139.824913,193.0,0.77,亀戸1-39-1,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 a122ddbc-533d-4521-8627-48881fe972ad,overture,めしと酒 と㐂,sake_bar,,居酒屋,overture,sake_bar,35.702784,139.825294,620.0,0.77,,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 293e5bc1-8968-44c6-ba6b-d7434887d891,overture,もつ焼き 居酒屋 いこい,sake_bar,,焼き鳥・やきとん,name,もつ焼,35.698355,139.82711,126.0,0.77,亀戸5-6-21,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
-cc7effc4-7286-49bd-908c-dc9b7cdc6ff9,overture,下町ダイニング 器,sake_bar,,居酒屋,name,ダイニング,35.696199,139.816307,936.0,0.77,江東橋4-28-2,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+cc7effc4-7286-49bd-908c-dc9b7cdc6ff9,overture,下町ダイニング 器,sake_bar,,バー,name,ダイニング,35.696199,139.816307,936.0,0.77,江東橋4-28-2,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 7a80f1ce-890d-4e61-b5bd-008e4aaaa1a9,overture,九六三,sake_bar,japanese_restaurant,居酒屋,overture,sake_bar,35.702887,139.824913,639.0,0.602,"Kameido, 3 Chome−61−10 ミオ亀戸",Overture|meta,CDLA-Permissive-2.0
 a86a86fc-83eb-4fbd-8401-d4dd7c3daa89,overture,九州自慢 亀戸店,sake_bar,,居酒屋,overture,sake_bar,35.698957,139.825768,198.0,0.77,亀戸5-2-6,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 9778223e-1487-427e-beb0-a3c80895d1bc,overture,亀戸個室居酒屋酒と和みと肉と野菜亀戸駅前店,sake_bar,,居酒屋,name,居酒屋,35.697712,139.825356,120.0,0.77,亀戸2丁目20-7 亀戸会館ビル 6F,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
@@ -839,7 +839,7 @@ a86a86fc-83eb-4fbd-8401-d4dd7c3daa89,overture,九州自慢 亀戸店,sake_bar,,�
 168b3b1a-6ae5-45ae-af6d-7c3830f5b604,overture,新家,sake_bar,bar|restaurant,居酒屋,overture,sake_bar,35.6957,139.827126,185.0,0.932,亀戸6丁目22-1,Overture|meta,CDLA-Permissive-2.0
 ab85eb40-5e08-47e7-8f89-b4f4617bc2d9,overture,新花,sake_bar,bar|restaurant,居酒屋,overture,sake_bar,35.699123,139.825951,210.0,0.9,亀戸5丁目14-11,Overture|meta,CDLA-Permissive-2.0
 a196d0d1-ef44-4437-bcbf-e5be616816d7,overture,日本海庄や 亀戸店,sake_bar,bar|japanese_restaurant,居酒屋,name,庄や,35.698092,139.826241,93.0,0.901,亀戸5丁目1-2,Overture|meta,CDLA-Permissive-2.0
-f1c4ddf4-528c-4fd7-861f-a7349f0be3eb,overture,日本酒バル ふとっぱらや,sake_bar,bar|japanese_restaurant,居酒屋,name,バル,35.697447,139.815804,974.0,0.998,4 Chome-6-10 Kinshi,Overture|meta,CDLA-Permissive-2.0
+f1c4ddf4-528c-4fd7-861f-a7349f0be3eb,overture,日本酒バル ふとっぱらや,sake_bar,bar|japanese_restaurant,バー,name,バル,35.697447,139.815804,974.0,0.998,4 Chome-6-10 Kinshi,Overture|meta,CDLA-Permissive-2.0
 2484c9b2-866a-40ff-ae26-ff787bd3a218,overture,晩杯屋亀戸店,sake_bar,restaurant|bar,居酒屋,name,晩杯屋,35.697094,139.828697,192.0,0.999,亀戸6-62,Overture|meta,CDLA-Permissive-2.0
 cefedced-d25f-427b-94be-a2186958e246,overture,梅田屋,sake_bar,,居酒屋,overture,sake_bar,35.699854,139.826042,287.0,0.77,亀戸5-16-3,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 3fb49aa3-41ee-47e3-ae03-e96d3fa16e12,overture,焼鳥のんき,sake_bar,,焼き鳥・やきとん,name,焼鳥,35.696045,139.82859,229.0,0.77,亀戸6-31-6,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
@@ -875,7 +875,7 @@ a655ed16-abd5-4592-af66-0dd54aae97a1,overture,海鮮まこと,seafood_restaurant
 269a441f-5b5a-428a-b9a4-3c82b3ad2a24,overture,パクパク苑,soul_food,asian_restaurant|korean_restaurant,その他各国料理,overture,soul_food,35.695581,139.827217,200.0,0.559,亀戸2-25-5,Overture|meta,CDLA-Permissive-2.0
 5403f848-0497-4f5d-be08-f794d7a72481,overture,スペイン郷土料理 タベルナ パタタ,spanish_restaurant,tapas_bar|iberian_restaurant,その他各国料理,name,スペイン,35.699076,139.82354,338.0,0.997,亀戸2丁目31-2,Overture|meta,CDLA-Permissive-2.0
 1124d944-63e8-4818-a26a-f2ac78e14a3d,overture,セルジオストロベリー,spanish_restaurant,wine_bar|tapas_bar,その他各国料理,overture,spanish_restaurant,35.697546,139.815651,988.0,0.248,錦糸4丁目6-7,Overture|meta,CDLA-Permissive-2.0
-c50ba52b-fdfc-40b0-913e-982f0da5b121,overture,バル・ポルテーニョ,spanish_restaurant,argentine_restaurant|japanese_restaurant,居酒屋,name,バル,35.695364,139.817154,878.0,0.989,江東橋4丁目25-15,Overture|meta,CDLA-Permissive-2.0
+c50ba52b-fdfc-40b0-913e-982f0da5b121,overture,バル・ポルテーニョ,spanish_restaurant,argentine_restaurant|japanese_restaurant,バー,name,バル,35.695364,139.817154,878.0,0.989,江東橋4丁目25-15,Overture|meta,CDLA-Permissive-2.0
 fa3eb2af-e9d2-4b2a-8e57-70ba0bed5a42,overture,Darts Bar Oase,sports_bar,bar|pub,バー,name,darts,35.698435,139.828392,206.0,0.988,"Kameido, 5 Chome−8−15 森山ビル 101",Overture|meta,CDLA-Permissive-2.0
 e16e5469-9494-420b-872f-dc90a79f099f,overture,GOGOステーキ,steakhouse,restaurant,ステーキ・ハンバーグ,name,ステーキ,35.694204,139.82618,347.0,0.394,亀戸6丁目2-2,Overture|meta,CDLA-Permissive-2.0
 9d2808b1-8025-4100-be2f-706f9ea59b91,overture,Steak House KURATA,steakhouse,,ステーキ・ハンバーグ,name,steak,35.698389,139.823586,296.0,0.77,亀戸2-24-3,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
@@ -931,7 +931,7 @@ fb18ab3f-ca29-4a9d-929a-d99edf923223,overture,ベトナム料理 アン,vietname
 6a435a11-cd91-4e42-b290-42edbb4cd5a9,overture,Bar Portree,whiskey_bar,bar,バー,name,bar,35.694059,139.816757,958.0,0.957,"Kotobashi, 4 Chome−13−1 サニーハイツ 101号室",Overture|meta,CDLA-Permissive-2.0
 8eec357f-c569-44b0-9795-b45b5700a4b9,overture,ブルネロ,wine_bar,,バー,overture,wine_bar,35.695951,139.826477,151.0,0.746,東京都江東区亀戸６丁目２４−７,Overture|meta,CDLA-Permissive-2.0
 a73fb298-ce78-4602-93e6-bbe737fe0f26,overture,下町ワイン酒場一期一会,wine_bar,italian_restaurant|bar,居酒屋,name,酒場,35.699343,139.826149,230.0,0.997,亀戸5丁目13-4,Overture|meta,CDLA-Permissive-2.0
-9efd3863-548b-40c8-a0b4-fcf1871dbf0a,overture,肉バル Angie,wine_bar,,居酒屋,name,バル,35.695145,139.815956,989.0,0.77,江東橋4-20-5,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
+9efd3863-548b-40c8-a0b4-fcf1871dbf0a,overture,肉バル Angie,wine_bar,,バー,name,バル,35.695145,139.815956,989.0,0.77,江東橋4-20-5,Overture|Foursquare,CDLA-Permissive-2.0|Apache-2.0
 ed03202f-ad6b-4d88-960e-97ff8513839f,overture,Lali Guras Kameido Yokocho,,,その他アジア料理,claude,高: 同じ店の別レコード「ラリグラス アジアン ダイニング バー」がある,35.699087,139.826195,201.0,0.725,"Kameido, 5 Chome−13−2 三報社印刷スクエア三報ビル 1F",Overture|meta,CDLA-Permissive-2.0
 927567cc-30f2-4b50-acbd-77dc3ed730fc,overture,Maruhachi Soba Kameido,,,そば・うどん,name,soba,35.701687,139.825691,494.0,0.688,亀戸4-35-16,Overture|meta,CDLA-Permissive-2.0
 1c55fa0a-93b7-46f9-8d38-2c85efffd673,overture,プリエ,,,その他飲食（判定不能）,unresolved,,35.689541,139.823021,921.0,0.94,大島2丁目18-12,Overture|meta,CDLA-Permissive-2.0
