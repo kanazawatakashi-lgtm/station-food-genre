@@ -21,6 +21,12 @@ import pyarrow.parquet as pq
 from classify_genre import ACCEPTED_CONFIDENCE, UNRESOLVED_GENRE, classify
 from dedupe import cluster
 
+# Overture の confidence がこれ未満の店は、閉店済みや実在しない地点の可能性が高いので集計から外す。
+# 亀戸で OSM・JFF と照合すると 0.3 未満は確認できた店 0%、0.3〜0.7 は約6%、0.9 以上は 22%。
+# 23区全体で 0.5 未満を外してもジャンル構成比はどれも 0.4 ポイント以内しか変わらない。
+# 0.9 以上に絞るとチェーン店に偏る（ファミレス 1.5 倍など）ので使わない。（2026-10-03）
+MIN_CONFIDENCE = 0.5
+
 
 def norm_name(n):
     return unicodedata.normalize("NFKC", n or "").strip()
@@ -44,7 +50,9 @@ def main(area):
         addr = ((r["addresses"] or [{}])[0] or {}).get("freeform") or ""
         b = r["bbox"]
         genre, method, _ = classify(name, cat)
-        if method == "unresolved":
+        if (r["confidence"] or 0) < MIN_CONFIDENCE:
+            genre, method = "対象外", "low_confidence"
+        elif method == "unresolved":
             c = claude.get(norm_name(name))
             if c and c["genre"] == "対象外":
                 genre, method = "対象外", "excluded"
@@ -54,7 +62,7 @@ def main(area):
                      "lng": (b["xmin"] + b["xmax"]) / 2, "category": cat, "alternates": alts, "address": addr,
                      "confidence": r["confidence"], "genre": genre, "method": method})
 
-    keep = [i for i, r in enumerate(rows) if r["method"] != "excluded"]
+    keep = [i for i, r in enumerate(rows) if r["method"] not in ("excluded", "low_confidence")]
     roots = cluster([(rows[i]["lat"], rows[i]["lng"], rows[i]["name"], rows[i]["genre"]) for i in keep], UNRESOLVED_GENRE)
     for r in rows:
         r["cluster"] = -1
@@ -73,7 +81,8 @@ def main(area):
     reps = [r for i, r in enumerate(rows) if r["cluster"] == i]
     methods = Counter(r["method"] for r in reps)
     unresolved = [r for r in reps if r["genre"] == UNRESOLVED_GENRE]
-    print(f"{len(rows)} 件 → 飲食店以外 {sum(1 for r in rows if r['method'] == 'excluded')} 件を除き、"
+    print(f"{len(rows)} 件 → 飲食店以外 {sum(1 for r in rows if r['method'] == 'excluded')} 件と "
+          f"confidence {MIN_CONFIDENCE} 未満 {sum(1 for r in rows if r['method'] == 'low_confidence')} 件を除き、"
           f"重複をまとめて {len(reps)} 件")
     print(f"  店名ルール {methods['name']} / Overture {methods['overture']} / Claude {methods['claude']} / "
           f"判定不能 {methods['unresolved']}（判定率 {1 - len(unresolved) / len(reps):.1%}）")
