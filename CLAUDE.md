@@ -64,6 +64,22 @@ PYTHONPATH=scripts python scripts/genre_table.py kameido tokyo23   # 件数・�
 - 居酒屋とバーの境界は分類方法でかなり動く。酒場系をまとめた LQ は 1.04 で、内訳の比較はまだ信頼できない
 - LQ は駅側・比較側とも同じ方法（ルール＋Overture）で計算する。Claude 判定を駅側だけに入れると比べられない
 
+### 23区の判定結果から駅を切り出す（2026-10-03、Claude 判定待ちで準備済み）
+
+```
+python scripts/classify_area.py tokyo23            # 23区を判定（tokyo23_claude.csv があれば反映）
+python scripts/census.py tokyo23                   # センサス補正の重み → data/census/weights_tokyo23.csv
+python scripts/station_table.py tokyo23            # 亀戸（common.py）
+python scripts/s12_stations.py <S12.geojson> --inspect                 # S12 の列を確認（ローカルで取得）
+python scripts/s12_stations.py <S12.geojson> --passengers <列名>       # → data/stations.csv
+python scripts/station_table.py tokyo23 --stations data/stations.csv  # 23区の全駅
+```
+
+- 駅の集計は亀戸専用のパイプライン（JFF・OSM 込み）ではなく、23区の判定結果（Overture のみ）から切り出す。
+  駅と比較対象が同じ方法になり、LQ に方法の差が入らない
+- `_w` の列はセンサス補正後。乗降客1万人あたり店舗数は補正後の件数で出す
+- `s12_stations.py` は偽データでのみ試験済み。S12 の列名は版で違うので `--inspect` で確認してから使う
+
 ### 次にやること
 
 - OSM（ローカル）: `fetch_osm.py` → `apply_osm.py` → `classify_genre.py` → `genre_table.py`。

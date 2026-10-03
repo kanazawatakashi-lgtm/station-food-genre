@@ -13,6 +13,9 @@ python scripts/apply_osm.py kameido               # OSM と突き合わせ
 python scripts/classify_genre.py kameido          # ジャンル判定 → genre.csv
 python scripts/fetch_overture_area.py tokyo23     # 比較対象（23区）
 PYTHONPATH=scripts python scripts/genre_table.py kameido tokyo23   # 件数・構成比・特化係数
+python scripts/classify_area.py tokyo23     # 23区を判定
+python scripts/census.py tokyo23            # 経済センサスで補正する重み
+python scripts/station_table.py tokyo23 [--stations data/stations.csv]   # 駅ごとの表
 ```
 
 亀戸の第1版の結果は `docs/kameido_results.md`。
@@ -24,3 +27,4 @@ PYTHONPATH=scripts python scripts/genre_table.py kameido tokyo23   # 件数・�
 - Overture Maps Foundation, Places（release 2026-08-19.0）。レコードごとのライセンスは `licenses` 列
 - OpenPOI API（https://openpoiapi.com/）。レコードごとの `licenses` / `attributions` を保持
 - © OpenStreetMap contributors（ODbL）。`apply_osm.py` を使った場合
+- 総務省・経済産業省「令和3年経済センサス‐活動調査」（e-Stat）。`data/census/`
