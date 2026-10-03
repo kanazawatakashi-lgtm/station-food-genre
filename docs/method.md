@@ -82,7 +82,7 @@
 |---|---|
 | 1. Overture 取得 | 済。`scripts/fetch_overture_area.py tokyo23`。Overture divisions の23区境界で切り出し、区名付きで 122,467 件 |
 | 2. ルール判定と重複除去 | 済。`scripts/classify_area.py tokyo23`（6秒）。重複をまとめて 119,825 件、判定率 75.0% |
-| 3. Claude 判定 | スクリプト済（`scripts/classify_area_with_claude.py`）。判定不能 30,008 件・店名 28,444 種類を 285 リクエストで送る。**ローカルで実行**（API キーが必要） |
+| 3. Claude 判定 | モデル選びの試験を準備（`scripts/compare_models.py`、Opus 5.5 と Haiku 4.5 を600店で比較。ローカルで実行）。本番のスクリプト済（`scripts/classify_area_with_claude.py`）。判定不能 30,008 件・店名 28,444 種類を 285 リクエストで送る。**ローカルで実行**（API キーが必要） |
 | 4. 駅の切り出し | 未。S12 の取得が必要 |
 
 - 手順2でチェーンの英字表記（Gyu-Kaku、Jojoen、Denny's など）、町そばの屋号（長寿庵、更科、砂場 など）、

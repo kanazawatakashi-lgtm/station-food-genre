@@ -4,3 +4,6 @@ __pycache__/
 data/areas/*
 !data/areas/tokyo23_unresolved_names.csv
 !data/areas/tokyo23_claude.csv
+!data/areas/model_compare_input.csv
+!data/areas/model_compare.csv
+!data/areas/model_compare_summary.json
