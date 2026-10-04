@@ -45,7 +45,7 @@ def load_stores(area):
     weights = load_weights(area)
     stores = []
     for r in reps:
-        major, mid = group_of(r["genre"], r["category"])
+        major, mid = group_of(r["genre"], r["category"], r.get("low_genre", ""))
         w = weight_of(weights, r["ward"], major, mid) if weights else None
         stores.append((major, mid, w))
     lat = np.array([r["lat"] for r in reps])

@@ -107,7 +107,7 @@ def compute_weights(area):
     census = load_census()
     counts = defaultdict(Counter)
     for r in representatives(area):
-        counts[r["ward"]][census_code(*group_of(r["genre"], r["category"]))] += 1
+        counts[r["ward"]][census_code(*group_of(r["genre"], r["category"], r.get("low_genre", "")))] += 1
 
     weights, table = {}, []
     for ward, cen in sorted(census.items()):

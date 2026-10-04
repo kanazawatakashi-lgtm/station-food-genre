@@ -81,6 +81,7 @@ python scripts/station_table.py tokyo23 --stations data/stations.csv [--radius 5
 - S12-25 は `data/s12/`（ユーザーが取得）。2024年の乗降客数は `S12_061`:
   `python scripts/s12_stations.py data/s12/S12-25_NumberOfPassengers.geojson --passengers S12_061`。
   別の版を使うときは `--inspect` で列を確認する
+- Claude 判定は高・中を採用。「低」は大分類だけに使い中分類は不明（ユーザー決定 2026-10-04）。中分類不明の扱いは今後検討
 - 円が重なる駅どうしで同じ店を重ねて数えてよい（ユーザー確認 2026-10-04）。乗降客1万人あたり店舗数は、
   そのため小さい駅ほど大きく出る（docs/method.md「23区の全駅」）
 - 出力は半径ごとに `data/stations/tokyo23_r<半径>_*.csv`。円が23区の外にはみ出すか（near_edge）も半径ごとに判定

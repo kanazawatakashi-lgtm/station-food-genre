@@ -16,6 +16,9 @@
 - 和食の小さいジャンル（割烹・天ぷら・うなぎ・郷土料理）は「和食（割烹・天ぷら・うなぎ・郷土）」にまとめる
 - タイ・ベトナム・その他アジアは「東南アジア・その他アジア」にまとめる
 - 惣菜・弁当（持ち帰り中心の店）も集計に入れる
+
+2026-10-04 決定: Claude の店名判定で確信度「低」のジャンルは、大分類だけに使い中分類は「不明」にする
+（Overture の粗い分類から大分類が分かる店はそちらを優先）。中分類不明の扱いは今後検討。
 """
 
 UNKNOWN = "不明"
@@ -71,9 +74,12 @@ OVERTURE_MAJOR = {
 MAJOR_ORDER = ["和食", "バー・スナック", "中華・アジア", "洋食", "カフェ・軽食", UNKNOWN]
 
 
-def group_of(genre, overture_category=""):
-    """細かいジャンルと Overture 分類から (大分類, 中分類) を返す。"""
+def group_of(genre, overture_category="", low_genre=""):
+    """細かいジャンルと Overture 分類から (大分類, 中分類) を返す。
+    low_genre は Claude が確信度「低」で挙げたジャンル（ジャンルが決まらなかった店だけ）。大分類にだけ使う。"""
     if genre in GROUPS:
         return GROUPS[genre]
     major = OVERTURE_MAJOR.get(overture_category or "", UNKNOWN)
+    if major == UNKNOWN and low_genre in GROUPS:
+        major = GROUPS[low_genre][0]
     return major, UNKNOWN

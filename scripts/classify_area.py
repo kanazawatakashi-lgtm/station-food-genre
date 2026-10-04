@@ -6,7 +6,8 @@
       data/areas/<area>_claude.csv（任意）判定不能の店名を Claude が判定した結果。列は name, genre, confidence, reason。
         店名単位なので、同じ店名の店（チェーンなど）にはまとめて効く
 出力: data/areas/<area>_genre.parquet  1店1行。id, name, ward, lat, lng, category, alternates, address,
-        genre, method, cluster（重複をまとめた代表の行番号。cluster == 行番号の行だけ数えればよい）
+        genre, method, low_genre（判定不能の店で Claude が確信度「低」で挙げたジャンル。大分類にだけ使う）,
+        cluster（重複をまとめた代表の行番号。cluster == 行番号の行だけ数えればよい）
       data/areas/<area>_unresolved_names.csv  判定不能の店名（重複なし）と件数・手がかり。Claude 判定に送る
 """
 import csv
@@ -50,6 +51,7 @@ def main(area):
         addr = ((r["addresses"] or [{}])[0] or {}).get("freeform") or ""
         b = r["bbox"]
         genre, method, _ = classify(name, cat)
+        low_genre = ""
         if (r["confidence"] or 0) < MIN_CONFIDENCE:
             genre, method = "対象外", "low_confidence"
         elif method == "unresolved":
@@ -58,9 +60,11 @@ def main(area):
                 genre, method = "対象外", "excluded"
             elif c and c["genre"] not in ("不明", "") and c["confidence"] in ACCEPTED_CONFIDENCE:
                 genre, method = c["genre"], "claude"
+            elif c and c["genre"] not in ("不明", ""):
+                low_genre = c["genre"]  # 確信度「低」。大分類にだけ使う（genre_groups.group_of）
         rows.append({"id": r["id"], "name": name, "ward": r["ward"], "lat": (b["ymin"] + b["ymax"]) / 2,
                      "lng": (b["xmin"] + b["xmax"]) / 2, "category": cat, "alternates": alts, "address": addr,
-                     "confidence": r["confidence"], "genre": genre, "method": method})
+                     "confidence": r["confidence"], "genre": genre, "method": method, "low_genre": low_genre})
 
     keep = [i for i, r in enumerate(rows) if r["method"] not in ("excluded", "low_confidence")]
     roots = cluster([(rows[i]["lat"], rows[i]["lng"], rows[i]["name"], rows[i]["genre"]) for i in keep], UNRESOLVED_GENRE)
