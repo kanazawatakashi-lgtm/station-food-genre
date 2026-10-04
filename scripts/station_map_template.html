@@ -1,0 +1,364 @@
+<title>23区 駅別乗降客数マップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+New:wght@700;900&display=swap">
+<style>
+/* 地図を主役に、下に順位表。路線図の駅名標のような落ち着いた灰緑と、深い青緑の円 */
+:root {
+  --bg: #eef1ef;
+  --land: #fbfcfb;
+  --ward-line: #c9d1cd;
+  --ink: #1d2523;
+  --ink-2: #4d5a56;
+  --ink-3: #7c8985;
+  --accent: #1f6f78;
+  --accent-soft: rgba(31, 111, 120, 0.28);
+  --pick: #b4531f;
+  --rule: #d8dfdc;
+  --panel: #ffffff;
+  --font-display: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --font-body: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111716; --land: #1a2120; --ward-line: #34403d; --ink: #e6ecea; --ink-2: #aab6b2; --ink-3: #7d8a86;
+    --accent: #5fb3bb; --accent-soft: rgba(95, 179, 187, 0.30); --pick: #f08a4b; --rule: #2a3331; --panel: #171e1d;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111716; --land: #1a2120; --ward-line: #34403d; --ink: #e6ecea; --ink-2: #aab6b2; --ink-3: #7d8a86;
+  --accent: #5fb3bb; --accent-soft: rgba(95, 179, 187, 0.30); --pick: #f08a4b; --rule: #2a3331; --panel: #171e1d;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.6; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 48px; display: grid; gap: 20px; }
+header { display: grid; gap: 4px; }
+h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(22px, 3.2vw, 30px); letter-spacing: 0.02em; margin: 0; text-wrap: balance; }
+.lede { margin: 0; color: var(--ink-2); max-width: 65ch; }
+.num { font-variant-numeric: tabular-nums; }
+
+.mapbox { position: relative; background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
+.tools { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; pointer-events: none; }
+.tools > * { pointer-events: auto; }
+.search { display: flex; align-items: center; gap: 6px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 4px 6px 4px 10px; }
+.search input { border: 0; background: transparent; color: var(--ink); font: inherit; width: 9em; outline: none; }
+.search:focus-within { border-color: var(--accent); }
+.btn { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; min-width: 34px; height: 34px; padding: 0 10px; cursor: pointer; }
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn:focus-visible, .row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.zoom { margin-left: auto; display: flex; gap: 6px; }
+.msg { color: var(--ink-3); font-size: 12px; }
+
+svg.map { display: block; width: 100%; height: min(78vh, 900px); min-height: 360px; touch-action: none; cursor: grab; }
+@media (max-width: 560px) { svg.map { height: 72vh; } }
+svg.map.drag { cursor: grabbing; }
+.ward { fill: var(--land); stroke: var(--ward-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ward-name { fill: var(--ink-3); font-family: var(--font-body); text-anchor: middle; pointer-events: none; }
+.st { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.st.hot { fill: var(--accent); }
+.st.pick { fill: var(--pick); stroke: var(--pick); fill-opacity: 0.55; stroke-width: 2; }
+.lbl { fill: var(--ink); font-family: var(--font-body); font-weight: 700; paint-order: stroke; stroke: var(--land); stroke-linejoin: round; pointer-events: none; }
+
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; border-top: 1px solid var(--rule); padding-block: 8px; padding-inline: 12px; font-size: 12px; color: var(--ink-2); }
+.legend svg circle { fill: none; stroke: var(--ink-3); }
+.legend svg text { fill: var(--ink-2); font-size: 11px; font-family: var(--font-body); }
+.legend .t { font-weight: 700; color: var(--ink); }
+
+.tip { position: absolute; z-index: 3; pointer-events: none; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; box-shadow: 0 4px 16px rgba(0,0,0,.12); font-size: 13px; min-width: 170px; max-width: 260px; }
+.tip b { font-family: var(--font-display); font-size: 15px; }
+.tip dl { display: grid; grid-template-columns: auto 1fr; gap: 0 10px; margin: 4px 0 0; }
+.tip dt { color: var(--ink-3); }
+.tip dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.tip .ops { color: var(--ink-2); font-size: 12px; margin-top: 4px; }
+
+.rank { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding-block: 16px; padding-inline: 16px; display: grid; gap: 12px; }
+.rank-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; }
+h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
+.rows { display: grid; gap: 2px; }
+.row { display: grid; grid-template-columns: 2.6em minmax(5.5em, 9em) 1fr 7.5em; gap: 10px; align-items: center; padding: 3px 4px; border-radius: 4px; cursor: pointer; }
+.row:hover { background: var(--bg); }
+.row .r { color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
+.row .n { font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row .bar { height: 10px; background: var(--accent); border-radius: 0 4px 4px 0; min-width: 2px; }
+.row .v { text-align: right; font-variant-numeric: tabular-nums; }
+.note { color: var(--ink-3); font-size: 12px; margin: 0; max-width: 80ch; }
+@media (max-width: 560px) {
+  .row { grid-template-columns: 2.2em 6em 1fr 6.2em; gap: 6px; font-size: 13px; }
+  .search input { width: 7em; }
+}
+@media (prefers-reduced-motion: no-preference) { svg.map .st { transition: fill .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>23区 駅別乗降客数マップ</h1>
+    <p class="lede"><span class="num" id="count">490</span> 駅の1日平均乗降客数（2024年）。円の面積が乗降客数に比例します。乗換駅は事業者の合計。ホイールやボタンで拡大、ドラッグで移動、円に触れると詳細が出ます。</p>
+  </header>
+
+  <div class="mapbox" id="mapbox">
+    <div class="tools">
+      <label class="search" for="q">駅名
+        <input id="q" type="search" placeholder="例: 亀戸" autocomplete="off">
+      </label>
+      <span class="msg" id="msg" aria-live="polite"></span>
+      <div class="zoom">
+        <button class="btn" id="zin" type="button" aria-label="拡大">＋</button>
+        <button class="btn" id="zout" type="button" aria-label="縮小">－</button>
+        <button class="btn" id="zreset" type="button">全体</button>
+      </div>
+    </div>
+    <svg class="map" id="map" role="img" aria-label="23区の駅の位置と乗降客数を円の大きさで表した地図">
+      <g id="wards"></g><g id="wardNames"></g><g id="circles"></g><g id="labels"></g>
+    </svg>
+    <div class="legend" aria-hidden="true">
+      <span class="t">円の大きさ＝1日平均乗降客数（いまの拡大率での大きさ）</span>
+      <svg id="legend" width="150" height="70"></svg>
+    </div>
+    <div class="tip" id="tip" hidden></div>
+  </div>
+
+  <section class="rank" aria-labelledby="rank-h">
+    <div class="rank-head">
+      <h2 id="rank-h">乗降客数の多い駅</h2>
+      <button class="btn" id="more" type="button">全駅を表示</button>
+    </div>
+    <div class="rows" id="rows"></div>
+    <p class="note">出典: 国土交通省「国土数値情報（駅別乗降客数データ）」S12-25 を加工して作成。同じ駅名で500m以内の駅、S12で同じグループの駅を1駅にまとめ、同じ事業者の重複は除いています。店数は駅から半径1kmの飲食店（Overture Maps、重複をまとめた後）。乗降客数が載っていない3駅は除いています。区の境界は Overture Maps Foundation（divisions）。</p>
+  </section>
+</div>
+
+<script>
+const D = __DATA__;
+const NS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById("map");
+const box = document.getElementById("mapbox");
+const tip = document.getElementById("tip");
+const fmt = n => n.toLocaleString("ja-JP");
+const maxP = D.stations[0].p;
+const R = p => Math.max(1.6, 30 * Math.sqrt(p / maxP));
+
+document.getElementById("count").textContent = D.stations.length;
+const full = { x: 0, y: 0, w: D.w, h: D.h };
+let vb = { ...full };
+let picked = -1;
+
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+
+const gW = document.getElementById("wards"), gWN = document.getElementById("wardNames");
+const gC = document.getElementById("circles"), gL = document.getElementById("labels");
+D.wards.forEach(w => {
+  el("path", { d: w.d, class: "ward" }, gW);
+  const t = el("text", { x: w.c[0], y: w.c[1], class: "ward-name" }, gWN);
+  t.textContent = w.name;
+});
+// 大きい円を下に、小さい円を上に
+const circles = D.stations.map((s, i) => el("circle", { cx: s.x, cy: s.y, r: R(s.p), class: "st", "data-i": i }, gC));
+const labels = D.stations.map(s => { const t = el("text", { x: s.x, y: s.y, class: "lbl", "text-anchor": "middle" }, gL); t.textContent = s.n; return t; });
+
+// 凡例（地図と同じ縮尺。表示の拡大率に合わせて描き直す）
+function drawLegend() {
+  const lg = document.getElementById("legend");
+  lg.innerHTML = "";
+  const k = 1 / unitPx();
+  const vals = [2000000, 500000, 100000];
+  const rs = vals.map(v => R(v) * k);
+  const big = Math.min(rs[0], 30);
+  const s = big / rs[0];
+  const base = 64;
+  vals.forEach((v, i) => {
+    const r = rs[i] * s;
+    el("circle", { cx: 34, cy: base - r, r: r }, lg);
+    el("line", { x1: 34, x2: 76, y1: base - 2 * r, y2: base - 2 * r, stroke: "currentColor", "stroke-opacity": 0.3 }, lg);
+    const t = el("text", { x: 80, y: base - 2 * r + 4 }, lg);
+    t.textContent = `${v / 10000}万人`;
+  });
+}
+
+function apply() {
+  svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  const px = unitPx(); // 画面1px あたりの地図座標
+  const zoom = full.w / vb.w;
+  const shown = zoom < 1.6 ? 14 : zoom < 3 ? 50 : zoom < 5 ? 160 : D.stations.length;
+  labels.forEach((t, i) => {
+    const s = D.stations[i];
+    const on = i < shown || i === picked;
+    t.style.display = on ? "" : "none";
+    if (on) {
+      t.setAttribute("font-size", 12 * px);
+      t.setAttribute("stroke-width", 3 * px);
+      t.setAttribute("y", s.y - R(s.p) - 4 * px);
+    }
+  });
+  gWN.querySelectorAll("text").forEach(t => { t.setAttribute("font-size", 11 * px); });
+  gWN.style.display = zoom > 6 ? "none" : "";
+  drawLegend();
+}
+
+function clampVb() {
+  vb.w = Math.min(Math.max(vb.w, full.w / 14), full.w);
+  vb.h = vb.w * full.h / full.w;
+  vb.x = Math.min(Math.max(vb.x, -vb.w * 0.3), full.w - vb.w * 0.7);
+  vb.y = Math.min(Math.max(vb.y, -vb.h * 0.3), full.h - vb.h * 0.7);
+}
+
+// 画面座標 → 地図座標（余白で中央寄せされても合うよう、SVG 自身の変換行列を使う）
+function toMap(clientX, clientY) {
+  const m = svg.getScreenCTM();
+  if (!m) return { x: 0, y: 0 };
+  const pt = new DOMPoint(clientX, clientY).matrixTransform(m.inverse());
+  return { x: pt.x, y: pt.y };
+}
+const unitPx = () => { const m = svg.getScreenCTM(); return m && m.a ? 1 / m.a : vb.w / Math.max(svg.clientWidth, 1); };
+
+function zoomAt(f, cx, cy) {
+  const nw = Math.min(Math.max(vb.w / f, full.w / 14), full.w);
+  const k = nw / vb.w;
+  vb.x = cx - (cx - vb.x) * k; vb.y = cy - (cy - vb.y) * k; vb.w = nw;
+  clampVb(); apply();
+}
+
+svg.addEventListener("wheel", e => {
+  e.preventDefault();
+  const p = toMap(e.clientX, e.clientY);
+  zoomAt(e.deltaY < 0 ? 1.25 : 0.8, p.x, p.y);
+}, { passive: false });
+
+const center = () => ({ x: vb.x + vb.w / 2, y: vb.y + vb.h / 2 });
+document.getElementById("zin").onclick = () => { const c = center(); zoomAt(1.6, c.x, c.y); };
+document.getElementById("zout").onclick = () => { const c = center(); zoomAt(1 / 1.6, c.x, c.y); };
+document.getElementById("zreset").onclick = () => { vb = { ...full }; apply(); };
+
+// ドラッグで移動（指2本で拡大縮小）
+const ptrs = new Map();
+let last = null, pinch = null;
+svg.addEventListener("pointerdown", e => {
+  svg.setPointerCapture(e.pointerId);
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size === 1) { last = { x: e.clientX, y: e.clientY, moved: false }; svg.classList.add("drag"); }
+  if (ptrs.size === 2) {
+    const [a, b] = [...ptrs.values()];
+    pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) };
+  }
+});
+svg.addEventListener("pointermove", e => {
+  if (ptrs.has(e.pointerId)) ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size === 2 && pinch) {
+    const [a, b] = [...ptrs.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y);
+    const m = toMap((a.x + b.x) / 2, (a.y + b.y) / 2);
+    zoomAt(d / pinch.d, m.x, m.y); pinch.d = d; hideTip(); return;
+  }
+  if (ptrs.size === 1 && last) {
+    const dx = e.clientX - last.x, dy = e.clientY - last.y;
+    if (Math.abs(dx) + Math.abs(dy) > 3) last.moved = true;
+    if (last.moved) {
+      const u = unitPx();
+      vb.x -= dx * u; vb.y -= dy * u;
+      last.x = e.clientX; last.y = e.clientY;
+      clampVb(); apply(); hideTip(); return;
+    }
+  }
+  hover(e);
+});
+const endPtr = e => {
+  const tapped = last && !last.moved && ptrs.size === 1;
+  ptrs.delete(e.pointerId);
+  if (ptrs.size < 2) pinch = null;
+  if (ptrs.size === 0) { svg.classList.remove("drag"); if (tapped) hover(e, true); last = null; }
+};
+svg.addEventListener("pointerup", endPtr);
+svg.addEventListener("pointercancel", endPtr);
+svg.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") hideTip(); });
+
+// いちばん近い駅（円の内側か、画面上で10px以内）
+function nearest(clientX, clientY) {
+  const p = toMap(clientX, clientY);
+  const px = unitPx();
+  let best = -1, bd = Infinity;
+  D.stations.forEach((s, i) => {
+    const d = Math.hypot(s.x - p.x, s.y - p.y);
+    const reach = Math.max(R(s.p), 10 * px);
+    // 小さい円を優先できるよう、円の大きさで割った距離で比べる
+    if (d <= reach && d / reach < bd) { bd = d / reach; best = i; }
+  });
+  return best;
+}
+
+let hot = -1;
+function hover(e, sticky) {
+  const i = nearest(e.clientX, e.clientY);
+  if (hot >= 0) circles[hot].classList.remove("hot");
+  hot = i;
+  if (i < 0) { if (!sticky) hideTip(); else hideTip(); return; }
+  circles[i].classList.add("hot");
+  showTip(i, e.clientX, e.clientY);
+}
+
+function showTip(i, clientX, clientY) {
+  const s = D.stations[i];
+  tip.innerHTML = `<b>${s.n}</b><dl><dt>乗降客数</dt><dd>${fmt(s.p)} 人/日</dd><dt>順位</dt><dd>${i + 1} 位</dd><dt>1km圏の飲食店</dt><dd>${fmt(s.s)} 店</dd></dl><div class="ops">${s.o}</div>`;
+  tip.hidden = false;
+  const r = box.getBoundingClientRect();
+  let x = clientX - r.left + 14, y = clientY - r.top + 14;
+  const tw = tip.offsetWidth, th = tip.offsetHeight;
+  if (x + tw > r.width - 8) x = clientX - r.left - tw - 14;
+  if (y + th > r.height - 8) y = clientY - r.top - th - 14;
+  tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+}
+function hideTip() { tip.hidden = true; if (hot >= 0) circles[hot].classList.remove("hot"); hot = -1; }
+
+function focusStation(i) {
+  if (picked >= 0) circles[picked].classList.remove("pick");
+  picked = i;
+  const s = D.stations[i];
+  circles[i].classList.add("pick");
+  circles[i].parentNode.appendChild(circles[i]);
+  vb.w = full.w / 5; vb.h = vb.w * full.h / full.w;
+  vb.x = s.x - vb.w / 2; vb.y = s.y - vb.h / 2;
+  clampVb(); apply();
+  document.getElementById("msg").textContent = `${s.n}　${fmt(s.p)} 人/日（${i + 1} 位）`;
+}
+
+const q = document.getElementById("q");
+q.addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  const v = q.value.trim().replace(/駅$/, "");
+  if (!v) return;
+  let i = D.stations.findIndex(s => s.n === v);
+  if (i < 0) i = D.stations.findIndex(s => s.n.includes(v));
+  if (i < 0) { document.getElementById("msg").textContent = `「${v}」は見つかりません`; return; }
+  focusStation(i);
+  box.scrollIntoView({ block: "nearest" });
+});
+
+// 順位表
+const rows = document.getElementById("rows");
+let showAll = false;
+function drawRows() {
+  rows.innerHTML = "";
+  const n = showAll ? D.stations.length : 30;
+  D.stations.slice(0, n).forEach((s, i) => {
+    const row = document.createElement("div");
+    row.className = "row"; row.tabIndex = 0; row.setAttribute("role", "button");
+    row.setAttribute("aria-label", `${s.n} ${fmt(s.p)}人 地図で見る`);
+    row.innerHTML = `<span class="r">${i + 1}</span><span class="n">${s.n}</span><span><div class="bar" style="width:${(s.p / maxP * 100).toFixed(2)}%"></div></span><span class="v">${fmt(s.p)}</span>`;
+    const go = () => { focusStation(i); box.scrollIntoView({ behavior: "smooth", block: "start" }); };
+    row.onclick = go;
+    row.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } };
+    rows.appendChild(row);
+  });
+  document.getElementById("more").textContent = showAll ? "上位30駅だけ表示" : `全${D.stations.length}駅を表示`;
+}
+document.getElementById("more").onclick = () => { showAll = !showAll; drawRows(); };
+
+drawRows();
+apply();
+window.addEventListener("resize", apply);
+</script>

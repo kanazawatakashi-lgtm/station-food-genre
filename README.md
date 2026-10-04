@@ -16,6 +16,7 @@ PYTHONPATH=scripts python scripts/genre_table.py kameido tokyo23   # 件数・�
 python scripts/classify_area.py tokyo23     # 23区を判定
 python scripts/census.py tokyo23            # 経済センサスで補正する重み
 python scripts/station_table.py tokyo23 [--stations data/stations.csv]   # 駅ごとの表
+python scripts/station_map.py               # 駅の乗降客数マップ → docs/station_map.html
 ```
 
 亀戸の第1版の結果は `docs/kameido_results.md`。
