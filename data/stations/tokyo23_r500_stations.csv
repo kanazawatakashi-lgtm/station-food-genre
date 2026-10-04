@@ -1,4 +1,4 @@
-station,name,passengers,near_edge,level,major,mid,count,share,base_share,LQ,count_w,share_w,base_share_w,LQ_w,per_10k_passengers_w
+﻿station,name,passengers,near_edge,level,major,mid,count,share,base_share,LQ,count_w,share_w,base_share_w,LQ_w,per_10k_passengers_w
 003922,渋谷,2897703,0,major,和食,,1061,0.4428,0.4703,0.9416,629.9046,0.5561,0.5376,1.0343,2.1738
 003922,渋谷,2897703,0,major,バー・スナック,,394,0.1644,0.1184,1.3885,138.5734,0.1223,0.1167,1.048,0.4782
 003922,渋谷,2897703,0,major,中華・アジア,,169,0.0705,0.0916,0.7699,80.9745,0.0715,0.0862,0.8294,0.2794

@@ -1,4 +1,4 @@
-station,name,passengers,near_edge,level,major,mid,count,share,base_share,LQ,count_w,share_w,base_share_w,LQ_w,per_10k_passengers_w
+﻿station,name,passengers,near_edge,level,major,mid,count,share,base_share,LQ,count_w,share_w,base_share_w,LQ_w,per_10k_passengers_w
 kameido,亀戸,,0,major,和食,,408,0.5237,0.4703,1.1137,288.7316,0.5846,0.5376,1.0874,
 kameido,亀戸,,0,major,バー・スナック,,81,0.104,0.1184,0.878,48.5716,0.0983,0.1167,0.8426,
 kameido,亀戸,,0,major,中華・アジア,,97,0.1245,0.0916,1.3592,52.4489,0.1062,0.0862,1.2321,

@@ -13,6 +13,8 @@
                                          半径ごとに判定する。海に面した駅も 1 になる）
       --stations を付けないときは <area>_r<半径>_common_*.csv
 
+出力の CSV は Excel でそのまま開けるよう BOM 付き UTF-8（utf-8-sig）。
+
 数え方:
 - 円が重なる駅どうしは、同じ店をそれぞれの駅で数える
 - 比較対象（23区全体）も駅側と同じ表・同じ判定・同じ重複まとめなので、方法の違いが LQ に入らない
@@ -136,7 +138,7 @@ def main():
     tag = f"{args.area}_r{args.radius:g}" + ("" if args.stations else "_common")
     out = f"data/stations/{tag}_stations.csv"
     wide, names, totals = {}, {}, {}
-    with open(out, "w", newline="", encoding="utf-8") as f:
+    with open(out, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f)
         w.writerow(["station", "name", "passengers", "near_edge", "level", "major", "mid",
                     "count", "share", "base_share", "LQ",
@@ -169,7 +171,7 @@ def main():
                 print(f"{st['name']}: 半径{args.radius:.0f}m に {total} 店（大分類不明 {unk / total:.1%}、中分類不明 {unk_mid / total:.1%}）")
 
     out_wide = f"data/stations/{tag}_lq_mid.csv"
-    with open(out_wide, "w", newline="", encoding="utf-8") as f:
+    with open(out_wide, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f)
         w.writerow(["station", "name", "passengers", "near_edge", "stores", "stores_w", "per_10k_passengers_w"] + MID_ORDER)
         for key, row in wide.items():
