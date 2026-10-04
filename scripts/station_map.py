@@ -37,9 +37,51 @@ def ring_path(coords):
     return "M" + "L".join(f"{x},{y}" for x, y in pts) + "Z"
 
 
-RAIL_CLASSES = {"standard_gauge": "rail", "narrow_gauge": "rail", "light_rail": "rail", "monorail": "rail",
-                "tram": "rail", "subway": "subway"}
+import re
+
+RAIL_CLASSES = {"standard_gauge", "narrow_gauge", "light_rail", "monorail", "tram", "subway"}
 RAIL_SKIP_FLAGS = {"is_disused", "is_abandoned"}
+
+# 英語などで入っている路線名と、同じ路線の表記ゆれを日本語の名前にそろえる
+RAIL_NAME = {
+    "Keihin Kyuuko Line": "京浜急行電鉄本線", "Keikyū-Hauptlinie": "京浜急行電鉄本線", "京浜急行線": "京浜急行電鉄本線",
+    "Keio New Line": "京王新線", "Keio Railway Keio Line": "京王電鉄京王線", "Línea Keio Inokashira": "京王電鉄井の頭線",
+    "Keisei Main Line": "京成電鉄本線", "Linea Keisei principale": "京成電鉄本線", "京成本線": "京成電鉄本線",
+    "京成金町線": "京成電鉄金町線", "Línea Hokuso": "北総線",
+    "Línea Verde del Metro Municipal de Yokohama": "横浜市営地下鉄グリーンライン",
+    "Línea de servicio rápida Joban": "常磐快速線", "Nambu Line": "JR南武線", "Odawara-Linie": "小田急電鉄小田原線",
+    "小田急電鉄 小田原線": "小田急電鉄小田原線", "Sōtetsu-Tokyu Verbindungsbahn": "相鉄・東急直通線",
+    "Tobu Isesaki Sen": "東武伊勢崎線", "伊勢崎線": "東武伊勢崎線", "とうぶだいしせん": "東武大師線", "東武鉄道大師線": "東武大師線",
+    "Toei Asakusa Line": "都営地下鉄浅草線", "都営浅草線": "都営地下鉄浅草線",
+    "Toei Mita Line": "都営地下鉄三田線", "都営三田線": "都営地下鉄三田線",
+    "Tokyo Metro Chiyoda Line": "東京メトロ千代田線", "Tokyo Metro Marunouchi Line": "東京メトロ丸ノ内線",
+    "Tokyo Metro Yurakucho Line": "東京メトロ有楽町線", "Tokyo Monorail": "東京モノレール",
+    "Tōhoku-Hauptlinie": "JR東北本線", "東北本線": "JR東北本線", "Yamanote-Linie": "山手線",
+    "せいぶいけぶくろせん": "西武池袋線", "西武鉄道新宿線": "西武新宿線",
+    "東急電鉄世田谷線": "東急世田谷線", "東京急行電鉄世田谷線": "東急世田谷線",
+    "京浜急行電鉄連続立体交差事業": "京浜急行電鉄本線", "北総鉄道": "北総線",
+}
+# 車両基地の線・遊園地の乗り物・廃線跡・計画線など、路線として描かないもの
+RAIL_DROP = re.compile(r"番線$|引上|機待|機留|機回|機走|機関区|仕業|仕訳|検修|修繕|洗浄|留置|着発|到着|出発|収納|材料線|車両所|車輪"
+                       r"|通路線|特入線|月検査|亘り|^センター線$|^Y線$|^MC線$|旧線|跡$|廃線|延伸|中央新幹線|アクセス線|豆汽車"
+                       r"|ミニトレイン|スカイサイクル|ディズニー|ウエスタン|Busy Buggies|ビジーバギー|さくらレール|あすかパーク"
+                       r"|訓練線|専用線|引き込み線|白鬚線|川崎市電")
+SUBWAY = re.compile(r"東京メトロ|都営地下鉄|横浜市営|地下鉄")
+JR = re.compile(r"^JR|山手|京浜東北|常磐|中央|総武|東海道|東北|赤羽線|上野東京ライン|成田エクスプレス|新幹線|大崎支線|大汐線"
+                r"|尻手短絡線|新金貨物線|越中島支線|北王子線|馬橋支線|北小金支線|貨物")
+
+
+def rail_name(raw):
+    n = raw.split(" (")[0].split(";")[0].strip()
+    return RAIL_NAME.get(n, n)
+
+
+def rail_kind(name):
+    if SUBWAY.search(name):
+        return "subway"
+    if JR.search(name):
+        return "jr"
+    return "private"  # 私鉄のほか、都電・モノレール・ゆりかもめ・りんかい線なども含む
 
 
 def line_path(coords):
@@ -48,26 +90,48 @@ def line_path(coords):
 
 
 def load_rails(area_geom):
-    """路線名（なければ種別）ごとに線路をまとめて SVG パスにする。23区の外は少し余白を残して切る。"""
+    """JR・私鉄・地下鉄に分け、路線名ごとに線路をまとめて SVG パスにする。23区の外は少し余白を残して切る。
+    名前のない線路は、60m 以内にある名前つきの線路と同じ路線とみなす（見つからなければ描かない）。"""
     import os
+    from shapely.strtree import STRtree
     path = "data/areas/tokyo23_rail.parquet"
     if not os.path.exists(path):
         return []
     clip = area_geom.buffer(0.01)
-    groups = defaultdict(list)
+    named, unnamed = [], []
     for r in pq.read_table(path).to_pylist():
-        kind = RAIL_CLASSES.get(r["class"])
         flags = {v for f in (r["rail_flags"] or []) for v in f["values"]}
-        if not kind or flags & RAIL_SKIP_FLAGS:
+        if r["class"] not in RAIL_CLASSES or flags & RAIL_SKIP_FLAGS:
             continue
         g = wkb.loads(r["geometry"]).intersection(clip)
         if g.is_empty:
             continue
-        name = ((r["names"] or {}).get("primary") or "").split(" (")[0]
-        for line in ([g] if g.geom_type == "LineString" else [x for x in getattr(g, "geoms", []) if x.geom_type == "LineString"]):
-            groups[(kind, name)].append(line_path(line.simplify(0.00015).coords))
-    rails = [{"k": k, "n": n, "d": "".join(ds)} for (k, n), ds in groups.items()]
-    rails.sort(key=lambda r: r["k"] != "subway")  # 地下鉄を下に
+        raw = (r["names"] or {}).get("primary") or ""
+        if raw:
+            name = rail_name(raw)
+            if not RAIL_DROP.search(name):
+                named.append((name, g))
+        else:
+            unnamed.append(g)
+    tree = STRtree([g for _, g in named])
+    near = 60 / 111000
+    groups = defaultdict(list)
+    for name, g in named:
+        groups[name].append(g)
+    for g in unnamed:
+        hits = tree.query(g, predicate="dwithin", distance=near)
+        if len(hits):
+            best = min(hits, key=lambda i: named[i][1].distance(g))
+            groups[named[best][0]].append(g)
+    rails = []
+    for name, gs in groups.items():
+        d = []
+        for g in gs:
+            for line in ([g] if g.geom_type == "LineString" else [x for x in getattr(g, "geoms", []) if x.geom_type == "LineString"]):
+                d.append(line_path(line.simplify(0.00015).coords))
+        rails.append({"k": rail_kind(name), "n": name, "d": "".join(d)})
+    order = {"subway": 0, "private": 1, "jr": 2}
+    rails.sort(key=lambda r: order[r["k"]])  # 地下鉄を下に
     return rails
 
 

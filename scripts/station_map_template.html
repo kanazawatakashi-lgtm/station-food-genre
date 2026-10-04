@@ -11,11 +11,12 @@
   --ink: #1d2523;
   --ink-2: #4d5a56;
   --ink-3: #7c8985;
-  --accent: #1f6f78;
-  --accent-soft: rgba(31, 111, 120, 0.28);
+  --accent: #2b3634;
+  --accent-soft: rgba(43, 54, 52, 0.16);
   --pick: #b4531f;
-  --rail: #6b7774;
-  --subway: #8a9794;
+  --jr: #4f8a2e;
+  --private: #c0457a;
+  --subway: #2f5fb3;
   --rule: #d8dfdc;
   --panel: #ffffff;
   --font-display: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
@@ -24,15 +25,15 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #111716; --land: #1a2120; --ward-line: #34403d; --ink: #e6ecea; --ink-2: #aab6b2; --ink-3: #7d8a86;
-    --accent: #5fb3bb; --accent-soft: rgba(95, 179, 187, 0.30); --pick: #f08a4b; --rule: #2a3331; --panel: #171e1d;
-    --rail: #8e9b97; --subway: #6a7774;
+    --accent: #d9e2df; --accent-soft: rgba(217, 226, 223, 0.16); --pick: #f08a4b; --rule: #2a3331; --panel: #171e1d;
+    --jr: #5f9e3f; --private: #d16a96; --subway: #5a88dc;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #111716; --land: #1a2120; --ward-line: #34403d; --ink: #e6ecea; --ink-2: #aab6b2; --ink-3: #7d8a86;
-  --accent: #5fb3bb; --accent-soft: rgba(95, 179, 187, 0.30); --pick: #f08a4b; --rule: #2a3331; --panel: #171e1d;
-  --rail: #8e9b97; --subway: #6a7774;
+  --accent: #d9e2df; --accent-soft: rgba(217, 226, 223, 0.16); --pick: #f08a4b; --rule: #2a3331; --panel: #171e1d;
+  --jr: #5f9e3f; --private: #d16a96; --subway: #5a88dc;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -61,14 +62,18 @@ svg.map.drag { cursor: grabbing; }
 .ward { fill: var(--land); stroke: var(--ward-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .ward-name { fill: var(--ink-3); font-family: var(--font-body); text-anchor: middle; pointer-events: none; }
 .rl { fill: none; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; pointer-events: none; }
-.rl.rail { stroke: var(--rail); stroke-width: 1.4; }
-.rl.subway { stroke: var(--subway); stroke-width: 1.4; stroke-dasharray: 3 2; }
-.rl.on { stroke: var(--pick); stroke-width: 3; stroke-dasharray: none; }
+.rl { stroke-width: 1.6; stroke-opacity: 0.85; }
+.rl.jr { stroke: var(--jr); }
+.rl.private { stroke: var(--private); }
+.rl.subway { stroke: var(--subway); stroke-dasharray: 4 2; }
+.rl.on { stroke-width: 4; stroke-opacity: 1; stroke-dasharray: none; }
 .rl-hit { fill: none; stroke: transparent; stroke-width: 9; vector-effect: non-scaling-stroke; pointer-events: stroke; }
 .layers { display: flex; gap: 10px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 5px 10px; font-size: 13px; }
 .layers label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
-.sw { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--rail); }
-.sw.sub { border-top: 2px dashed var(--subway); }
+.sw { display: inline-block; width: 18px; height: 0; border-top: 3px solid; }
+.sw.jr { border-color: var(--jr); }
+.sw.private { border-color: var(--private); }
+.sw.subway { border-top-style: dashed; border-color: var(--subway); }
 .st { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .st.hot { fill: var(--accent); }
 .st.pick { fill: var(--pick); stroke: var(--pick); fill-opacity: 0.55; stroke-width: 2; }
@@ -107,7 +112,7 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
 <div class="wrap">
   <header>
     <h1>23区 駅別乗降客数マップ</h1>
-    <p class="lede"><span class="num" id="count">490</span> 駅の1日平均乗降客数（2024年）。円の面積が乗降客数に比例します。乗換駅は事業者の合計。ホイールやボタンで拡大、ドラッグで移動。円に触れると駅の詳細、線に触れると路線名が出ます。</p>
+    <p class="lede"><span class="num" id="count">490</span> 駅の1日平均乗降客数（2024年）。円の面積が乗降客数に比例します。乗換駅は事業者の合計。ホイールやボタンで拡大、ドラッグで移動。円に触れると駅の詳細、線に触れると路線名が出ます。路線はJR・私鉄・地下鉄ごとに表示を切り替えられます。</p>
   </header>
 
   <div class="mapbox" id="mapbox">
@@ -116,8 +121,9 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
         <input id="q" type="search" placeholder="例: 亀戸" autocomplete="off">
       </label>
       <div class="layers">
-        <label for="lyRail"><input id="lyRail" type="checkbox" checked><span class="sw"></span>JR・私鉄</label>
-        <label for="lySub"><input id="lySub" type="checkbox" checked><span class="sw sub"></span>地下鉄</label>
+        <label for="lyJr"><input id="lyJr" type="checkbox" checked><span class="sw jr"></span>JR</label>
+        <label for="lyPrivate"><input id="lyPrivate" type="checkbox" checked><span class="sw private"></span>私鉄</label>
+        <label for="lySub"><input id="lySub" type="checkbox" checked><span class="sw subway"></span>地下鉄</label>
       </div>
       <span class="msg" id="msg" aria-live="polite"></span>
       <div class="zoom">
@@ -142,7 +148,7 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
       <button class="btn" id="more" type="button">全駅を表示</button>
     </div>
     <div class="rows" id="rows"></div>
-    <p class="note">出典: 国土交通省「国土数値情報（駅別乗降客数データ）」S12-25 を加工して作成。同じ駅名で500m以内の駅、S12で同じグループの駅を1駅にまとめ、同じ事業者の重複は除いています。店数は駅から半径1kmの飲食店（Overture Maps、重複をまとめた後）。乗降客数が載っていない3駅は除いています。区の境界と線路は Overture Maps Foundation（divisions、transportation。線路は OpenStreetMap 由来、© OpenStreetMap contributors、ODbL）。</p>
+    <p class="note">出典: 国土交通省「国土数値情報（駅別乗降客数データ）」S12-25 を加工して作成。同じ駅名で500m以内の駅、S12で同じグループの駅を1駅にまとめ、同じ事業者の重複は除いています。店数は駅から半径1kmの飲食店（Overture Maps、重複をまとめた後）。乗降客数が載っていない3駅は除いています。区の境界と線路は Overture Maps Foundation（divisions、transportation。線路は OpenStreetMap 由来、© OpenStreetMap contributors、ODbL）。路線の区分は路線名から付けています。私鉄には都電・モノレール・ゆりかもめ・りんかい線・日暮里舎人ライナーなども含みます。車両基地の線や廃線跡は描いていません。</p>
   </section>
 </div>
 
@@ -191,7 +197,7 @@ function layerToggle(id, kind) {
   };
   box.addEventListener("change", sync); sync();
 }
-layerToggle("lyRail", "rail"); layerToggle("lySub", "subway");
+layerToggle("lyJr", "jr"); layerToggle("lyPrivate", "private"); layerToggle("lySub", "subway");
 
 // 大きい円を下に、小さい円を上に
 const circles = D.stations.map((s, i) => el("circle", { cx: s.x, cy: s.y, r: R(s.p), class: "st", "data-i": i }, gC));
@@ -326,6 +332,7 @@ function nearest(clientX, clientY) {
   return best;
 }
 
+const KIND = { jr: "JR", private: "私鉄（都電・モノレール・ゆりかもめ・りんかい線などを含む）", subway: "地下鉄" };
 let hot = -1, hotRail = -1;
 function clearRail() { if (hotRail >= 0) railEls[hotRail].classList.remove("on"); hotRail = -1; }
 function hover(e) {
@@ -342,7 +349,7 @@ function hover(e) {
     const rail = D.rails[hotRail];
     railEls[hotRail].classList.add("on");
     railEls[hotRail].parentNode.appendChild(railEls[hotRail]);
-    placeTip(`<b>${rail.n || "名称のない線路"}</b><div class="ops">${rail.k === "subway" ? "地下鉄" : "JR・私鉄など"}</div>`, e.clientX, e.clientY);
+    placeTip(`<b>${rail.n || "名称のない線路"}</b><div class="ops">${KIND[rail.k]}</div>`, e.clientX, e.clientY);
     return;
   }
   hideTip();
