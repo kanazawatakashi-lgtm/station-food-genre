@@ -59,7 +59,7 @@ RAIL_NAME = {
     "Tōhoku-Hauptlinie": "JR東北本線", "東北本線": "JR東北本線", "Yamanote-Linie": "山手線",
     "せいぶいけぶくろせん": "西武池袋線", "西武鉄道新宿線": "西武新宿線",
     "東急電鉄世田谷線": "東急世田谷線", "東京急行電鉄世田谷線": "東急世田谷線",
-    "京浜急行電鉄連続立体交差事業": "京浜急行電鉄本線", "北総鉄道": "北総線",
+    "京浜急行電鉄連続立体交差事業": "京浜急行電鉄本線", "北総鉄道": "北総線", "Keihin-Tōhoku-Linie": "京浜東北線",
 }
 # 車両基地の線・遊園地の乗り物・廃線跡・計画線など、路線として描かないもの
 RAIL_DROP = re.compile(r"番線$|引上|機待|機留|機回|機走|機関区|仕業|仕訳|検修|修繕|洗浄|留置|着発|到着|出発|収納|材料線|車両所|車輪"
@@ -74,6 +74,26 @@ JR = re.compile(r"^JR|山手|京浜東北|常磐|中央|総武|東海道|東北|
 def rail_name(raw):
     n = raw.split(" (")[0].split(";")[0].strip()
     return RAIL_NAME.get(n, n)
+
+
+GENERIC_NAMES = {"東京メトロ"}  # 会社名だけの名前。線の上には出さない（触れたときだけ出る）
+JA_CHARS = re.compile(r"[ぁ-んァ-ヶ一-龥]")
+
+
+def rail_name_ja(names):
+    """路線名を日本語で返す。主の名前が日本語でなければ、別名の日本語（ja）→ RAIL_NAME の順に探し、
+    見つからなければ名前なし扱い（""）。"""
+    names = names or {}
+    raw = names.get("primary") or ""
+    if not raw:
+        return ""
+    name = rail_name(raw)
+    if JA_CHARS.search(name):
+        return name
+    for lang, v in names.get("common") or []:
+        if lang == "ja" and v:
+            return rail_name(v)
+    return ""
 
 
 def rail_kind(name):
@@ -195,8 +215,7 @@ def load_rails(area_geom):
         g = wkb.loads(r["geometry"])
         if g.geom_type != "LineString":
             continue
-        raw = (r["names"] or {}).get("primary") or ""
-        name = rail_name(raw) if raw else ""
+        name = rail_name_ja(r["names"])
         if name and RAIL_DROP.search(name):
             name = ""
         segs.append((name, g, r["class"]))
@@ -211,12 +230,20 @@ def load_rails(area_geom):
     for name, own in by_line.items():
         merged = linemerge(MultiLineString([[a, b] for a, b in graph.fill_gaps(own)]))
         g = merged.intersection(clip)
-        d = []
+        d, anchors = [], []
         for line in ([g] if g.geom_type == "LineString" else [x for x in getattr(g, "geoms", []) if x.geom_type == "LineString"]):
-            if not line.is_empty:
-                d.append(line_path(line.simplify(0.00015).coords))
+            if line.is_empty:
+                continue
+            d.append(line_path(line.simplify(0.00015).coords))
+            # 路線名を置く位置: 3km 以上の線に、おおむね 5km おきに
+            km = _length_m(line) / 1000
+            if km >= 3 and name not in GENERIC_NAMES:
+                n = max(1, round(km / 5))
+                for j in range(n):
+                    p = line.interpolate((j + 0.5) / n, normalized=True)
+                    anchors.append(xy(p.x, p.y))
         if d:
-            rails.append({"k": rail_kind(name), "n": name, "d": "".join(d)})
+            rails.append({"k": rail_kind(name), "n": name, "d": "".join(d), "a": anchors})
     order = {"subway": 0, "private": 1, "jr": 2}
     rails.sort(key=lambda r: order[r["k"]])  # 地下鉄を下に
     return rails

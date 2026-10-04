@@ -37,7 +37,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.6; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.6; }
 .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 48px; display: grid; gap: 20px; }
 header { display: grid; gap: 4px; }
 h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(22px, 3.2vw, 30px); letter-spacing: 0.02em; margin: 0; text-wrap: balance; }
@@ -54,7 +54,7 @@ h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(22px, 
 .btn:hover { border-color: var(--accent); color: var(--accent); }
 .btn:focus-visible, .row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .zoom { margin-left: auto; display: flex; gap: 6px; }
-.msg { color: var(--ink-3); font-size: 12px; }
+.msg { color: var(--ink-2); font-size: 14px; }
 
 svg.map { display: block; width: 100%; height: min(78vh, 900px); min-height: 360px; touch-action: none; cursor: grab; }
 @media (max-width: 560px) { svg.map { height: 72vh; } }
@@ -67,8 +67,14 @@ svg.map.drag { cursor: grabbing; }
 .rl.private { stroke: var(--private); }
 .rl.subway { stroke: var(--subway); stroke-dasharray: 4 2; }
 .rl.on { stroke-width: 4; stroke-opacity: 1; stroke-dasharray: none; }
+.rail-lbl { pointer-events: none; }
+.rail-lbl rect { fill: var(--panel); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.rail-lbl.jr rect { stroke: var(--jr); }
+.rail-lbl.private rect { stroke: var(--private); }
+.rail-lbl.subway rect { stroke: var(--subway); stroke-dasharray: 4 2; }
+.rail-lbl text { fill: var(--ink); font-family: var(--font-body); font-weight: 700; dominant-baseline: central; text-anchor: middle; }
 .rl-hit { fill: none; stroke: transparent; stroke-width: 9; vector-effect: non-scaling-stroke; pointer-events: stroke; }
-.layers { display: flex; gap: 10px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 5px 10px; font-size: 13px; }
+.layers { display: flex; gap: 10px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 5px 10px; font-size: 14px; }
 .layers label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
 .sw { display: inline-block; width: 18px; height: 0; border-top: 3px solid; }
 .sw.jr { border-color: var(--jr); }
@@ -79,17 +85,22 @@ svg.map.drag { cursor: grabbing; }
 .st.pick { fill: var(--pick); stroke: var(--pick); fill-opacity: 0.55; stroke-width: 2; }
 .lbl { fill: var(--ink); font-family: var(--font-body); font-weight: 700; paint-order: stroke; stroke: var(--land); stroke-linejoin: round; pointer-events: none; }
 
-.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; border-top: 1px solid var(--rule); padding-block: 8px; padding-inline: 12px; font-size: 12px; color: var(--ink-2); }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; border-top: 1px solid var(--rule); padding-block: 8px; padding-inline: 12px; font-size: 13px; color: var(--ink-2); }
 .legend svg circle { fill: none; stroke: var(--ink-3); }
-.legend svg text { fill: var(--ink-2); font-size: 11px; font-family: var(--font-body); }
+.legend svg text { fill: var(--ink-2); font-size: 12px; font-family: var(--font-body); }
 .legend .t { font-weight: 700; color: var(--ink); }
 
-.tip { position: absolute; z-index: 3; pointer-events: none; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; box-shadow: 0 4px 16px rgba(0,0,0,.12); font-size: 13px; min-width: 170px; max-width: 260px; }
-.tip b { font-family: var(--font-display); font-size: 15px; }
+.tip { position: absolute; z-index: 3; pointer-events: none; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; box-shadow: 0 4px 16px rgba(0,0,0,.12); font-size: 14px; min-width: 190px; max-width: 300px; }
+.tip b { font-family: var(--font-display); font-size: 17px; }
+.tip .line { display: flex; align-items: center; gap: 8px; }
+.tip .line i { width: 22px; height: 0; border-top: 4px solid; flex: none; }
+.tip .line i.jr { border-color: var(--jr); }
+.tip .line i.private { border-color: var(--private); }
+.tip .line i.subway { border-color: var(--subway); border-top-style: dashed; }
 .tip dl { display: grid; grid-template-columns: auto 1fr; gap: 0 10px; margin: 4px 0 0; }
 .tip dt { color: var(--ink-3); }
 .tip dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
-.tip .ops { color: var(--ink-2); font-size: 12px; margin-top: 4px; }
+.tip .ops { color: var(--ink-2); font-size: 13px; margin-top: 4px; }
 
 .rank { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding-block: 16px; padding-inline: 16px; display: grid; gap: 12px; }
 .rank-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; }
@@ -101,9 +112,9 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
 .row .n { font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row .bar { height: 10px; background: var(--accent); border-radius: 0 4px 4px 0; min-width: 2px; }
 .row .v { text-align: right; font-variant-numeric: tabular-nums; }
-.note { color: var(--ink-3); font-size: 12px; margin: 0; max-width: 80ch; }
+.note { color: var(--ink-3); font-size: 13px; margin: 0; max-width: 80ch; }
 @media (max-width: 560px) {
-  .row { grid-template-columns: 2.2em 6em 1fr 6.2em; gap: 6px; font-size: 13px; }
+  .row { grid-template-columns: 2.2em 6em 1fr 6.2em; gap: 6px; font-size: 14px; }
   .search input { width: 7em; }
 }
 @media (prefers-reduced-motion: no-preference) { svg.map .st { transition: fill .15s; } }
@@ -112,7 +123,7 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
 <div class="wrap">
   <header>
     <h1>23区 駅別乗降客数マップ</h1>
-    <p class="lede"><span class="num" id="count">490</span> 駅の1日平均乗降客数（2024年）。円の面積が乗降客数に比例します。乗換駅は事業者の合計。ホイールやボタンで拡大、ドラッグで移動。円に触れると駅の詳細、線に触れると路線名が出ます。路線はJR・私鉄・地下鉄ごとに表示を切り替えられます。</p>
+    <p class="lede"><span class="num" id="count">490</span> 駅の1日平均乗降客数（2024年）。円の面積が乗降客数に比例します。乗換駅は事業者の合計。ホイールやボタンで拡大、ドラッグで移動。円に触れると駅の詳細、線に触れると路線名が出ます。拡大すると路線名が線の上に表示されます。路線はJR・私鉄・地下鉄ごとに表示を切り替えられます。</p>
   </header>
 
   <div class="mapbox" id="mapbox">
@@ -124,6 +135,7 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
         <label for="lyJr"><input id="lyJr" type="checkbox" checked><span class="sw jr"></span>JR</label>
         <label for="lyPrivate"><input id="lyPrivate" type="checkbox" checked><span class="sw private"></span>私鉄</label>
         <label for="lySub"><input id="lySub" type="checkbox" checked><span class="sw subway"></span>地下鉄</label>
+        <label for="lyNames"><input id="lyNames" type="checkbox" checked>路線名</label>
       </div>
       <span class="msg" id="msg" aria-live="polite"></span>
       <div class="zoom">
@@ -133,7 +145,7 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
       </div>
     </div>
     <svg class="map" id="map" role="img" aria-label="23区の駅の位置と乗降客数を円の大きさで表した地図">
-      <g id="wards"></g><g id="wardNames"></g><g id="rails"></g><g id="railHits"></g><g id="circles"></g><g id="labels"></g>
+      <g id="wards"></g><g id="wardNames"></g><g id="rails"></g><g id="railHits"></g><g id="circles"></g><g id="railLabels"></g><g id="labels"></g>
     </svg>
     <div class="legend" aria-hidden="true">
       <span class="t">円の大きさ＝1日平均乗降客数（いまの拡大率での大きさ）</span>
@@ -194,9 +206,42 @@ function layerToggle(id, kind) {
     const on = box.checked;
     railEls.forEach((p, i) => { if (D.rails[i].k === kind) p.style.display = on ? "" : "none"; });
     gRH.querySelectorAll(`[data-k="${kind}"]`).forEach(p => { p.style.display = on ? "" : "none"; });
+    if (typeof apply === "function" && ready) apply();
   };
   box.addEventListener("change", sync); sync();
 }
+let ready = false;
+let stationBoxes = [];
+const kindOn = k => document.getElementById({ jr: "lyJr", private: "lyPrivate", subway: "lySub" }[k]).checked;
+// 路線名のラベル。拡大すると表示し、重なるものは省く（駅名・線と同じく画面上で一定の大きさ）
+const gRL = document.getElementById("railLabels");
+function drawRailLabels(px, zoom) {
+  gRL.innerHTML = "";
+  if (!document.getElementById("lyNames").checked || zoom < 1.8) return;
+  const fs = 13 * px, padX = 6 * px, h = 20 * px;
+  const placed = stationBoxes.slice(); // 駅名と重ならないように
+  const view = { x0: vb.x, y0: vb.y, x1: vb.x + vb.w, y1: vb.y + vb.h };
+  // JR → 私鉄 → 地下鉄の順に、同じ路線は近すぎる位置に2つ置かない
+  const order = { jr: 0, private: 1, subway: 2 };
+  const cand = [];
+  D.rails.forEach(r => { if (kindOn(r.k)) r.a.forEach(([x, y]) => cand.push({ r, x, y })); });
+  cand.sort((a, b) => order[a.r.k] - order[b.r.k]);
+  const lastOf = new Map();
+  for (const c of cand) {
+    if (c.x < view.x0 || c.x > view.x1 || c.y < view.y0 || c.y > view.y1) continue;
+    const w = c.r.n.length * fs + padX * 2;
+    const box = { x0: c.x - w / 2, x1: c.x + w / 2, y0: c.y - h / 2, y1: c.y + h / 2 };
+    if (placed.some(b => b.x0 < box.x1 && box.x0 < b.x1 && b.y0 < box.y1 && box.y0 < b.y1)) continue;
+    const prev = lastOf.get(c.r.n);
+    if (prev && Math.hypot(prev.x - c.x, prev.y - c.y) < 220 * px) continue;
+    placed.push(box); lastOf.set(c.r.n, c);
+    const g = el("g", { class: `rail-lbl ${c.r.k}` }, gRL);
+    el("rect", { x: box.x0, y: box.y0, width: w, height: h, rx: h / 2 }, g);
+    const t = el("text", { x: c.x, y: c.y, "font-size": fs }, g);
+    t.textContent = c.r.n;
+  }
+}
+document.getElementById("lyNames").addEventListener("change", () => apply());
 layerToggle("lyJr", "jr"); layerToggle("lyPrivate", "private"); layerToggle("lySub", "subway");
 
 // 大きい円を下に、小さい円を上に
@@ -227,17 +272,21 @@ function apply() {
   const px = unitPx(); // 画面1px あたりの地図座標
   const zoom = full.w / vb.w;
   const shown = zoom < 1.6 ? 14 : zoom < 3 ? 50 : zoom < 5 ? 160 : D.stations.length;
+  stationBoxes = [];
   labels.forEach((t, i) => {
     const s = D.stations[i];
     const on = i < shown || i === picked;
     t.style.display = on ? "" : "none";
     if (on) {
-      t.setAttribute("font-size", 12 * px);
-      t.setAttribute("stroke-width", 3 * px);
+      const tw = s.n.length * 14 * px, ty = s.y - R(s.p) - 4 * px;
+      stationBoxes.push({ x0: s.x - tw / 2, x1: s.x + tw / 2, y0: ty - 14 * px, y1: ty + 3 * px });
+      t.setAttribute("font-size", 14 * px);
+      t.setAttribute("stroke-width", 3.5 * px);
       t.setAttribute("y", s.y - R(s.p) - 4 * px);
     }
   });
-  gWN.querySelectorAll("text").forEach(t => { t.setAttribute("font-size", 11 * px); });
+  gWN.querySelectorAll("text").forEach(t => { t.setAttribute("font-size", 13 * px); });
+  drawRailLabels(px, zoom);
   gWN.style.display = zoom > 6 ? "none" : "";
   drawLegend();
 }
@@ -349,7 +398,7 @@ function hover(e) {
     const rail = D.rails[hotRail];
     railEls[hotRail].classList.add("on");
     railEls[hotRail].parentNode.appendChild(railEls[hotRail]);
-    placeTip(`<b>${rail.n || "名称のない線路"}</b><div class="ops">${KIND[rail.k]}</div>`, e.clientX, e.clientY);
+    placeTip(`<div class="line"><i class="${rail.k}"></i><b>${rail.n}</b></div><div class="ops">${KIND[rail.k]}</div>`, e.clientX, e.clientY);
     return;
   }
   hideTip();
@@ -416,6 +465,7 @@ function drawRows() {
 document.getElementById("more").onclick = () => { showAll = !showAll; drawRows(); };
 
 drawRows();
+ready = true;
 apply();
 window.addEventListener("resize", apply);
 </script>
