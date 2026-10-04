@@ -72,7 +72,7 @@ python scripts/census.py tokyo23                   # センサス補正の重み
 python scripts/station_table.py tokyo23            # 亀戸（common.py）
 python scripts/s12_stations.py <S12.geojson> --inspect                 # S12 の列を確認（ローカルで取得）
 python scripts/s12_stations.py <S12.geojson> --passengers <列名>       # → data/stations.csv
-python scripts/station_table.py tokyo23 --stations data/stations.csv  # 23区の全駅
+python scripts/station_table.py tokyo23 --stations data/stations.csv [--radius 500]  # 23区の全駅。半径は任意（既定 1000m）
 ```
 
 - 駅の集計は亀戸専用のパイプライン（JFF・OSM 込み）ではなく、23区の判定結果（Overture のみ）から切り出す。
@@ -81,7 +81,9 @@ python scripts/station_table.py tokyo23 --stations data/stations.csv  # 23区の
 - S12-25 は `data/s12/`（ユーザーが取得）。2024年の乗降客数は `S12_061`:
   `python scripts/s12_stations.py data/s12/S12-25_NumberOfPassengers.geojson --passengers S12_061`。
   別の版を使うときは `--inspect` で列を確認する
-- 乗降客1万人あたり店舗数は、円の重なりのため小さい駅ほど大きく出る（docs/method.md「23区の全駅」）
+- 円が重なる駅どうしで同じ店を重ねて数えてよい（ユーザー確認 2026-10-04）。乗降客1万人あたり店舗数は、
+  そのため小さい駅ほど大きく出る（docs/method.md「23区の全駅」）
+- 出力は半径ごとに `data/stations/tokyo23_r<半径>_*.csv`。円が23区の外にはみ出すか（near_edge）も半径ごとに判定
 
 ### 次にやること
 
