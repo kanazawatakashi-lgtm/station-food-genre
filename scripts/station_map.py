@@ -89,47 +89,134 @@ def line_path(coords):
     return "M" + "L".join(f"{x},{y}" for x, y in pts)
 
 
+def _key(c):
+    return (round(c[0], 6), round(c[1], 6))
+
+
+def _length_m(line):
+    return sum(math.hypot((x2 - x1) * 111320 * KX, (y2 - y1) * 110950)
+               for (x1, y1), (x2, y2) in zip(line.coords, list(line.coords)[1:]))
+
+
+class RailGraph:
+    """線路の頂点をノード、隣り合う頂点の間を辺にしたグラフ。Overture の線路は途中の頂点でもつながるので、
+    端点だけでなく全頂点を使う（同じ座標の頂点は同じノード）。"""
+
+    def __init__(self, segs):
+        self.adj = defaultdict(list)
+        self.edges_of = defaultdict(list)  # 線路の番号 → その線路の辺 (a, b)
+        for i, (_, g, _) in enumerate(segs):
+            pts = [_key(c) for c in g.coords]
+            for a, b in zip(pts, pts[1:]):
+                if a == b:
+                    continue
+                w = math.hypot((b[0] - a[0]) * 111320 * KX, (b[1] - a[1]) * 110950)
+                self.adj[a].append((b, w))
+                self.adj[b].append((a, w))
+                self.edges_of[i].append((a, b))
+
+    def fill_gaps(self, own, max_m=8000):
+        """own（ある路線の線路の番号）が途切れているところを、他の路線や名前のない線路を通る最短経路でつなぎ、
+        その路線に描く辺の一覧を返す。線路を共用する区間（山手線と京浜東北線など）は、元データでは
+        どちらか一方の名前しか付いていないため。つなぐのは、途切れの両端が線路づたいに max_m 以内で、
+        遠回り（直線距離の2倍＋300m 超）にならない場合だけ。"""
+        import heapq
+        edges = [e for i in own for e in self.edges_of[i]]
+        parent = {}
+
+        def find(n):
+            while parent.setdefault(n, n) != n:
+                parent[n] = parent[parent[n]]
+                n = parent[n]
+            return n
+
+        for a, b in edges:
+            parent[find(a)] = find(b)
+        nodes = {n for e in edges for n in e}
+        tried = set()
+        while True:
+            comps = defaultdict(set)
+            for n in nodes:
+                comps[find(n)].add(n)
+            todo = [r for r in comps if r not in tried]
+            if len(comps) < 2 or not todo:
+                break
+            root = todo[0]
+            start = comps[root]
+            dist = {n: 0.0 for n in start}
+            prev = {}
+            heap = [(0.0, n) for n in start]
+            goal = None
+            while heap:
+                d, n = heapq.heappop(heap)
+                if d > dist.get(n, 1e18):
+                    continue
+                if n in nodes and find(n) != root:
+                    goal = n
+                    break
+                for m, w in self.adj[n]:
+                    nd = d + w
+                    if nd <= max_m and nd < dist.get(m, 1e18):
+                        dist[m] = nd
+                        prev[m] = n
+                        heapq.heappush(heap, (nd, m))
+            if goal is None:
+                tried.add(root)
+                continue
+            path, n = [], goal
+            while n in prev:
+                path.append((prev[n], n))
+                n = prev[n]
+            straight = math.hypot((goal[0] - n[0]) * 111320 * KX, (goal[1] - n[1]) * 110950)
+            if dist[goal] > straight * 2 + 300:
+                tried.add(root)
+                continue
+            for a, b in path:
+                parent[find(a)] = find(b)
+                nodes.update((a, b))
+            edges.extend(path)
+            tried.discard(root)
+        return edges
+
+
 def load_rails(area_geom):
     """JR・私鉄・地下鉄に分け、路線名ごとに線路をまとめて SVG パスにする。23区の外は少し余白を残して切る。
-    名前のない線路は、60m 以内にある名前つきの線路と同じ路線とみなす（見つからなければ描かない）。"""
+    路線が途切れているところは _fill_gaps で他の線路を通してつなぐ（共用区間は両方の路線に描く）。"""
     import os
-    from shapely.strtree import STRtree
     path = "data/areas/tokyo23_rail.parquet"
     if not os.path.exists(path):
         return []
     clip = area_geom.buffer(0.01)
-    named, unnamed = [], []
+    segs = []  # (路線名 or "", LineString)
     for r in pq.read_table(path).to_pylist():
         flags = {v for f in (r["rail_flags"] or []) for v in f["values"]}
-        if r["class"] not in RAIL_CLASSES or flags & RAIL_SKIP_FLAGS:
+        if (r["class"] not in RAIL_CLASSES and r["class"] != "unknown") or flags & RAIL_SKIP_FLAGS:
             continue
-        g = wkb.loads(r["geometry"]).intersection(clip)
-        if g.is_empty:
+        g = wkb.loads(r["geometry"])
+        if g.geom_type != "LineString":
             continue
         raw = (r["names"] or {}).get("primary") or ""
-        if raw:
-            name = rail_name(raw)
-            if not RAIL_DROP.search(name):
-                named.append((name, g))
-        else:
-            unnamed.append(g)
-    tree = STRtree([g for _, g in named])
-    near = 60 / 111000
-    groups = defaultdict(list)
-    for name, g in named:
-        groups[name].append(g)
-    for g in unnamed:
-        hits = tree.query(g, predicate="dwithin", distance=near)
-        if len(hits):
-            best = min(hits, key=lambda i: named[i][1].distance(g))
-            groups[named[best][0]].append(g)
+        name = rail_name(raw) if raw else ""
+        if name and RAIL_DROP.search(name):
+            name = ""
+        segs.append((name, g, r["class"]))
+    by_line = defaultdict(list)
+    for i, (name, _, _) in enumerate(segs):
+        if name:
+            by_line[name].append(i)
+    from shapely.geometry import MultiLineString
+    from shapely.ops import linemerge
+    graph = RailGraph(segs)
     rails = []
-    for name, gs in groups.items():
+    for name, own in by_line.items():
+        merged = linemerge(MultiLineString([[a, b] for a, b in graph.fill_gaps(own)]))
+        g = merged.intersection(clip)
         d = []
-        for g in gs:
-            for line in ([g] if g.geom_type == "LineString" else [x for x in getattr(g, "geoms", []) if x.geom_type == "LineString"]):
+        for line in ([g] if g.geom_type == "LineString" else [x for x in getattr(g, "geoms", []) if x.geom_type == "LineString"]):
+            if not line.is_empty:
                 d.append(line_path(line.simplify(0.00015).coords))
-        rails.append({"k": rail_kind(name), "n": name, "d": "".join(d)})
+        if d:
+            rails.append({"k": rail_kind(name), "n": name, "d": "".join(d)})
     order = {"subway": 0, "private": 1, "jr": 2}
     rails.sort(key=lambda r: order[r["k"]])  # 地下鉄を下に
     return rails

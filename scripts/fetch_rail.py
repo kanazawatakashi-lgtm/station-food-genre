@@ -16,8 +16,9 @@ BBOX = (139.54, 35.50, 139.94, 35.84)
 
 
 def main():
-    f = ((pc.field("subtype") == "rail") & (pc.field("bbox", "xmin") >= BBOX[0]) & (pc.field("bbox", "xmax") <= BBOX[2])
-         & (pc.field("bbox", "ymin") >= BBOX[1]) & (pc.field("bbox", "ymax") <= BBOX[3]))
+    # 範囲に少しでもかかる線路を取る（範囲の端で線が切れないように）
+    f = ((pc.field("subtype") == "rail") & (pc.field("bbox", "xmax") >= BBOX[0]) & (pc.field("bbox", "xmin") <= BBOX[2])
+         & (pc.field("bbox", "ymax") >= BBOX[1]) & (pc.field("bbox", "ymin") <= BBOX[3]))
     t = ds.dataset(SEGMENTS, filesystem=s3fs(), format="parquet").to_table(
         columns=["id", "class", "names", "rail_flags", "level_rules", "geometry"], filter=f)
     pq.write_table(t, "data/areas/tokyo23_rail.parquet")
