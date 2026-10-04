@@ -8,10 +8,13 @@
 出力: data/stations.csv  列 key, name, lat, lng, passengers, operators, near_edge
 
 S12 の列名（どの年の乗降客数が何番の列か）は版によって違うので、まず --inspect で確かめてから
---passengers に最新年の乗降客数の列を指定する。（このスクリプトは実データで未確認。2026-10-03）
+--passengers に最新年の乗降客数の列を指定する。
+S12-25（2026-10-04 取得）は S12_006 から1年4列（重複コード・データ有無・備考・乗降客数）で 2011〜2024 年。
+2024 年の乗降客数は S12_061。重複コード 2 の行（別路線として重ねて載せた行）は乗降客数が 0 になっている。
 
 まとめ方:
-- 同じグループコード（乗換駅として同じ駅とみなされる単位）の駅を1駅にする
+- 同じグループコード（乗換駅として同じ駅とみなされる単位）の駅を1駅にする。グループコードが違っても、
+  同じ駅名で中心が MERGE_M 以内なら1駅にする（S12 では東京駅の京葉線などが別グループになっている）
 - 乗降客数は、事業者ごとに最大の値を取って合計する。S12 は同じ事業者の同じ駅を路線ごとに
   同じ数字で載せていることがあり、単純に足すと二重に数えるため
 - 位置はグループ内の駅（線）の座標の平均
@@ -28,7 +31,9 @@ from shapely import wkb
 from shapely.geometry import Point
 from shapely.ops import unary_union
 
-from common import RADIUS_M
+from common import RADIUS_M, haversine_m
+
+MERGE_M = 500
 
 
 def coords(geom):
@@ -81,18 +86,35 @@ def main():
         p = f["properties"]
         groups[p.get(args.group) or p.get(args.name)].append((p, coords(f["geometry"])))
 
+    def center(members):
+        pts = [c for _, cs in members for c in cs]
+        return sum(c[1] for c in pts) / len(pts), sum(c[0] for c in pts) / len(pts)
+
+    def main_name(members):
+        return Counter(p.get(args.name) for p, _ in members).most_common(1)[0][0]
+
+    # 同じ駅名で近いグループをまとめる（駅名ごとに比べる）
+    by_name = defaultdict(list)
+    for g, members in groups.items():
+        by_name[main_name(members)].append(g)
+    for gs in by_name.values():
+        for i, a in enumerate(gs):
+            if a not in groups:
+                continue
+            for b in gs[i + 1:]:
+                if b in groups and haversine_m(*center(groups[a]), *center(groups[b])) <= MERGE_M:
+                    groups[a] += groups.pop(b)
+
     rows = []
     for g, members in groups.items():
-        pts = [c for _, cs in members for c in cs]
-        lng = sum(c[0] for c in pts) / len(pts)
-        lat = sum(c[1] for c in pts) / len(pts)
+        lat, lng = center(members)
         pt = Point(lng, lat)
         if not area.contains(pt):
             continue
         by_op = defaultdict(float)
         for p, _ in members:
             by_op[p.get(args.operator)] = max(by_op[p.get(args.operator)], num(p.get(args.passengers)))
-        name = Counter(p.get(args.name) for p, _ in members).most_common(1)[0][0]
+        name = main_name(members)
         rows.append({"key": str(g), "name": name, "lat": round(lat, 6), "lng": round(lng, 6),
                      "passengers": int(sum(by_op.values())) or "", "operators": "|".join(sorted(map(str, by_op))),
                      "near_edge": 0 if inner.contains(pt) else 1})

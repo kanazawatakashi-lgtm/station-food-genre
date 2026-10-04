@@ -28,3 +28,4 @@ python scripts/station_table.py tokyo23 [--stations data/stations.csv]   # 駅�
 - OpenPOI API（https://openpoiapi.com/）。レコードごとの `licenses` / `attributions` を保持
 - © OpenStreetMap contributors（ODbL）。`apply_osm.py` を使った場合
 - 総務省・経済産業省「令和3年経済センサス‐活動調査」（e-Stat）。`data/census/`
+- 「国土数値情報（駅別乗降客数データ）」（国土交通省）S12-25 を加工して作成。`data/s12/`、`data/stations.csv`
