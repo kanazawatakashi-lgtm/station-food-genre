@@ -184,3 +184,9 @@ python scripts/fetch_openpoi.py kameido
 - ライセンス: `docs/licenses.md`。S12-25（乗降客数）は公共データ利用規約 第1.0版で商用可（ユーザー確認）。古い版は非商用なので使わない。
   線路・区の境界（Overture、ODbL）は国土数値情報 N02・N03 に置き換える
 - **サービスに載せる注記（出典表示、データの時点、数字の限界）は `docs/disclosures.md` に作業のたびに足す**（ユーザーの指示。最後にまとめて載せる）
+- **アプリ**: `python scripts/build_app.py` → `docs/app.html`（データ埋め込みの1ファイル、約5MB）。
+  駅カード（300/500/1000m）、比較（5駅）、ジャンルで探す（LQ で地図を塗る）、地点分析（50/100/300m の店一覧）。
+  公開先 https://claude.ai/artifact/LWtYAoxwNX1yRruwZFWMDF 。人口・地価・住所検索は「準備中」の枠だけある（`docs/next_data.md` のデータ待ち）
+- 線路・区の境界は国土数値情報 N02・N03 に置き換え済み（`scripts/ksj.py`）。Overture の rail/divisions はもう使わない
+- 駐車料金は無料で商用に使えるデータがない → 地価公示（L01）を直接使う案（`docs/parking_research.md`）
+

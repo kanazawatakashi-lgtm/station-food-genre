@@ -1,0 +1,565 @@
+<title>駅まわり出店ナビ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+New:wght@700;900&display=swap">
+<style>
+/* 左に地図、右に分析パネル（タブ: 駅・比較・ジャンルで探す・地点分析）。狭い画面では縦に積む */
+:root {
+  --bg: #eef1ef; --panel: #ffffff; --land: #fbfcfb; --ward-line: #c9d1cd; --rule: #d8dfdc;
+  --ink: #1d2523; --ink-2: #4d5a56; --ink-3: #7c8985;
+  --accent: #2b3634; --accent-soft: rgba(43, 54, 52, 0.14); --pick: #b4531f;
+  --jr: #4f8a2e; --private: #c0457a; --subway: #2f5fb3; --on-line: #ffffff;
+  --g0: #c2462e; --g1: #7d4fb5; --g2: #b07a12; --g3: #2a7fb8; --g4: #2f8a5f; --g5: #a7b0ad;
+  --lo: #2a7fb8; --mid: #c3cac7; --hi: #c2462e;
+  --font-display: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --font-body: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111716; --panel: #171e1d; --land: #1a2120; --ward-line: #34403d; --rule: #2a3331;
+    --ink: #e6ecea; --ink-2: #aab6b2; --ink-3: #7d8a86; --accent: #d9e2df; --accent-soft: rgba(217, 226, 223, 0.14); --pick: #f08a4b;
+    --jr: #5f9e3f; --private: #d16a96; --subway: #5a88dc; --on-line: #111716;
+    --g0: #d9604a; --g1: #9d78d4; --g2: #b38020; --g3: #4e94d0; --g4: #3f9a6e; --g5: #5d6966;
+    --lo: #4e94d0; --mid: #46524f; --hi: #d9604a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111716; --panel: #171e1d; --land: #1a2120; --ward-line: #34403d; --rule: #2a3331;
+  --ink: #e6ecea; --ink-2: #aab6b2; --ink-3: #7d8a86; --accent: #d9e2df; --accent-soft: rgba(217, 226, 223, 0.14); --pick: #f08a4b;
+  --jr: #5f9e3f; --private: #d16a96; --subway: #5a88dc; --on-line: #111716;
+  --g0: #d9604a; --g1: #9d78d4; --g2: #b38020; --g3: #4e94d0; --g4: #3f9a6e; --g5: #5d6966;
+  --lo: #4e94d0; --mid: #46524f; --hi: #d9604a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.6; margin: 0; }
+.wrap { max-width: 1400px; margin: 0 auto; padding-inline: 16px; padding-block: 18px 40px; display: grid; gap: 14px; }
+header { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; }
+h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(22px, 2.6vw, 28px); margin: 0; letter-spacing: 0.02em; }
+.sub { color: var(--ink-2); margin: 0; }
+.num { font-variant-numeric: tabular-nums; }
+.main { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; }
+
+/* 地図 */
+.mapbox { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 8px); overflow: hidden; }
+@media (max-width: 900px) { .mapbox { position: relative; top: 0; } }
+.tools { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; pointer-events: none; z-index: 2; }
+.tools > * { pointer-events: auto; }
+.layers { display: flex; gap: 10px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 4px 10px; font-size: 13px; }
+.layers label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.sw { display: inline-block; width: 16px; height: 0; border-top: 3px solid; }
+.sw.jr { border-color: var(--jr); } .sw.private { border-color: var(--private); } .sw.subway { border-color: var(--subway); border-top-style: dashed; }
+.zoom { margin-left: auto; display: flex; gap: 6px; }
+.btn { font: inherit; font-size: 14px; color: var(--ink); background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; min-height: 34px; padding: 0 12px; cursor: pointer; }
+.btn:hover { border-color: var(--ink-2); }
+.btn.primary { background: var(--accent); color: var(--panel); border-color: var(--accent); }
+.btn:focus-visible, .tab:focus-visible, .row:focus-visible, .chip:focus-visible { outline: 2px solid var(--pick); outline-offset: 2px; }
+svg.map { display: block; width: 100%; height: min(82vh, 860px); min-height: 380px; touch-action: none; cursor: grab; background: var(--panel); }
+@media (max-width: 900px) { svg.map { height: 62vh; } }
+svg.map.drag { cursor: grabbing; } svg.map.pointmode { cursor: crosshair; }
+.ward { fill: var(--land); stroke: var(--ward-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ward-name { fill: var(--ink-3); font-family: var(--font-body); text-anchor: middle; pointer-events: none; }
+.rl { fill: none; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; stroke-width: 1.5; stroke-opacity: 0.8; pointer-events: none; }
+.rl.jr { stroke: var(--jr); } .rl.private { stroke: var(--private); } .rl.subway { stroke: var(--subway); stroke-dasharray: 4 2; }
+.muted .rl { stroke: var(--ink-3); stroke-opacity: 0.35; }
+.st { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.zoomed .st { fill: none; stroke-opacity: 0.5; }
+.st.sel { fill: var(--pick); fill-opacity: 0.5; stroke: var(--pick); stroke-width: 2; }
+.st.cmp { stroke: var(--pick); stroke-width: 2; }
+.lbl { fill: var(--ink); font-family: var(--font-body); font-weight: 700; paint-order: stroke; stroke: var(--land); stroke-linejoin: round; pointer-events: none; text-anchor: middle; }
+.ring { fill: var(--pick); fill-opacity: 0.06; stroke: var(--pick); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-dasharray: 6 3; pointer-events: none; }
+.dot { stroke: var(--panel); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.dot.hot { stroke: var(--ink); stroke-width: 2.5; }
+.pin { fill: var(--pick); stroke: var(--panel); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; border-top: 1px solid var(--rule); padding-block: 8px; padding-inline: 12px; font-size: 13px; color: var(--ink-2); }
+.key { display: inline-flex; align-items: center; gap: 5px; }
+.key i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.ramp { width: 120px; height: 10px; border-radius: 3px; background: linear-gradient(90deg, var(--lo), var(--mid), var(--hi)); display: inline-block; }
+.tip { position: absolute; z-index: 5; pointer-events: none; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; box-shadow: 0 4px 16px rgba(0,0,0,.14); font-size: 14px; max-width: 280px; }
+.tip b { font-family: var(--font-display); font-size: 16px; }
+.tip .s { color: var(--ink-2); font-size: 13px; }
+
+/* パネル */
+.panel { display: grid; min-width: 0; }
+.tabs { display: flex; border-bottom: 1px solid var(--rule); overflow-x: auto; }
+.tab { font: inherit; font-weight: 700; font-size: 15px; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--ink-2); padding: 12px 14px 9px; cursor: pointer; white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--pick); }
+.pane { padding-block: 16px; padding-inline: 16px; display: grid; gap: 16px; min-width: 0; }
+.search { display: flex; gap: 8px; flex-wrap: wrap; }
+.search input, .search select, select.inp, input.inp { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 10px; min-height: 36px; min-width: 0; }
+.search input { flex: 1 1 12em; }
+h2 { font-family: var(--font-display); font-size: 22px; margin: 0; line-height: 1.3; }
+h3 { font-size: 15px; margin: 0; color: var(--ink-2); font-weight: 700; }
+.muted-t { color: var(--ink-3); font-size: 13px; margin: 0; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.seg button { font: inherit; font-size: 14px; border: 0; background: var(--panel); color: var(--ink-2); padding: 6px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--panel); font-weight: 700; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+.stat { border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; }
+.stat .v { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.stat .l { color: var(--ink-3); font-size: 12px; }
+.bar { display: flex; height: 16px; border-radius: 4px; overflow: hidden; gap: 2px; background: var(--panel); }
+.bar span { display: block; height: 100%; min-width: 2px; }
+.barrow { display: grid; grid-template-columns: 5.5em 1fr; gap: 8px; align-items: center; font-size: 13px; color: var(--ink-2); }
+.keys { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; }
+.lq { display: grid; gap: 4px; }
+.lqrow { display: grid; grid-template-columns: minmax(6em, 1fr) 4.5em 3.5em; gap: 8px; font-size: 14px; align-items: center; padding: 2px 0; border-bottom: 1px solid var(--rule); }
+.lqrow .v { text-align: right; font-variant-numeric: tabular-nums; }
+.lqrow .c { text-align: right; color: var(--ink-3); font-variant-numeric: tabular-nums; font-size: 13px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 520px) { .two { grid-template-columns: 1fr; } }
+.todo { border: 1px dashed var(--rule); border-radius: 6px; padding: 10px 12px; color: var(--ink-2); font-size: 14px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 14px; width: 100%; }
+th, td { padding: 6px 8px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: var(--panel); }
+thead th { color: var(--ink-2); font-weight: 700; font-size: 13px; }
+.rows { display: grid; }
+.row { display: grid; grid-template-columns: 2em minmax(5em, 1fr) 5em 4em 4em; gap: 8px; align-items: center; padding: 5px 4px; border-bottom: 1px solid var(--rule); cursor: pointer; font-size: 14px; }
+.row:hover { background: var(--bg); }
+.row .r { color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
+.row .n { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row .v { text-align: right; font-variant-numeric: tabular-nums; }
+.row.head { cursor: default; color: var(--ink-3); font-size: 12px; } .row.head:hover { background: none; }
+.list { max-height: 460px; overflow-y: auto; border-top: 1px solid var(--rule); }
+.srow { display: grid; grid-template-columns: 10px minmax(6em, 1fr) minmax(5em, 9em) 3.5em; gap: 8px; align-items: center; padding: 5px 2px; border-bottom: 1px solid var(--rule); font-size: 14px; }
+.srow i { width: 10px; height: 10px; border-radius: 50%; }
+.srow .n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.srow .g { color: var(--ink-2); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.srow .d { text-align: right; color: var(--ink-3); font-variant-numeric: tabular-nums; font-size: 13px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: inherit; font-size: 13px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+.chip b { margin-left: 4px; color: var(--ink-3); }
+.note { color: var(--ink-3); font-size: 12px; line-height: 1.7; margin: 0; }
+.foot { padding-block: 14px; padding-inline: 16px; display: grid; gap: 6px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>駅まわり出店ナビ</h1>
+    <p class="sub">東京23区・<span class="num" id="nSt"></span>駅の飲食店の構成と乗降客数（試作版）</p>
+  </header>
+
+  <div class="main">
+    <div class="card mapbox" id="mapbox">
+      <div class="tools">
+        <div class="layers" role="group" aria-label="路線の表示">
+          <label for="lyJr"><input id="lyJr" type="checkbox" checked><span class="sw jr"></span>JR</label>
+          <label for="lyPrivate"><input id="lyPrivate" type="checkbox" checked><span class="sw private"></span>私鉄</label>
+          <label for="lySub"><input id="lySub" type="checkbox" checked><span class="sw subway"></span>地下鉄</label>
+        </div>
+        <div class="zoom">
+          <button class="btn" id="zin" type="button" aria-label="拡大">＋</button>
+          <button class="btn" id="zout" type="button" aria-label="縮小">－</button>
+          <button class="btn" id="zreset" type="button">全体</button>
+        </div>
+      </div>
+      <svg class="map" id="map" role="img" aria-label="23区の駅と飲食店の地図">
+        <g id="gW"></g><g id="gWN"></g><g id="gR"></g><g id="gC"></g><g id="gP"></g><g id="gL"></g>
+      </svg>
+      <div class="legend" id="legend"></div>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+
+    <div class="card panel">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="t-station" aria-selected="true" aria-controls="p-station">駅</button>
+        <button class="tab" role="tab" id="t-compare" aria-selected="false" aria-controls="p-compare">比較</button>
+        <button class="tab" role="tab" id="t-genre" aria-selected="false" aria-controls="p-genre">ジャンルで探す</button>
+        <button class="tab" role="tab" id="t-point" aria-selected="false" aria-controls="p-point">地点分析</button>
+      </div>
+      <section class="pane" id="p-station" role="tabpanel" aria-labelledby="t-station"></section>
+      <section class="pane" id="p-compare" role="tabpanel" aria-labelledby="t-compare" hidden></section>
+      <section class="pane" id="p-genre" role="tabpanel" aria-labelledby="t-genre" hidden></section>
+      <section class="pane" id="p-point" role="tabpanel" aria-labelledby="t-point" hidden></section>
+    </div>
+  </div>
+
+  <div class="card foot">
+    <p class="note"><b>この試作の数字について</b>　店の数は地図サービスに登録された飲食店の件数で、実際の店数とは一致しません（閉店済みの店が残っている場合があります）。ジャンルは店名や分類から自動で判定しており（AI による判定を含む）、判定率は約83%です。LQ（特化係数）は、駅周辺のジャンルの割合が23区全体の何倍かを示し、経済センサスの事業所数で地図サービスの偏りを補正した値です。店が少ないジャンルは数店の違いで大きく動くので、件数と合わせて見てください。円が重なる駅は同じ店をそれぞれの駅で数えています。乗降客数は2024年の1日平均で、乗換駅は事業者の合計です。「少ないジャンル」が出店の好機とは限りません。</p>
+    <p class="note"><b>出典</b>　店舗: © Overture Maps Foundation（Places、CDLA-Permissive-2.0。一部 © Foursquare Labs, Inc.、Apache-2.0）を加工して作成。乗降客数・鉄道・行政区域: 国土交通省「国土数値情報（駅別乗降客数データ S12-25、鉄道データ、行政区域データ）」（公共データ利用規約 第1.0版）を加工して作成。事業所数: 総務省・経済産業省「令和3年経済センサス‐活動調査」（e-Stat）を加工して作成。</p>
+  </div>
+</div>
+
+<script>
+const D = __DATA__;
+const NS = "http://www.w3.org/2000/svg";
+const $ = id => document.getElementById(id);
+const fmt = n => Math.round(n).toLocaleString("ja-JP");
+const pct = v => (v * 100).toFixed(1) + "%";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const ST = D.stations, SS = D.stores, M = D.majors, MID = D.mids;
+const UNKNOWN_M = M.length - 1;
+const GCOL = M.map((_, i) => `var(--g${i})`);
+const svg = $("map"), box = $("mapbox"), tip = $("tip");
+const stByKey = new Map(ST.map((s, i) => [s.k, i]));
+$("nSt").textContent = ST.length;
+
+// 座標 → 地図座標（Python 側の xy と同じ式）
+const P = D.proj;
+const toXY = (la, lo) => [(lo - P.lng0) * P.kx * P.s, (P.lat0 - la) * P.s];
+const fromXY = (x, y) => [P.lat0 - y / P.s, x / (P.kx * P.s) + P.lng0];
+const mPerUnit = 111320 / P.s; // 地図座標1あたりのメートル（おおよそ）
+function distM(la1, lo1, la2, lo2) {
+  const r = Math.PI / 180, a = Math.sin((la2 - la1) * r / 2) ** 2 + Math.cos(la1 * r) * Math.cos(la2 * r) * Math.sin((lo2 - lo1) * r / 2) ** 2;
+  return 12742000 * Math.asin(Math.sqrt(a));
+}
+
+// ---- 地図の描画 ----
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const gW = $("gW"), gWN = $("gWN"), gR = $("gR"), gC = $("gC"), gP = $("gP"), gL = $("gL");
+D.wards.forEach(w => { el("path", { d: w.d, class: "ward" }, gW); el("text", { x: w.c[0], y: w.c[1], class: "ward-name" }, gWN).textContent = w.name; });
+const railEls = D.rails.map(r => el("path", { d: r.d, class: `rl ${r.k}` }, gR));
+[["lyJr", "jr"], ["lyPrivate", "private"], ["lySub", "subway"]].forEach(([id, k]) => {
+  const sync = () => railEls.forEach((p, i) => { if (D.rails[i].k === k) p.style.display = $(id).checked ? "" : "none"; });
+  $(id).addEventListener("change", sync); sync();
+});
+const maxP = ST[0].p;
+const R = p => Math.max(1.6, 26 * Math.sqrt(p / maxP));
+const circles = ST.map((s, i) => el("circle", { cx: s.x, cy: s.y, r: R(s.p), class: "st" }, gC));
+const labels = ST.map(s => { const t = el("text", { x: s.x, y: s.y, class: "lbl" }, gL); t.textContent = s.n; return t; });
+
+const full = { x: 0, y: 0, w: D.w, h: D.h };
+let vb = { ...full };
+const unitPx = () => { const m = svg.getScreenCTM(); return m && m.a ? 1 / m.a : vb.w / Math.max(svg.clientWidth, 1); };
+function toMap(cx, cy) { const m = svg.getScreenCTM(); if (!m) return { x: 0, y: 0 }; const p = new DOMPoint(cx, cy).matrixTransform(m.inverse()); return { x: p.x, y: p.y }; }
+function clampVb() {
+  vb.w = Math.min(Math.max(vb.w, full.w / 220), full.w); vb.h = vb.w * full.h / full.w;
+  vb.x = Math.min(Math.max(vb.x, -vb.w * 0.3), full.w - vb.w * 0.7); vb.y = Math.min(Math.max(vb.y, -vb.h * 0.3), full.h - vb.h * 0.7);
+}
+function zoomAt(f, cx, cy) { const nw = Math.min(Math.max(vb.w / f, full.w / 220), full.w); const k = nw / vb.w; vb.x = cx - (cx - vb.x) * k; vb.y = cy - (cy - vb.y) * k; vb.w = nw; clampVb(); draw(); }
+function focusOn(x, y, w) { vb.w = w; vb.h = w * full.h / full.w; vb.x = x - vb.w / 2; vb.y = y - vb.h / 2; clampVb(); draw(); }
+
+function draw() {
+  svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  const px = unitPx(), zoom = full.w / vb.w;
+  const shown = zoom < 1.6 ? 12 : zoom < 3 ? 45 : zoom < 6 ? 150 : ST.length;
+  labels.forEach((t, i) => {
+    const s = ST[i];
+    const on = (i < shown || i === state.sel || state.cmp.includes(i)) && !(state.tab === "point" && zoom > 25);
+    t.style.display = on ? "" : "none";
+    if (on) { t.setAttribute("font-size", 13 * px); t.setAttribute("stroke-width", 3.5 * px); t.setAttribute("y", s.y - R(s.p) - 4 * px); }
+  });
+  gWN.querySelectorAll("text").forEach(t => t.setAttribute("font-size", 12 * px));
+  gWN.style.display = zoom > 8 ? "none" : "";
+  // 拡大したときは駅の円を輪郭だけにして、店や地図を隠さない
+  gC.classList.toggle("zoomed", zoom > 10);
+  drawPoint();
+}
+
+svg.addEventListener("wheel", e => { e.preventDefault(); const p = toMap(e.clientX, e.clientY); zoomAt(e.deltaY < 0 ? 1.25 : 0.8, p.x, p.y); }, { passive: false });
+const center = () => ({ x: vb.x + vb.w / 2, y: vb.y + vb.h / 2 });
+$("zin").onclick = () => { const c = center(); zoomAt(1.6, c.x, c.y); };
+$("zout").onclick = () => { const c = center(); zoomAt(1 / 1.6, c.x, c.y); };
+$("zreset").onclick = () => { vb = { ...full }; draw(); };
+
+const ptrs = new Map(); let last = null, pinch = null;
+svg.addEventListener("pointerdown", e => {
+  svg.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size === 1) { last = { x: e.clientX, y: e.clientY, moved: false }; svg.classList.add("drag"); }
+  if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) }; }
+});
+svg.addEventListener("pointermove", e => {
+  if (ptrs.has(e.pointerId)) ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size === 2 && pinch) { const [a, b] = [...ptrs.values()]; const d = Math.hypot(a.x - b.x, a.y - b.y); const m = toMap((a.x + b.x) / 2, (a.y + b.y) / 2); zoomAt(d / pinch.d, m.x, m.y); pinch.d = d; hideTip(); return; }
+  if (ptrs.size === 1 && last) {
+    const dx = e.clientX - last.x, dy = e.clientY - last.y;
+    if (Math.abs(dx) + Math.abs(dy) > 4) last.moved = true;
+    if (last.moved) { const u = unitPx(); vb.x -= dx * u; vb.y -= dy * u; last.x = e.clientX; last.y = e.clientY; clampVb(); draw(); hideTip(); return; }
+  }
+  hover(e);
+});
+const endPtr = e => {
+  const tapped = last && !last.moved && ptrs.size === 1;
+  ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null;
+  if (ptrs.size === 0) { svg.classList.remove("drag"); if (tapped) tap(e); last = null; }
+};
+svg.addEventListener("pointerup", endPtr); svg.addEventListener("pointercancel", endPtr);
+svg.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") hideTip(); });
+
+function nearestStation(cx, cy) {
+  const p = toMap(cx, cy), px = unitPx(); let best = -1, bd = Infinity;
+  ST.forEach((s, i) => { const d = Math.hypot(s.x - p.x, s.y - p.y), reach = Math.max(R(s.p), 9 * px); if (d <= reach && d / reach < bd) { bd = d / reach; best = i; } });
+  return best;
+}
+function nearestStore(cx, cy) {
+  if (!state.point) return -1;
+  const p = toMap(cx, cy), px = unitPx(); let best = -1, bd = 9 * px;
+  pointHits.forEach(h => { const [x, y] = toXY(SS.la[h.i], SS.lo[h.i]); const d = Math.hypot(x - p.x, y - p.y); if (d < bd) { bd = d; best = h.i; } });
+  return best;
+}
+function hover(e) {
+  const si = nearestStore(e.clientX, e.clientY);
+  if (si >= 0) { placeTip(`<b>${esc(SS.n[si])}</b><div class="s">${esc(genreLabel(si))}</div>`, e); return; }
+  const i = nearestStation(e.clientX, e.clientY);
+  if (i < 0) { hideTip(); return; }
+  const s = ST[i], r = s.r[String(state.radius)] || s.r["1000"];
+  let extra = "";
+  if (state.tab === "genre" && state.genre >= 0) { const q = r.q[state.genre]; extra = `<div class="s">${esc(MID[state.genre])}: ${r.m[state.genre]}店・LQ ${q == null ? "—" : q.toFixed(2)}</div>`; }
+  placeTip(`<b>${esc(s.n)}</b><div class="s">乗降客数 ${fmt(s.p)}人/日・${state.radius}m圏 ${fmt(r.t)}店</div>${extra}`, e);
+}
+function placeTip(html, e) {
+  tip.innerHTML = html; tip.hidden = false;
+  const r = box.getBoundingClientRect(); let x = e.clientX - r.left + 14, y = e.clientY - r.top + 14;
+  if (x + tip.offsetWidth > r.width - 8) x = e.clientX - r.left - tip.offsetWidth - 14;
+  if (y + tip.offsetHeight > r.height - 8) y = e.clientY - r.top - tip.offsetHeight - 14;
+  tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+}
+function hideTip() { tip.hidden = true; }
+function tap(e) {
+  if (state.tab === "point") { const p = toMap(e.clientX, e.clientY); const [la, lo] = fromXY(p.x, p.y); setPoint(la, lo, "地図で選んだ地点"); return; }
+  const i = nearestStation(e.clientX, e.clientY);
+  if (i < 0) return;
+  if (state.tab === "compare") addCompare(i); else { selectStation(i, false); if (state.tab !== "station") showTab("station"); }
+}
+
+// ---- 状態 ----
+const state = { tab: "station", sel: stByKey.get("003635") ?? 0, radius: 1000, cmp: [], genre: MID.indexOf("ラーメン"), gdir: "low", gmin: 30000, point: null, pRadius: 100, pFilter: -1 };
+
+function genreLabel(i) { const f = D.fine[SS.f[i]]; const mi = SS.m[i]; return [M[SS.M[i]], mi >= 0 ? MID[mi] : "中分類不明", f && f !== (mi >= 0 ? MID[mi] : "") ? f : ""].filter(Boolean).join(" ／ "); }
+
+// ---- タブ ----
+const TABS = ["station", "compare", "genre", "point"];
+function showTab(t) {
+  state.tab = t;
+  TABS.forEach(x => { $("t-" + x).setAttribute("aria-selected", String(x === t)); $("p-" + x).hidden = x !== t; });
+  svg.classList.toggle("pointmode", t === "point");
+  paintStations(); render(); draw();
+}
+TABS.forEach(t => $("t-" + t).addEventListener("click", () => showTab(t)));
+
+function paintStations() {
+  circles.forEach((c, i) => {
+    c.classList.toggle("sel", state.tab === "station" && i === state.sel);
+    c.classList.toggle("cmp", state.tab === "compare" && state.cmp.includes(i));
+    if (state.tab === "genre" && state.genre >= 0) {
+      const q = ST[i].r[String(state.radius)].q[state.genre];
+      c.style.fill = q == null ? "" : lqColor(q); c.style.fillOpacity = q == null ? "" : 0.8;
+    } else { c.style.fill = ""; c.style.fillOpacity = ""; }
+  });
+  gR.classList.toggle("muted", state.tab === "point" || state.tab === "genre");
+  legend();
+}
+function lqColor(q) {
+  // LQ 1 を中間の灰色に、0.5 以下を青、2 以上を赤にする（対数で対称）
+  const t = Math.max(-1, Math.min(1, Math.log2(q)));
+  const css = getComputedStyle(document.documentElement);
+  const mix = (a, b, k) => `color-mix(in oklab, ${a} ${Math.round((1 - k) * 100)}%, ${b})`;
+  return t < 0 ? mix("var(--mid)", "var(--lo)", -t) : mix("var(--mid)", "var(--hi)", t);
+}
+function legend() {
+  const L = $("legend");
+  if (state.tab === "genre") { L.innerHTML = `<span>${esc(MID[state.genre])} の LQ（${state.radius}m圏）</span><span>少ない 0.5</span><span class="ramp"></span><span>2 多い</span><span>灰色の円: 23区平均並み</span>`; return; }
+  if (state.tab === "point") { L.innerHTML = M.map((m, i) => `<span class="key"><i style="background:${GCOL[i]}"></i>${esc(m)}</span>`).join("") + `<span>地図をクリックすると、その地点で分析します</span>`; return; }
+  L.innerHTML = `<span>円の大きさ＝1日平均乗降客数（2024年）</span><span>${state.tab === "compare" ? "円を押すと比較に追加" : "円を押すと駅を選べます"}</span>`;
+}
+
+// ---- 駅カード ----
+function radiusSeg(id, values, cur) { return `<div class="seg" role="group" id="${id}">${values.map(v => `<button type="button" data-v="${v}" aria-pressed="${v === cur}">${v}m</button>`).join("")}</div>`; }
+function bindSeg(id, fn) { $(id).querySelectorAll("button").forEach(b => b.onclick = () => fn(+b.dataset.v)); }
+function majorBar(counts) {
+  const known = counts.reduce((a, v, i) => a + (i === UNKNOWN_M ? 0 : v), 0) || 1;
+  return `<div class="bar">${counts.map((v, i) => i === UNKNOWN_M || !v ? "" : `<span style="width:${v / known * 100}%;background:${GCOL[i]}" title="${esc(M[i])} ${pct(v / known)}"></span>`).join("")}</div>`;
+}
+function baseBar() { return `<div class="bar">${D.base.M.map((v, i) => v ? `<span style="width:${v * 100}%;background:${GCOL[i]}" title="${esc(M[i])} ${pct(v)}"></span>` : "").join("")}</div>`; }
+function majorKeys(counts) {
+  const known = counts.reduce((a, v, i) => a + (i === UNKNOWN_M ? 0 : v), 0) || 1;
+  return `<div class="keys">${counts.map((v, i) => i === UNKNOWN_M ? "" : `<span class="key"><i style="background:${GCOL[i]}"></i>${esc(M[i])} <b class="num">${pct(v / known)}</b></span>`).join("")}</div>`;
+}
+function features(r, dir, n = 6) {
+  // 多い: LQ が高く 3 店以上。少ない: LQ が低く、23区平均なら 3 店以上あるはずのジャンル
+  const known = r.m.reduce((a, b) => a + b, 0);
+  const rows = MID.map((m, i) => ({ m, i, q: r.q[i], c: r.m[i], exp: known * D.base.m[i] })).filter(x => x.q != null);
+  return (dir === "hi" ? rows.filter(x => x.c >= 3 && x.q > 1).sort((a, b) => b.q - a.q)
+    : rows.filter(x => x.exp >= 3 && x.q < 1).sort((a, b) => a.q - b.q)).slice(0, n);
+}
+function lqList(list, empty) {
+  if (!list.length) return `<p class="muted-t">${empty}</p>`;
+  return `<div class="lq"><div class="lqrow" style="color:var(--ink-3);font-size:12px"><span>中分類</span><span class="v">LQ</span><span class="c">店数</span></div>${list.map(x => `<div class="lqrow"><span>${esc(x.m)}</span><span class="v">${x.q.toFixed(2)}</span><span class="c">${x.c}</span></div>`).join("")}</div>`;
+}
+function popBlock(s) {
+  const p = s.pop[String(state.radius)];
+  if (!p || !D.popCols.length) return `<div class="todo"><b>人口・年齢層・働く人の数</b>（準備中）<br>国勢調査・経済センサスの地域メッシュ統計を取り込むと、ここに${state.radius}m圏の人口・年齢構成・従業者数が出ます。</div>`;
+  return `<div class="stats">${D.popCols.map((c, i) => `<div class="stat"><div class="v">${fmt(p[i])}</div><div class="l">${esc(c)}（${state.radius}m圏）</div></div>`).join("")}</div>`;
+}
+function selectStation(i, scroll = true) {
+  state.sel = i; paintStations(); render();
+  const s = ST[i]; if (scroll) focusOn(s.x, s.y, full.w / 7); else draw();
+}
+function stationSearch(id, onPick, placeholder) {
+  return { html: `<div class="search"><input id="${id}" type="search" list="${id}-dl" placeholder="${placeholder}" autocomplete="off"><datalist id="${id}-dl">${ST.map(s => `<option value="${esc(s.n)}">`).join("")}</datalist><button class="btn" id="${id}-go" type="button">表示</button></div>`,
+    bind() { const go = () => { const v = $(id).value.trim().replace(/駅$/, ""); if (!v) return; let i = ST.findIndex(s => s.n === v); if (i < 0) i = ST.findIndex(s => s.n.includes(v)); if (i >= 0) onPick(i); else $(id).setCustomValidity("見つかりません"), $(id).reportValidity(); }; $(id + "-go").onclick = go; $(id).addEventListener("keydown", e => { $(id).setCustomValidity(""); if (e.key === "Enter") go(); }); } };
+}
+function renderStation() {
+  const s = ST[state.sel], r = s.r[String(state.radius)];
+  const rank = state.sel + 1;
+  const ss = stationSearch("q1", i => selectStation(i), "駅名（例: 亀戸）");
+  $("p-station").innerHTML = `${ss.html}
+    <div><h2>${esc(s.n)}</h2><p class="muted-t">${esc(s.o)}</p></div>
+    <div class="actions">${radiusSeg("segR", D.radii, state.radius)}<button class="btn" id="toCmp" type="button">比較に追加</button><button class="btn" id="toPoint" type="button">この駅で地点分析</button></div>
+    <div class="stats">
+      <div class="stat"><div class="v">${fmt(s.p)}</div><div class="l">乗降客数（人/日）・${rank}位</div></div>
+      <div class="stat"><div class="v">${fmt(r.t)}</div><div class="l">飲食店（${state.radius}m圏）</div></div>
+      <div class="stat"><div class="v">${(r.tw / s.p * 10000).toFixed(1)}</div><div class="l">乗降客1万人あたり店数（補正後）</div></div>
+    </div>
+    <div><h3>ジャンル構成（大分類）</h3>
+      <div class="barrow"><span>${state.radius}m圏</span>${majorBar(r.M)}</div>
+      <div class="barrow"><span>23区平均</span>${baseBar()}</div>
+      ${majorKeys(r.M)}
+      <p class="muted-t">中分類まで分からない店 ${fmt(r.u)}店（${pct(r.u / Math.max(r.t, 1))}）は、構成比の分母から除いています。</p>
+    </div>
+    <div class="two"><div><h3>多いジャンル（LQ が高い）</h3>${lqList(features(r, "hi"), "目立って多いジャンルはありません")}</div>
+      <div><h3>少ないジャンル（LQ が低い）</h3>${lqList(features(r, "lo"), "目立って少ないジャンルはありません")}</div></div>
+    ${popBlock(s)}
+    <div class="todo"><b>駅周辺の地価</b>（準備中）<br>国土数値情報の地価公示を取り込むと、駅周辺の商業地の地価（中央値）が出ます。</div>`;
+  ss.bind();
+  bindSeg("segR", v => { state.radius = v; paintStations(); render(); });
+  $("toCmp").onclick = () => { addCompare(state.sel); showTab("compare"); };
+  $("toPoint").onclick = () => { showTab("point"); setPoint(s.la, s.lo, `${s.n}駅`); };
+}
+
+// ---- 比較 ----
+function addCompare(i) {
+  if (!state.cmp.includes(i)) { state.cmp.push(i); if (state.cmp.length > 5) state.cmp.shift(); }
+  paintStations(); render(); draw();
+}
+function renderCompare() {
+  const ss = stationSearch("q2", i => addCompare(i), "駅名を入れて追加（最大5駅）");
+  const cs = state.cmp.map(i => ST[i]);
+  let table = `<p class="muted-t">駅名を入れるか、地図の円を押すと追加されます。</p>`;
+  if (cs.length) {
+    const rr = cs.map(s => s.r[String(state.radius)]);
+    const known = r => r.M.reduce((a, v, i) => a + (i === UNKNOWN_M ? 0 : v), 0) || 1;
+    const rows = [
+      ["乗降客数（人/日）", cs.map(s => fmt(s.p))],
+      [`飲食店（${state.radius}m圏）`, rr.map(r => fmt(r.t))],
+      ["1万人あたり（補正後）", cs.map((s, k) => (rr[k].tw / s.p * 10000).toFixed(1))],
+      ...M.slice(0, UNKNOWN_M).map((m, j) => [`${m}の割合`, rr.map(r => pct(r.M[j] / known(r)))]),
+      ["多いジャンル", rr.map(r => features(r, "hi", 3).map(x => `${x.m} ${x.q.toFixed(1)}`).join("<br>") || "—")],
+      ["少ないジャンル", rr.map(r => features(r, "lo", 3).map(x => `${x.m} ${x.q.toFixed(1)}`).join("<br>") || "—")],
+    ];
+    if (D.popCols.length) D.popCols.forEach((c, j) => rows.push([`${c}`, cs.map(s => s.pop[String(state.radius)] ? fmt(s.pop[String(state.radius)][j]) : "—")]));
+    table = `<div class="tablewrap"><table><thead><tr><th></th>${cs.map((s, k) => `<th>${esc(s.n)}<br><button class="chip" data-rm="${k}" type="button" aria-label="${esc(s.n)}を外す">外す</button></th>`).join("")}</tr></thead>
+      <tbody>${rows.map(([h, v]) => `<tr><td>${h}</td>${v.map(x => `<td style="white-space:normal;vertical-align:top">${x}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+  }
+  $("p-compare").innerHTML = `${ss.html}<div class="actions">${radiusSeg("segR2", D.radii, state.radius)}</div>${table}
+    ${D.popCols.length ? "" : `<p class="muted-t">人口・年齢層は準備中です（データを取り込むと表に加わります）。</p>`}`;
+  ss.bind();
+  bindSeg("segR2", v => { state.radius = v; render(); });
+  $("p-compare").querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { state.cmp.splice(+b.dataset.rm, 1); paintStations(); render(); draw(); });
+}
+
+// ---- ジャンルで探す ----
+function renderGenre() {
+  const g = state.genre, rkey = String(state.radius);
+  const list = ST.map((s, i) => ({ s, i, r: s.r[rkey] })).filter(x => x.s.p >= state.gmin && x.r.q[g] != null)
+    .map(x => { const known = x.r.m.reduce((a, b) => a + b, 0); return { ...x, q: x.r.q[g], c: x.r.m[g], exp: known * D.base.m[g] }; })
+    .filter(x => state.gdir === "low" ? x.exp >= 2 : x.c >= 3);
+  list.sort((a, b) => state.gdir === "low" ? a.q - b.q || b.s.p - a.s.p : b.q - a.q);
+  const opts = D.majors.slice(0, UNKNOWN_M).map((m, j) => `<optgroup label="${esc(m)}">${MID.map((x, i) => D.midMajor[i] === j ? `<option value="${i}" ${i === g ? "selected" : ""}>${esc(x)}</option>` : "").join("")}</optgroup>`).join("");
+  $("p-genre").innerHTML = `
+    <div class="search"><select class="inp" id="gSel" aria-label="ジャンル">${opts}</select>
+      <div class="seg" role="group" id="gDir"><button type="button" data-v="low" aria-pressed="${state.gdir === "low"}">少ない駅</button><button type="button" data-v="high" aria-pressed="${state.gdir === "high"}">多い駅</button></div></div>
+    <div class="actions">${radiusSeg("segR3", D.radii, state.radius)}
+      <label class="muted-t" for="gMin">乗降客数</label><select class="inp" id="gMin">${[0, 10000, 30000, 100000, 300000].map(v => `<option value="${v}" ${v === state.gmin ? "selected" : ""}>${v ? fmt(v) + "人以上" : "すべて"}</option>`).join("")}</select></div>
+    <p class="muted-t">${state.gdir === "low" ? `23区平均なら2店以上あるはずなのに、${esc(MID[g])}の割合が低い駅を、LQ の低い順に並べています。` : `${esc(MID[g])}の割合が高い駅（3店以上）を、LQ の高い順に並べています。`}地図の円の色も LQ を表します。</p>
+    <div class="rows"><div class="row head"><span class="r">順位</span><span>駅</span><span class="v">乗降客数</span><span class="v">店数</span><span class="v">LQ</span></div>
+      ${list.slice(0, 60).map((x, k) => `<div class="row" tabindex="0" role="button" data-i="${x.i}"><span class="r">${k + 1}</span><span class="n">${esc(x.s.n)}</span><span class="v">${fmt(x.s.p)}</span><span class="v">${x.c}</span><span class="v">${x.q.toFixed(2)}</span></div>`).join("") || `<p class="muted-t">条件に合う駅がありません。</p>`}</div>
+    <p class="muted-t">${list.length}駅中 上位${Math.min(60, list.length)}駅。店数は${state.radius}m圏の${esc(MID[g])}の件数。</p>`;
+  $("gSel").onchange = e => { state.genre = +e.target.value; paintStations(); render(); };
+  $("gMin").onchange = e => { state.gmin = +e.target.value; render(); };
+  $("gDir").querySelectorAll("button").forEach(b => b.onclick = () => { state.gdir = b.dataset.v; render(); });
+  bindSeg("segR3", v => { state.radius = v; paintStations(); render(); });
+  $("p-genre").querySelectorAll(".row[data-i]").forEach(r => { const go = () => { const i = +r.dataset.i; focusOn(ST[i].x, ST[i].y, full.w / 6); }; r.onclick = go; r.onkeydown = e => { if (e.key === "Enter") go(); }; });
+}
+
+// ---- 地点分析 ----
+// 店を 0.005 度ごとの格子に入れておき、近くの格子だけ調べる
+const CELL = 0.005, grid = new Map();
+for (let i = 0; i < SS.n.length; i++) { const k = Math.floor(SS.la[i] / CELL) + ":" + Math.floor(SS.lo[i] / CELL); (grid.get(k) || grid.set(k, []).get(k)).push(i); }
+let pointHits = [];
+function storesNear(la, lo, rad) {
+  const out = [], a = Math.floor(la / CELL), b = Math.floor(lo / CELL);
+  for (let i = a - 1; i <= a + 1; i++) for (let j = b - 1; j <= b + 1; j++) for (const s of grid.get(i + ":" + j) || []) {
+    const d = distM(la, lo, SS.la[s], SS.lo[s]); if (d <= rad) out.push({ i: s, d });
+  }
+  return out.sort((x, y) => x.d - y.d);
+}
+function setPoint(la, lo, label) {
+  state.point = { la, lo, label }; state.pFilter = -1;
+  const [x, y] = toXY(la, lo);
+  focusOn(x, y, (state.pRadius * 5.5) / mPerUnit);
+  render();
+}
+function drawPoint() {
+  gP.innerHTML = "";
+  if (state.tab !== "point" || !state.point) { pointHits = []; return; }
+  const { la, lo } = state.point, [x, y] = toXY(la, lo), px = unitPx();
+  el("circle", { cx: x, cy: y, r: state.pRadius / mPerUnit, class: "ring" }, gP);
+  pointHits = storesNear(la, lo, state.pRadius * 1.8);
+  for (const h of pointHits) {
+    if (state.pFilter >= 0 && SS.M[h.i] !== state.pFilter) continue;
+    const [sx, sy] = toXY(SS.la[h.i], SS.lo[h.i]);
+    el("circle", { cx: sx, cy: sy, r: (h.d <= state.pRadius ? 5 : 3.5) * px, class: "dot", fill: GCOL[SS.M[h.i]], "fill-opacity": h.d <= state.pRadius ? 1 : 0.35 }, gP);
+  }
+  el("circle", { cx: x, cy: y, r: 6 * px, class: "pin" }, gP);
+}
+function parseCoords(v) {
+  const m = v.match(/(-?\d+(?:\.\d+)?)\s*[,，\s]\s*(-?\d+(?:\.\d+)?)/);
+  if (!m) return null; let a = +m[1], b = +m[2]; if (a > 90) [a, b] = [b, a];
+  return a > 35.4 && a < 35.95 && b > 139.4 && b < 140.1 ? [a, b] : null;
+}
+function renderPoint() {
+  const p = state.point;
+  let body = `<div class="todo">地図をクリックするか、上の欄に駅名や座標を入れてください。座標は Google マップで地点を右クリックすると出る「35.6974, 139.8266」の形をそのまま貼り付けられます。</div>`;
+  if (p) {
+    const hits = storesNear(p.la, p.lo, state.pRadius);
+    const byM = M.map(() => 0); const byMid = new Map();
+    hits.forEach(h => { byM[SS.M[h.i]]++; const k = SS.m[h.i] >= 0 ? MID[SS.m[h.i]] : `${M[SS.M[h.i]]}（中分類不明）`; byMid.set(k, (byMid.get(k) || 0) + 1); });
+    const shown = hits.filter(h => state.pFilter < 0 || SS.M[h.i] === state.pFilter);
+    const midChips = [...byMid].sort((a, b) => b[1] - a[1]).map(([k, n]) => `<span class="chip" style="cursor:default">${esc(k)}<b>${n}</b></span>`).join("");
+    body = `<div><h2>${esc(p.label)}</h2><p class="muted-t num">${p.la.toFixed(5)}, ${p.lo.toFixed(5)}</p></div>
+      <div class="actions">${radiusSeg("segP", [50, 100, 300], state.pRadius)}</div>
+      <div class="stats"><div class="stat"><div class="v">${hits.length}</div><div class="l">飲食店（半径${state.pRadius}m）</div></div>
+        ${M.slice(0, UNKNOWN_M).map((m, i) => `<div class="stat"><div class="v" style="color:${GCOL[i]}">${byM[i]}</div><div class="l">${esc(m)}</div></div>`).join("")}</div>
+      <div><h3>ジャンル（中分類）</h3><div class="chips">${midChips || `<span class="muted-t">この範囲に飲食店はありません</span>`}</div></div>
+      <div><h3>店の一覧（近い順）</h3>
+        <div class="chips" role="group" aria-label="大分類で絞り込む"><button class="chip" type="button" data-f="-1" aria-pressed="${state.pFilter < 0}">すべて</button>${M.map((m, i) => byM[i] ? `<button class="chip" type="button" data-f="${i}" aria-pressed="${state.pFilter === i}"><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${GCOL[i]};margin-right:4px"></i>${esc(m)}</button>` : "").join("")}</div>
+        <div class="list">${shown.map(h => `<div class="srow"><i style="background:${GCOL[SS.M[h.i]]}"></i><span class="n">${esc(SS.n[h.i])}</span><span class="g">${esc(genreLabel(h.i))}</span><span class="d">${Math.round(h.d)}m</span></div>`).join("")}</div></div>
+      <p class="muted-t">地図上の濃い点が範囲内の店、薄い点が範囲のすぐ外の店です。店の位置は地図サービスの登録位置で、数十mずれることがあります。閉店済みの店が残っている場合があります。</p>`;
+  }
+  $("p-point").innerHTML = `<div class="search"><input id="q4" type="search" list="q1-dl2" placeholder="駅名、または座標（35.6974, 139.8266）" autocomplete="off"><datalist id="q1-dl2">${ST.map(s => `<option value="${esc(s.n)}">`).join("")}</datalist><button class="btn primary" id="q4-go" type="button">分析</button></div>
+    <p class="muted-t">住所からの検索は準備中です（国土交通省の位置参照情報を取り込むと対応できます）。</p>${body}`;
+  const go = () => {
+    const v = $("q4").value.trim(); if (!v) return;
+    const c = parseCoords(v); if (c) { setPoint(c[0], c[1], "指定した地点"); return; }
+    const n = v.replace(/駅$/, ""); let i = ST.findIndex(s => s.n === n); if (i < 0) i = ST.findIndex(s => s.n.includes(n));
+    if (i >= 0) setPoint(ST[i].la, ST[i].lo, `${ST[i].n}駅`); else { $("q4").setCustomValidity("駅名か座標を入れてください（23区内）"); $("q4").reportValidity(); }
+  };
+  $("q4-go").onclick = go; $("q4").addEventListener("keydown", e => { $("q4").setCustomValidity(""); if (e.key === "Enter") go(); });
+  if (p) {
+    bindSeg("segP", v => { state.pRadius = v; const [x, y] = toXY(p.la, p.lo); focusOn(x, y, (v * 5.5) / mPerUnit); render(); });
+    $("p-point").querySelectorAll("[data-f]").forEach(b => b.onclick = () => { state.pFilter = +b.dataset.f; render(); draw(); });
+  }
+}
+
+function render() {
+  if (state.tab === "station") renderStation();
+  if (state.tab === "compare") renderCompare();
+  if (state.tab === "genre") renderGenre();
+  if (state.tab === "point") renderPoint();
+}
+
+paintStations(); render(); draw();
+window.addEventListener("resize", draw);
+</script>
