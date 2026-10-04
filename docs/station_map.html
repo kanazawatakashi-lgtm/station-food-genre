@@ -17,6 +17,7 @@
   --jr: #4f8a2e;
   --private: #c0457a;
   --subway: #2f5fb3;
+  --on-line: #ffffff;
   --rule: #d8dfdc;
   --panel: #ffffff;
   --font-display: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
@@ -26,14 +27,14 @@
   :root:not([data-theme="light"]) {
     --bg: #111716; --land: #1a2120; --ward-line: #34403d; --ink: #e6ecea; --ink-2: #aab6b2; --ink-3: #7d8a86;
     --accent: #d9e2df; --accent-soft: rgba(217, 226, 223, 0.16); --pick: #f08a4b; --rule: #2a3331; --panel: #171e1d;
-    --jr: #5f9e3f; --private: #d16a96; --subway: #5a88dc;
+    --jr: #5f9e3f; --private: #d16a96; --subway: #5a88dc; --on-line: #111716;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #111716; --land: #1a2120; --ward-line: #34403d; --ink: #e6ecea; --ink-2: #aab6b2; --ink-3: #7d8a86;
   --accent: #d9e2df; --accent-soft: rgba(217, 226, 223, 0.16); --pick: #f08a4b; --rule: #2a3331; --panel: #171e1d;
-  --jr: #5f9e3f; --private: #d16a96; --subway: #5a88dc;
+  --jr: #5f9e3f; --private: #d16a96; --subway: #5a88dc; --on-line: #111716;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -66,13 +67,26 @@ svg.map.drag { cursor: grabbing; }
 .rl.jr { stroke: var(--jr); }
 .rl.private { stroke: var(--private); }
 .rl.subway { stroke: var(--subway); stroke-dasharray: 4 2; }
-.rl.on { stroke-width: 4; stroke-opacity: 1; stroke-dasharray: none; }
+.rl.on, .rl.sel { stroke-width: 4; stroke-opacity: 1; stroke-dasharray: none; }
+#rails.dim .rl:not(.sel) { stroke-opacity: 0.15; }
+#railLabels.dim .rail-lbl:not(.sel) { opacity: 0.2; }
+/* 路線名は駅の案内板のように、路線の色の札に白抜きの文字 */
 .rail-lbl { pointer-events: none; }
-.rail-lbl rect { fill: var(--panel); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
-.rail-lbl.jr rect { stroke: var(--jr); }
-.rail-lbl.private rect { stroke: var(--private); }
-.rail-lbl.subway rect { stroke: var(--subway); stroke-dasharray: 4 2; }
-.rail-lbl text { fill: var(--ink); font-family: var(--font-body); font-weight: 700; dominant-baseline: central; text-anchor: middle; }
+.rail-lbl rect { stroke: var(--land); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.rail-lbl.jr rect { fill: var(--jr); }
+.rail-lbl.private rect { fill: var(--private); }
+.rail-lbl.subway rect { fill: var(--subway); }
+.rail-lbl text { fill: var(--on-line); font-family: var(--font-body); font-weight: 700; dominant-baseline: central; text-anchor: middle; }
+.lines { display: grid; gap: 10px; }
+.lines .grp { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.lines .grp > span { font-weight: 700; min-width: 4.5em; font-size: 14px; }
+.chip { font: inherit; font-size: 14px; font-weight: 700; border: 0; border-radius: 999px; padding: 4px 12px; cursor: pointer; color: var(--on-line); }
+.chip.jr { background: var(--jr); }
+.chip.private { background: var(--private); }
+.chip.subway { background: var(--subway); }
+.chip[aria-pressed="true"] { outline: 3px solid var(--ink); outline-offset: 2px; }
+.chip:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.lines.dim .chip[aria-pressed="false"] { opacity: 0.45; }
 .rl-hit { fill: none; stroke: transparent; stroke-width: 9; vector-effect: non-scaling-stroke; pointer-events: stroke; }
 .layers { display: flex; gap: 10px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 5px 10px; font-size: 14px; }
 .layers label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
@@ -123,7 +137,7 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
 <div class="wrap">
   <header>
     <h1>23区 駅別乗降客数マップ</h1>
-    <p class="lede"><span class="num" id="count">490</span> 駅の1日平均乗降客数（2024年）。円の面積が乗降客数に比例します。乗換駅は事業者の合計。ホイールやボタンで拡大、ドラッグで移動。円に触れると駅の詳細、線に触れると路線名が出ます。拡大すると路線名が線の上に表示されます。路線はJR・私鉄・地下鉄ごとに表示を切り替えられます。</p>
+    <p class="lede"><span class="num" id="count">490</span> 駅の1日平均乗降客数（2024年）。円の面積が乗降客数に比例します。乗換駅は事業者の合計。ホイールやボタンで拡大、ドラッグで移動。円に触れると駅の詳細、線に触れると路線名が出ます。路線名は線の上の札と、地図の下の一覧で確かめられます。路線はJR・私鉄・地下鉄ごとに表示を切り替えられます。</p>
   </header>
 
   <div class="mapbox" id="mapbox">
@@ -153,6 +167,14 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
     </div>
     <div class="tip" id="tip" hidden></div>
   </div>
+
+  <section class="rank" aria-labelledby="lines-h">
+    <div class="rank-head">
+      <h2 id="lines-h">路線</h2>
+      <span class="msg">路線名を押すと、その路線だけを地図で強調します。もう一度押すと元に戻ります。</span>
+    </div>
+    <div class="lines" id="lines"></div>
+  </section>
 
   <section class="rank" aria-labelledby="rank-h">
     <div class="rank-head">
@@ -211,31 +233,35 @@ function layerToggle(id, kind) {
   box.addEventListener("change", sync); sync();
 }
 let ready = false;
+let selName = null;
 let stationBoxes = [];
 const kindOn = k => document.getElementById({ jr: "lyJr", private: "lyPrivate", subway: "lySub" }[k]).checked;
 // 路線名のラベル。拡大すると表示し、重なるものは省く（駅名・線と同じく画面上で一定の大きさ）
 const gRL = document.getElementById("railLabels");
 function drawRailLabels(px, zoom) {
   gRL.innerHTML = "";
-  if (!document.getElementById("lyNames").checked || zoom < 1.8) return;
-  const fs = 13 * px, padX = 6 * px, h = 20 * px;
-  const placed = stationBoxes.slice(); // 駅名と重ならないように
+  if (!document.getElementById("lyNames").checked) return;
+  const fs = 15 * px, padX = 8 * px, h = 24 * px;
+  const placed = []; // 選んだ路線の札を先に置き、そのあと駅名と重ならないように他の札を置く
+  let stationsAdded = false;
   const view = { x0: vb.x, y0: vb.y, x1: vb.x + vb.w, y1: vb.y + vb.h };
   // JR → 私鉄 → 地下鉄の順に、同じ路線は近すぎる位置に2つ置かない
   const order = { jr: 0, private: 1, subway: 2 };
   const cand = [];
   D.rails.forEach(r => { if (kindOn(r.k)) r.a.forEach(([x, y]) => cand.push({ r, x, y })); });
-  cand.sort((a, b) => order[a.r.k] - order[b.r.k]);
+  // 選んだ路線を最優先で置く
+  cand.sort((a, b) => (selName && (b.r.n === selName) - (a.r.n === selName)) || order[a.r.k] - order[b.r.k]);
   const lastOf = new Map();
   for (const c of cand) {
     if (c.x < view.x0 || c.x > view.x1 || c.y < view.y0 || c.y > view.y1) continue;
+    if (!stationsAdded && c.r.n !== selName) { placed.push(...stationBoxes); stationsAdded = true; }
     const w = c.r.n.length * fs + padX * 2;
     const box = { x0: c.x - w / 2, x1: c.x + w / 2, y0: c.y - h / 2, y1: c.y + h / 2 };
     if (placed.some(b => b.x0 < box.x1 && box.x0 < b.x1 && b.y0 < box.y1 && box.y0 < b.y1)) continue;
     const prev = lastOf.get(c.r.n);
-    if (prev && Math.hypot(prev.x - c.x, prev.y - c.y) < 220 * px) continue;
+    if (prev && Math.hypot(prev.x - c.x, prev.y - c.y) < 260 * px) continue;
     placed.push(box); lastOf.set(c.r.n, c);
-    const g = el("g", { class: `rail-lbl ${c.r.k}` }, gRL);
+    const g = el("g", { class: `rail-lbl ${c.r.k}${c.r.n === selName ? " sel" : ""}` }, gRL);
     el("rect", { x: box.x0, y: box.y0, width: w, height: h, rx: h / 2 }, g);
     const t = el("text", { x: c.x, y: c.y, "font-size": fs }, g);
     t.textContent = c.r.n;
@@ -463,6 +489,48 @@ function drawRows() {
   document.getElementById("more").textContent = showAll ? "上位30駅だけ表示" : `全${D.stations.length}駅を表示`;
 }
 document.getElementById("more").onclick = () => { showAll = !showAll; drawRows(); };
+
+// 路線の一覧（JR・私鉄・地下鉄ごと）。押すと地図でその路線を強調
+const linesBox = document.getElementById("lines");
+const chips = [];
+[["jr", "JR"], ["private", "私鉄"], ["subway", "地下鉄"]].forEach(([k, label]) => {
+  const grp = document.createElement("div");
+  grp.className = "grp";
+  grp.innerHTML = `<span>${label}</span>`;
+  D.rails.filter(r => r.k === k && r.a.length).map(r => r.n).sort((a, b) => a.localeCompare(b, "ja")).forEach(n => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = `chip ${k}`; b.textContent = n; b.setAttribute("aria-pressed", "false");
+    b.onclick = () => selectLine(selName === n ? null : n);
+    grp.appendChild(b); chips.push(b);
+  });
+  linesBox.appendChild(grp);
+});
+function selectLine(n) {
+  selName = n;
+  chips.forEach(c => c.setAttribute("aria-pressed", String(c.textContent === n)));
+  linesBox.classList.toggle("dim", !!n);
+  gR.classList.toggle("dim", !!n);
+  gRL.classList.toggle("dim", !!n);
+  railEls.forEach((p, i) => p.classList.toggle("sel", D.rails[i].n === n));
+  if (n) {
+    const i = D.rails.findIndex(r => r.n === n);
+    const k = D.rails[i].k;
+    const box = document.getElementById({ jr: "lyJr", private: "lyPrivate", subway: "lySub" }[k]);
+    if (!box.checked) { box.checked = true; box.dispatchEvent(new Event("change")); }
+    const bb = railEls[i].getBBox();
+    const pad = 0.08;
+    vb.w = Math.max(bb.width, bb.height * full.w / full.h) * (1 + pad * 2);
+    vb.h = vb.w * full.h / full.w;
+    vb.x = bb.x + bb.width / 2 - vb.w / 2; vb.y = bb.y + bb.height / 2 - vb.h / 2;
+    clampVb();
+    railEls[i].parentNode.appendChild(railEls[i]);
+    document.getElementById("msg").textContent = n;
+    box.scrollIntoView && document.getElementById("mapbox").scrollIntoView({ behavior: "smooth", block: "start" });
+  } else {
+    document.getElementById("msg").textContent = "";
+  }
+  apply();
+}
 
 drawRows();
 ready = true;
