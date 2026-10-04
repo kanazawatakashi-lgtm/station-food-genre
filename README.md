@@ -16,6 +16,7 @@ PYTHONPATH=scripts python scripts/genre_table.py kameido tokyo23   # 件数・�
 python scripts/classify_area.py tokyo23     # 23区を判定
 python scripts/census.py tokyo23            # 経済センサスで補正する重み
 python scripts/station_table.py tokyo23 [--stations data/stations.csv]   # 駅ごとの表
+python scripts/fetch_rail.py                # 地図の背景用の線路（Overture transportation）
 python scripts/station_map.py               # 駅の乗降客数マップ → docs/station_map.html
 ```
 
@@ -30,3 +31,4 @@ python scripts/station_map.py               # 駅の乗降客数マップ → do
 - © OpenStreetMap contributors（ODbL）。`apply_osm.py` を使った場合
 - 総務省・経済産業省「令和3年経済センサス‐活動調査」（e-Stat）。`data/census/`
 - 「国土数値情報（駅別乗降客数データ）」（国土交通省）S12-25 を加工して作成。`data/s12/`、`data/stations.csv`
+- 地図の線路: Overture Maps Foundation, Transportation（OpenStreetMap 由来、© OpenStreetMap contributors、ODbL）。`docs/station_map.html`

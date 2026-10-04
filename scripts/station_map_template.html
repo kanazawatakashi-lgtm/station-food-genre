@@ -14,6 +14,8 @@
   --accent: #1f6f78;
   --accent-soft: rgba(31, 111, 120, 0.28);
   --pick: #b4531f;
+  --rail: #6b7774;
+  --subway: #8a9794;
   --rule: #d8dfdc;
   --panel: #ffffff;
   --font-display: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
@@ -23,12 +25,14 @@
   :root:not([data-theme="light"]) {
     --bg: #111716; --land: #1a2120; --ward-line: #34403d; --ink: #e6ecea; --ink-2: #aab6b2; --ink-3: #7d8a86;
     --accent: #5fb3bb; --accent-soft: rgba(95, 179, 187, 0.30); --pick: #f08a4b; --rule: #2a3331; --panel: #171e1d;
+    --rail: #8e9b97; --subway: #6a7774;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #111716; --land: #1a2120; --ward-line: #34403d; --ink: #e6ecea; --ink-2: #aab6b2; --ink-3: #7d8a86;
   --accent: #5fb3bb; --accent-soft: rgba(95, 179, 187, 0.30); --pick: #f08a4b; --rule: #2a3331; --panel: #171e1d;
+  --rail: #8e9b97; --subway: #6a7774;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -56,6 +60,15 @@ svg.map { display: block; width: 100%; height: min(78vh, 900px); min-height: 360
 svg.map.drag { cursor: grabbing; }
 .ward { fill: var(--land); stroke: var(--ward-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .ward-name { fill: var(--ink-3); font-family: var(--font-body); text-anchor: middle; pointer-events: none; }
+.rl { fill: none; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; pointer-events: none; }
+.rl.rail { stroke: var(--rail); stroke-width: 1.4; }
+.rl.subway { stroke: var(--subway); stroke-width: 1.4; stroke-dasharray: 3 2; }
+.rl.on { stroke: var(--pick); stroke-width: 3; stroke-dasharray: none; }
+.rl-hit { fill: none; stroke: transparent; stroke-width: 9; vector-effect: non-scaling-stroke; pointer-events: stroke; }
+.layers { display: flex; gap: 10px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 5px 10px; font-size: 13px; }
+.layers label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.sw { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--rail); }
+.sw.sub { border-top: 2px dashed var(--subway); }
 .st { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .st.hot { fill: var(--accent); }
 .st.pick { fill: var(--pick); stroke: var(--pick); fill-opacity: 0.55; stroke-width: 2; }
@@ -94,7 +107,7 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
 <div class="wrap">
   <header>
     <h1>23区 駅別乗降客数マップ</h1>
-    <p class="lede"><span class="num" id="count">490</span> 駅の1日平均乗降客数（2024年）。円の面積が乗降客数に比例します。乗換駅は事業者の合計。ホイールやボタンで拡大、ドラッグで移動、円に触れると詳細が出ます。</p>
+    <p class="lede"><span class="num" id="count">490</span> 駅の1日平均乗降客数（2024年）。円の面積が乗降客数に比例します。乗換駅は事業者の合計。ホイールやボタンで拡大、ドラッグで移動。円に触れると駅の詳細、線に触れると路線名が出ます。</p>
   </header>
 
   <div class="mapbox" id="mapbox">
@@ -102,6 +115,10 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
       <label class="search" for="q">駅名
         <input id="q" type="search" placeholder="例: 亀戸" autocomplete="off">
       </label>
+      <div class="layers">
+        <label for="lyRail"><input id="lyRail" type="checkbox" checked><span class="sw"></span>JR・私鉄</label>
+        <label for="lySub"><input id="lySub" type="checkbox" checked><span class="sw sub"></span>地下鉄</label>
+      </div>
       <span class="msg" id="msg" aria-live="polite"></span>
       <div class="zoom">
         <button class="btn" id="zin" type="button" aria-label="拡大">＋</button>
@@ -110,7 +127,7 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
       </div>
     </div>
     <svg class="map" id="map" role="img" aria-label="23区の駅の位置と乗降客数を円の大きさで表した地図">
-      <g id="wards"></g><g id="wardNames"></g><g id="circles"></g><g id="labels"></g>
+      <g id="wards"></g><g id="wardNames"></g><g id="rails"></g><g id="railHits"></g><g id="circles"></g><g id="labels"></g>
     </svg>
     <div class="legend" aria-hidden="true">
       <span class="t">円の大きさ＝1日平均乗降客数（いまの拡大率での大きさ）</span>
@@ -125,7 +142,7 @@ h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
       <button class="btn" id="more" type="button">全駅を表示</button>
     </div>
     <div class="rows" id="rows"></div>
-    <p class="note">出典: 国土交通省「国土数値情報（駅別乗降客数データ）」S12-25 を加工して作成。同じ駅名で500m以内の駅、S12で同じグループの駅を1駅にまとめ、同じ事業者の重複は除いています。店数は駅から半径1kmの飲食店（Overture Maps、重複をまとめた後）。乗降客数が載っていない3駅は除いています。区の境界は Overture Maps Foundation（divisions）。</p>
+    <p class="note">出典: 国土交通省「国土数値情報（駅別乗降客数データ）」S12-25 を加工して作成。同じ駅名で500m以内の駅、S12で同じグループの駅を1駅にまとめ、同じ事業者の重複は除いています。店数は駅から半径1kmの飲食店（Overture Maps、重複をまとめた後）。乗降客数が載っていない3駅は除いています。区の境界と線路は Overture Maps Foundation（divisions、transportation。線路は OpenStreetMap 由来、© OpenStreetMap contributors、ODbL）。</p>
   </section>
 </div>
 
@@ -158,6 +175,24 @@ D.wards.forEach(w => {
   const t = el("text", { x: w.c[0], y: w.c[1], class: "ward-name" }, gWN);
   t.textContent = w.name;
 });
+// 路線（同じ路線名の線路を1本のパスにまとめてある）
+const gR = document.getElementById("rails"), gRH = document.getElementById("railHits");
+const railEls = D.rails.map((r, i) => {
+  const v = el("path", { d: r.d, class: `rl ${r.k}` }, gR);
+  el("path", { d: r.d, class: "rl-hit", "data-r": i, "data-k": r.k }, gRH);
+  return v;
+});
+function layerToggle(id, kind) {
+  const box = document.getElementById(id);
+  const sync = () => {
+    const on = box.checked;
+    railEls.forEach((p, i) => { if (D.rails[i].k === kind) p.style.display = on ? "" : "none"; });
+    gRH.querySelectorAll(`[data-k="${kind}"]`).forEach(p => { p.style.display = on ? "" : "none"; });
+  };
+  box.addEventListener("change", sync); sync();
+}
+layerToggle("lyRail", "rail"); layerToggle("lySub", "subway");
+
 // 大きい円を下に、小さい円を上に
 const circles = D.stations.map((s, i) => el("circle", { cx: s.x, cy: s.y, r: R(s.p), class: "st", "data-i": i }, gC));
 const labels = D.stations.map(s => { const t = el("text", { x: s.x, y: s.y, class: "lbl", "text-anchor": "middle" }, gL); t.textContent = s.n; return t; });
@@ -271,7 +306,7 @@ const endPtr = e => {
   const tapped = last && !last.moved && ptrs.size === 1;
   ptrs.delete(e.pointerId);
   if (ptrs.size < 2) pinch = null;
-  if (ptrs.size === 0) { svg.classList.remove("drag"); if (tapped) hover(e, true); last = null; }
+  if (ptrs.size === 0) { svg.classList.remove("drag"); if (tapped) hover(e); last = null; }
 };
 svg.addEventListener("pointerup", endPtr);
 svg.addEventListener("pointercancel", endPtr);
@@ -291,19 +326,34 @@ function nearest(clientX, clientY) {
   return best;
 }
 
-let hot = -1;
-function hover(e, sticky) {
+let hot = -1, hotRail = -1;
+function clearRail() { if (hotRail >= 0) railEls[hotRail].classList.remove("on"); hotRail = -1; }
+function hover(e) {
   const i = nearest(e.clientX, e.clientY);
   if (hot >= 0) circles[hot].classList.remove("hot");
   hot = i;
-  if (i < 0) { if (!sticky) hideTip(); else hideTip(); return; }
-  circles[i].classList.add("hot");
-  showTip(i, e.clientX, e.clientY);
+  clearRail();
+  if (i >= 0) { circles[i].classList.add("hot"); showTip(i, e.clientX, e.clientY); return; }
+  // 駅が近くになければ、指している線路の路線名
+  const hit = document.elementFromPoint(e.clientX, e.clientY);
+  const r = hit && hit.closest && hit.closest("[data-r]");
+  if (r) {
+    hotRail = +r.dataset.r;
+    const rail = D.rails[hotRail];
+    railEls[hotRail].classList.add("on");
+    railEls[hotRail].parentNode.appendChild(railEls[hotRail]);
+    placeTip(`<b>${rail.n || "名称のない線路"}</b><div class="ops">${rail.k === "subway" ? "地下鉄" : "JR・私鉄など"}</div>`, e.clientX, e.clientY);
+    return;
+  }
+  hideTip();
 }
 
 function showTip(i, clientX, clientY) {
   const s = D.stations[i];
-  tip.innerHTML = `<b>${s.n}</b><dl><dt>乗降客数</dt><dd>${fmt(s.p)} 人/日</dd><dt>順位</dt><dd>${i + 1} 位</dd><dt>1km圏の飲食店</dt><dd>${fmt(s.s)} 店</dd></dl><div class="ops">${s.o}</div>`;
+  placeTip(`<b>${s.n}</b><dl><dt>乗降客数</dt><dd>${fmt(s.p)} 人/日</dd><dt>順位</dt><dd>${i + 1} 位</dd><dt>1km圏の飲食店</dt><dd>${fmt(s.s)} 店</dd></dl><div class="ops">${s.o}</div>`, clientX, clientY);
+}
+function placeTip(html, clientX, clientY) {
+  tip.innerHTML = html;
   tip.hidden = false;
   const r = box.getBoundingClientRect();
   let x = clientX - r.left + 14, y = clientY - r.top + 14;
@@ -312,7 +362,7 @@ function showTip(i, clientX, clientY) {
   if (y + th > r.height - 8) y = clientY - r.top - th - 14;
   tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
 }
-function hideTip() { tip.hidden = true; if (hot >= 0) circles[hot].classList.remove("hot"); hot = -1; }
+function hideTip() { tip.hidden = true; if (hot >= 0) circles[hot].classList.remove("hot"); hot = -1; clearRail(); }
 
 function focusStation(i) {
   if (picked >= 0) circles[picked].classList.remove("pick");
