@@ -1,14 +1,17 @@
-"""駅から半径1kmの店を23区の判定結果から切り出し、ジャンル別の件数・構成比・特化係数（LQ）を出す。
+"""駅から半径 R の店を23区の判定結果から切り出し、ジャンル別の件数・構成比・特化係数（LQ）を出す。
 
-  python scripts/station_table.py tokyo23                         # common.py の STATIONS（今は亀戸だけ）
-  python scripts/station_table.py tokyo23 --stations data/stations.csv   # 駅一覧（S12 から作る予定）
+  python scripts/station_table.py tokyo23                                     # common.py の STATIONS（亀戸）、半径1km
+  python scripts/station_table.py tokyo23 --stations data/stations.csv        # 23区の全駅（s12_stations.py の出力）
+  python scripts/station_table.py tokyo23 --stations data/stations.csv --radius 500   # 半径は任意（m）
 
 入力: data/areas/<area>_genre.parquet（classify_area.py の出力。重複をまとめた代表の行だけ数える）
       data/census/weights_<area>.csv（census.py の出力、任意。あればセンサス補正した列も出す）
       --stations の CSV: 列 key, name, lat, lng, passengers（passengers は1日平均乗降客数、空欄可）
-出力: data/stations/<area>_stations.csv  駅 × 大分類／中分類 の縦長の表
-      data/stations/<area>_lq_mid.csv    駅ごとの店数（補正前・後）・乗降客1万人あたり店舗数と、中分類の LQ（センサス補正あり）の
-                                         横長の表。駅どうしの比較用。near_edge=1 は円が23区の外にはみ出す駅（外側の店はデータに無い）
+出力: data/stations/<area>_r<半径>_stations.csv  駅 × 大分類／中分類 の縦長の表
+      data/stations/<area>_r<半径>_lq_mid.csv    駅ごとの店数（補正前・後）・乗降客1万人あたり店舗数と、中分類の LQ（センサス補正あり）の
+                                         横長の表。駅どうしの比較用。near_edge=1 は円が23区の外にはみ出す駅（外側の店はデータに無い。
+                                         半径ごとに判定する。海に面した駅も 1 になる）
+      --stations を付けないときは <area>_r<半径>_common_*.csv
 
 数え方:
 - 円が重なる駅どうしは、同じ店をそれぞれの駅で数える
@@ -26,6 +29,10 @@ import numpy as np
 import pyarrow.parquet as pq
 
 from census import load_weights, weight_of
+from shapely import wkb
+from shapely.geometry import Point
+from shapely.ops import transform, unary_union
+
 from common import EARTH_R, RADIUS_M, STATIONS
 from genre_groups import GROUPS, MAJOR_ORDER, UNKNOWN, group_of
 
@@ -46,15 +53,27 @@ def load_stores(area):
     return stores, lat, lng, weights is not None
 
 
+def edge_checker(area, radius):
+    """(lat, lng) → 半径 radius の円が比較対象の範囲（23区）の外にはみ出すなら 1。"""
+    lat0 = 35.7
+    kx, ky = 111320 * np.cos(np.radians(lat0)), 110950
+
+    def to_m(x, y, z=None):
+        return x * kx, y * ky
+
+    wards = pq.read_table(f"data/areas/{area}_wards.parquet").to_pylist()
+    boundary = transform(to_m, unary_union([wkb.loads(w["geometry"]) for w in wards])).boundary
+    return lambda lat, lng: int(boundary.distance(Point(lng * kx, lat * ky)) < radius)
+
+
 def load_stations(path):
     if not path:
-        return [{"key": k, "name": s["name"], "lat": s["lat"], "lng": s["lng"], "passengers": None, "near_edge": ""}
+        return [{"key": k, "name": s["name"], "lat": s["lat"], "lng": s["lng"], "passengers": None}
                 for k, s in STATIONS.items()]
     out = []
     for r in csv.DictReader(open(path, encoding="utf-8")):
         out.append({"key": r["key"], "name": r["name"], "lat": float(r["lat"]), "lng": float(r["lng"]),
-                    "passengers": float(r["passengers"]) if r.get("passengers") else None,
-                    "near_edge": r.get("near_edge", "")})
+                    "passengers": float(r["passengers"]) if r.get("passengers") else None})
     return out
 
 
@@ -112,7 +131,10 @@ def main():
         print(f"data/census/weights_{args.area}.csv が無いのでセンサス補正なしで出す（python scripts/census.py {args.area}）")
 
     os.makedirs("data/stations", exist_ok=True)
-    out = f"data/stations/{args.area}_stations.csv"
+    near_edge = edge_checker(args.area, args.radius)
+    # 駅一覧を指定しないとき（亀戸など common.py の駅だけ）は、全駅の出力を上書きしないよう別の名前にする
+    tag = f"{args.area}_r{args.radius:g}" + ("" if args.stations else "_common")
+    out = f"data/stations/{tag}_stations.csv"
     wide, names, totals = {}, {}, {}
     with open(out, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
@@ -121,6 +143,7 @@ def main():
                     "count_w", "share_w", "base_share_w", "LQ_w", "per_10k_passengers_w"])
         for st in load_stations(args.stations):
             idx = within(lat, lng, st["lat"], st["lng"], args.radius)
+            st["near_edge"] = near_edge(st["lat"], st["lng"])
             c = tally(stores, idx, False)
             s = shares(c)
             cw = tally(stores, idx, True) if has_w else {}
@@ -145,7 +168,7 @@ def main():
             if not args.quiet:
                 print(f"{st['name']}: 半径{args.radius:.0f}m に {total} 店（大分類不明 {unk / total:.1%}、中分類不明 {unk_mid / total:.1%}）")
 
-    out_wide = f"data/stations/{args.area}_lq_mid.csv"
+    out_wide = f"data/stations/{tag}_lq_mid.csv"
     with open(out_wide, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["station", "name", "passengers", "near_edge", "stores", "stores_w", "per_10k_passengers_w"] + MID_ORDER)
