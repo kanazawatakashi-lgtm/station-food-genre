@@ -7,7 +7,8 @@
       data/census/weights_<area>.csv（census.py の出力、任意。あればセンサス補正した列も出す）
       --stations の CSV: 列 key, name, lat, lng, passengers（passengers は1日平均乗降客数、空欄可）
 出力: data/stations/<area>_stations.csv  駅 × 大分類／中分類 の縦長の表
-      data/stations/<area>_lq_mid.csv    駅 × 中分類の LQ（センサス補正あり）の横長の表。駅どうしの比較用
+      data/stations/<area>_lq_mid.csv    駅ごとの店数（補正前・後）・乗降客1万人あたり店舗数と、中分類の LQ（センサス補正あり）の
+                                         横長の表。駅どうしの比較用。near_edge=1 は円が23区の外にはみ出す駅（外側の店はデータに無い）
 
 数え方:
 - 円が重なる駅どうしは、同じ店をそれぞれの駅で数える
@@ -47,12 +48,13 @@ def load_stores(area):
 
 def load_stations(path):
     if not path:
-        return [{"key": k, "name": s["name"], "lat": s["lat"], "lng": s["lng"], "passengers": None}
+        return [{"key": k, "name": s["name"], "lat": s["lat"], "lng": s["lng"], "passengers": None, "near_edge": ""}
                 for k, s in STATIONS.items()]
     out = []
     for r in csv.DictReader(open(path, encoding="utf-8")):
         out.append({"key": r["key"], "name": r["name"], "lat": float(r["lat"]), "lng": float(r["lng"]),
-                    "passengers": float(r["passengers"]) if r.get("passengers") else None})
+                    "passengers": float(r["passengers"]) if r.get("passengers") else None,
+                    "near_edge": r.get("near_edge", "")})
     return out
 
 
@@ -97,6 +99,7 @@ def main():
     ap.add_argument("area")
     ap.add_argument("--stations")
     ap.add_argument("--radius", type=float, default=RADIUS_M)
+    ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args()
 
     stores, lat, lng, has_w = load_stores(args.area)
@@ -110,10 +113,10 @@ def main():
 
     os.makedirs("data/stations", exist_ok=True)
     out = f"data/stations/{args.area}_stations.csv"
-    wide = {}
+    wide, names, totals = {}, {}, {}
     with open(out, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["station", "name", "passengers", "level", "major", "mid",
+        w.writerow(["station", "name", "passengers", "near_edge", "level", "major", "mid",
                     "count", "share", "base_share", "LQ",
                     "count_w", "share_w", "base_share_w", "LQ_w", "per_10k_passengers_w"])
         for st in load_stations(args.stations):
@@ -127,22 +130,27 @@ def main():
                 lq = s[k] / base_s[k] if k in s and base_s.get(k) else None
                 lqw = sw[k] / base_ws[k] if k in sw and base_ws.get(k) else None
                 per = cw.get(k, 0) / st["passengers"] * 10000 if has_w and st["passengers"] else None
-                w.writerow([st["key"], st["name"], st["passengers"] or "", k[0], k[1], k[2],
+                w.writerow([st["key"], st["name"], int(st["passengers"]) if st["passengers"] else "", st["near_edge"], k[0], k[1], k[2],
                             int(c[k]), r4(s.get(k)), r4(base_s.get(k)), r4(lq),
                             r4(cw.get(k)) if has_w else "", r4(sw.get(k)), r4(base_ws.get(k)), r4(lqw), r4(per)])
                 if k[0] == "mid" and k[2] != UNKNOWN:
                     wide[st["key"]][k[2]] = lqw if has_w else lq
             total = len(idx)
+            tw = sum(n for (lv, _, _), n in cw.items() if lv == "major") if has_w else None
+            per = tw / st["passengers"] * 10000 if tw is not None and st["passengers"] else None
+            names[st["key"]] = st["name"]
+            totals[st["key"]] = [int(st["passengers"]) if st["passengers"] else "", st["near_edge"], total, r4(tw), r4(per)]
             unk = c.get(("major", UNKNOWN, ""), 0)
             unk_mid = sum(n for (lv, _, md), n in c.items() if lv == "mid" and md == UNKNOWN)
-            print(f"{st['name']}: 半径{args.radius:.0f}m に {total} 店（大分類不明 {unk / total:.1%}、中分類不明 {unk_mid / total:.1%}）")
+            if not args.quiet:
+                print(f"{st['name']}: 半径{args.radius:.0f}m に {total} 店（大分類不明 {unk / total:.1%}、中分類不明 {unk_mid / total:.1%}）")
 
     out_wide = f"data/stations/{args.area}_lq_mid.csv"
     with open(out_wide, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["station"] + MID_ORDER)
+        w.writerow(["station", "name", "passengers", "near_edge", "stores", "stores_w", "per_10k_passengers_w"] + MID_ORDER)
         for key, row in wide.items():
-            w.writerow([key] + [r4(row.get(m)) for m in MID_ORDER])
+            w.writerow([key, names[key], *totals[key]] + [r4(row.get(m)) for m in MID_ORDER])
     print(f"-> {out}\n-> {out_wide}")
 
 

@@ -78,7 +78,10 @@ python scripts/station_table.py tokyo23 --stations data/stations.csv  # 23区の
 - 駅の集計は亀戸専用のパイプライン（JFF・OSM 込み）ではなく、23区の判定結果（Overture のみ）から切り出す。
   駅と比較対象が同じ方法になり、LQ に方法の差が入らない
 - `_w` の列はセンサス補正後。乗降客1万人あたり店舗数は補正後の件数で出す
-- `s12_stations.py` は偽データでのみ試験済み。S12 の列名は版で違うので `--inspect` で確認してから使う
+- S12-25 は `data/s12/`（ユーザーが取得）。2024年の乗降客数は `S12_061`:
+  `python scripts/s12_stations.py data/s12/S12-25_NumberOfPassengers.geojson --passengers S12_061`。
+  別の版を使うときは `--inspect` で列を確認する
+- 乗降客1万人あたり店舗数は、円の重なりのため小さい駅ほど大きく出る（docs/method.md「23区の全駅」）
 
 ### 次にやること
 
