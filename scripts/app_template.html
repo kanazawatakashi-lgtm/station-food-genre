@@ -237,13 +237,7 @@ table.gt tr.unk td { color: var(--ink-3); }
     <div id="mBody"></div>
   </div>
 </div>
-<div class="pop" id="pop" role="dialog" aria-label="平均比の説明" hidden>
-  <h4>平均比とは</h4>
-  <p>その駅のまわり（選んだ半径の範囲）にある飲食店のうち、あるジャンルが占める割合が、23区全体の割合の何倍かを表した数字です。</p>
-  <h4>例</h4>
-  <p>23区全体では飲食店の7%が居酒屋です。A駅のまわりでは飲食店の14%が居酒屋だとすると、A駅の居酒屋の平均比は 14% ÷ 7% ＝ <b>2.0倍</b> です。</p>
-  <ul><li>1.0倍：23区平均と同じ</li><li>2.0倍：23区平均の2倍ある（多い）</li><li>0.5倍：23区平均の半分しかない（少ない）</li></ul>
-</div>
+<div class="pop" id="pop" role="dialog" hidden></div>
 <script>
 const D = __DATA__;
 const NS = "http://www.w3.org/2000/svg";
@@ -269,7 +263,13 @@ function distM(la1, lo1, la2, lo2) {
 }
 
 // ---- 平均比の説明（? マーク）----
-const help = () => `<button class="help" type="button" aria-label="平均比の説明" aria-expanded="false" data-help>?</button>`;
+const HELP = {
+  lq: ["平均比の説明", `<h4>平均比とは</h4><p>その駅のまわり（選んだ半径の範囲）にある飲食店のうち、あるジャンルが占める割合が、23区全体の割合の何倍かを表した数字です。</p><h4>例</h4><p>23区全体では飲食店の7%が居酒屋です。A駅のまわりでは飲食店の14%が居酒屋だとすると、A駅の居酒屋の平均比は 14% ÷ 7% ＝ <b>2.0倍</b> です。</p><ul><li>1.0倍：23区平均と同じ</li><li>2.0倍：23区平均の2倍ある（多い）</li><li>0.5倍：23区平均の半分しかない（少ない）</li></ul>`],
+  dayNight: ["働く人 ÷ 住む人の説明", `<p>「働く人 ÷ 住む人」が大きいほど、昼間に人が集まる街（ランチ需要が大きい）です。</p>`],
+  work: ["従業者数の説明", `<p>従業者数は事業所で働く人の数で、通学者や買い物客は含みません。</p>`],
+  office: ["オフィス・商業系の説明", `<p>オフィス・商業系は、情報通信・卸売小売・金融保険・不動産・専門サービス・その他サービス（警備・ビル管理・派遣など）の合計です。</p>`],
+};
+const help = (k = "lq") => `<button class="help" type="button" aria-label="${HELP[k][0]}" aria-expanded="false" data-help="${k}">?</button>`;
 const pop = $("pop");
 let popBtn = null;
 function closePop() { pop.hidden = true; if (popBtn) popBtn.setAttribute("aria-expanded", "false"); popBtn = null; }
@@ -278,7 +278,9 @@ document.addEventListener("click", e => {
   if (b) {
     e.stopPropagation();
     if (popBtn === b) { closePop(); return; }
-    closePop(); popBtn = b; b.setAttribute("aria-expanded", "true"); pop.hidden = false;
+    closePop(); popBtn = b; b.setAttribute("aria-expanded", "true");
+    const [label, body] = HELP[b.dataset.help] || HELP.lq;
+    pop.setAttribute("aria-label", label); pop.innerHTML = body; pop.hidden = false;
     const r = b.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
     let x = Math.min(window.innerWidth - w - 16, Math.max(16, r.left - w / 2));
     let y = r.bottom + 8; if (y + h > window.innerHeight - 8) y = Math.max(8, r.top - h - 8);
@@ -551,12 +553,12 @@ function popBlock(s) {
     </div>
     ${f.work != null ? `<div><h3>働いている人（${state.radius}m圏、2021年経済センサス）</h3>
       <div class="stats">
-        <div class="stat"><div class="v">${f.dayNight.toFixed(1)}倍</div><div class="l">働く人 ÷ 住む人</div>${cmp(0, a && a.dayNight, v => v.toFixed(1) + "倍")}</div>
-        <div class="stat"><div class="v">${fmt(f.work)}</div><div class="l">従業者数</div></div>
-        <div class="stat"><div class="v">${fmt(f.workOffice)}</div><div class="l">うちオフィス・商業系（${pct(f.workOffice / Math.max(f.work, 1))}）</div>${cmp(0, a && a.workOffice / Math.max(a.work, 1), pct)}</div>
+        <div class="stat"><div class="v">${f.dayNight.toFixed(1)}倍</div><div class="l">働く人 ÷ 住む人${help("dayNight")}</div>${cmp(0, a && a.dayNight, v => v.toFixed(1) + "倍")}</div>
+        <div class="stat"><div class="v">${fmt(f.work)}</div><div class="l">従業者数${help("work")}</div></div>
+        <div class="stat"><div class="v">${fmt(f.workOffice)}</div><div class="l">うちオフィス・商業系（${pct(f.workOffice / Math.max(f.work, 1))}）${help("office")}</div>${cmp(0, a && a.workOffice / Math.max(a.work, 1), pct)}</div>
         <div class="stat"><div class="v">${fmt(f.workFood)}</div><div class="l">うち宿泊・飲食サービス</div></div>
       </div>
-      <p class="muted-t">「働く人 ÷ 住む人」が大きいほど、昼間に人が集まる街（ランチ需要が大きい）です。従業者数は事業所で働く人の数で、通学者や買い物客は含みません。オフィス・商業系は、情報通信・卸売小売・金融保険・不動産・専門サービス・その他サービス（警備・ビル管理・派遣など）の合計です。</p></div>` : ""}`;
+</div>` : ""}`;
 }
 // ---- 駅の特徴（店の構成と人口から、決まった規則で文章にする） ----
 const DAILY = ["定食・丼", "惣菜・弁当", "ラーメン", "そば・うどん", "ハンバーガー・ファストフード", "ファミレス", "とんかつ・揚げ物"];
