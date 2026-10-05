@@ -296,19 +296,25 @@ function apply() {
   svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
   const px = unitPx(); // 画面1px あたりの地図座標
   const zoom = full.w / vb.w;
-  const shown = zoom < 1.6 ? 14 : zoom < 3 ? 50 : zoom < 5 ? 160 : D.stations.length;
+  // 駅名は、拡大の度合いに応じた乗降客数以上の駅だけ出し、重なるものは出さない（全体表示ではターミナル駅だけ）
+  const minP = zoom < 1.6 ? 1000000 : zoom < 2.5 ? 400000 : zoom < 4 ? 150000 : zoom < 7 ? 50000 : zoom < 12 ? 15000 : 0;
   stationBoxes = [];
   labels.forEach((t, i) => {
     const s = D.stations[i];
-    const on = i < shown || i === picked;
-    t.style.display = on ? "" : "none";
+    const forced = i === picked;
+    let on = s.p >= minP || forced;
     if (on) {
       const tw = s.n.length * 14 * px, ty = s.y - R(s.p) - 4 * px;
-      stationBoxes.push({ x0: s.x - tw / 2, x1: s.x + tw / 2, y0: ty - 14 * px, y1: ty + 3 * px });
-      t.setAttribute("font-size", 14 * px);
-      t.setAttribute("stroke-width", 3.5 * px);
-      t.setAttribute("y", s.y - R(s.p) - 4 * px);
+      const box = { x0: s.x - tw / 2, x1: s.x + tw / 2, y0: ty - 14 * px, y1: ty + 3 * px };
+      if (!forced && stationBoxes.some(b => b.x0 < box.x1 && box.x0 < b.x1 && b.y0 < box.y1 && box.y0 < b.y1)) on = false;
+      else {
+        stationBoxes.push(box);
+        t.setAttribute("font-size", 14 * px);
+        t.setAttribute("stroke-width", 3.5 * px);
+        t.setAttribute("y", ty);
+      }
     }
+    t.style.display = on ? "" : "none";
   });
   gWN.querySelectorAll("text").forEach(t => { t.setAttribute("font-size", 13 * px); });
   drawRailLabels(px, zoom);

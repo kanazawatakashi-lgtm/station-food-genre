@@ -186,8 +186,8 @@ python scripts/fetch_openpoi.py kameido
 - **サービスに載せる注記（出典表示、データの時点、数字の限界）は `docs/disclosures.md` に作業のたびに足す**（ユーザーの指示。最後にまとめて載せる）
 - **アプリ**: `python scripts/build_app.py` → `docs/app.html`（データ埋め込みの1ファイル、約5MB）。
   駅カード（300/500/1000m）、比較（5駅）、ジャンルで探す（LQ で地図を塗る）、地点分析（50/100/300m の店一覧）。
-  公開先 https://claude.ai/artifact/LWtYAoxwNX1yRruwZFWMDF 。人口は取り込み済み（国勢調査2020 250mメッシュ、`data/mesh/`、`mesh_stats.py` の --cols は README 参照）。働く人の数も取り込み済み（経済センサス2021 500mメッシュ、T001147022＝全産業の従業者数。001〜021 は事業所数で項目名が重複するので列コードで指定する）。住所検索はデータ待ち（`docs/next_data.md`）。地価は見送り（ユーザー判断 2026-10-05）
+  公開先 https://claude.ai/artifact/LWtYAoxwNX1yRruwZFWMDF 。人口は取り込み済み（国勢調査2020 250mメッシュ、`data/mesh/`、`mesh_stats.py` の --cols は README 参照）。働く人の数も取り込み済み（経済センサス2021 500mメッシュ、T001147022＝全産業の従業者数。001〜021 は事業所数で項目名が重複するので列コードで指定する）。住所検索も対応済み（位置参照情報 街区レベル `data/isj/`、build_app.py の load_addresses と app の geocode()）。地価は見送り（ユーザー判断 2026-10-05）
 - 線路・区の境界は国土数値情報 N02・N03 に置き換え済み（`scripts/ksj.py`）。Overture の rail/divisions はもう使わない
 - 駐車料金は無料で商用に使えるデータがない。地価も見送り（`docs/parking_research.md`）
 - 駅カードの「駅の特徴」は `app_template.html` の describe() が規則で作る文章（街の性格＝人口密度と店の密度の23区比、住民＝年齢・単身・外国人の23区比、飲食＝まとまりの LQ と上位/下位ジャンル）。AI の生成文ではない
-
+- 地図の駅名: 拡大の度合いに応じた乗降客数以上の駅だけ、乗降客数の多い順に重ならないように出す（全体表示は100万人以上。ユーザー指示 2026-10-05）

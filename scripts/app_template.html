@@ -188,7 +188,7 @@ thead th { color: var(--ink-2); font-weight: 700; font-size: 13px; }
 
   <div class="card foot">
     <p class="note"><b>この試作の数字について</b>　店の数は地図サービスに登録された飲食店の件数で、実際の店数とは一致しません（閉店済みの店が残っている場合があります）。ジャンルは店名や分類から自動で判定しており（AI による判定を含む）、判定率は約83%です。LQ（特化係数）は、駅周辺のジャンルの割合が23区全体の何倍かを示し、経済センサスの事業所数で地図サービスの偏りを補正した値です。店が少ないジャンルは数店の違いで大きく動くので、件数と合わせて見てください。円が重なる駅は同じ店をそれぞれの駅で数えています。乗降客数は2024年の1日平均で、乗換駅は事業者の合計です。「少ないジャンル」が出店の好機とは限りません。</p>
-    <p class="note"><b>出典</b>　店舗: © Overture Maps Foundation（Places、CDLA-Permissive-2.0。一部 © Foursquare Labs, Inc.、Apache-2.0）を加工して作成。乗降客数・鉄道・行政区域: 国土交通省「国土数値情報（駅別乗降客数データ S12-25、鉄道データ、行政区域データ）」（公共データ利用規約 第1.0版）を加工して作成。事業所数: 総務省・経済産業省「令和3年経済センサス‐活動調査」（e-Stat）を加工して作成。人口: 総務省統計局「令和2年国勢調査 地域メッシュ統計」、従業者数: 総務省・経済産業省「令和3年経済センサス‐活動調査 地域メッシュ統計」（e-Stat）を加工して作成。</p>
+    <p class="note"><b>出典</b>　店舗: © Overture Maps Foundation（Places、CDLA-Permissive-2.0。一部 © Foursquare Labs, Inc.、Apache-2.0）を加工して作成。乗降客数・鉄道・行政区域: 国土交通省「国土数値情報（駅別乗降客数データ S12-25、鉄道データ、行政区域データ）」（公共データ利用規約 第1.0版）を加工して作成。事業所数: 総務省・経済産業省「令和3年経済センサス‐活動調査」（e-Stat）を加工して作成。住所の位置: 国土交通省「位置参照情報（街区レベル）」を加工して作成。人口: 総務省統計局「令和2年国勢調査 地域メッシュ統計」、従業者数: 総務省・経済産業省「令和3年経済センサス‐活動調査 地域メッシュ統計」（e-Stat）を加工して作成。</p>
   </div>
 </div>
 
@@ -249,12 +249,21 @@ function focusOn(x, y, w) { vb.w = w; vb.h = w * full.h / full.w; vb.x = x - vb.
 function draw() {
   svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
   const px = unitPx(), zoom = full.w / vb.w;
-  const shown = zoom < 1.6 ? 12 : zoom < 3 ? 45 : zoom < 6 ? 150 : ST.length;
+  // 駅名は、拡大の度合いに応じた乗降客数以上の駅だけ出す（全体表示ではターミナル駅だけ）。
+  // 乗降客数の多い順に置き、すでに置いた駅名と重なるものは出さない
+  const minP = zoom < 1.6 ? 1000000 : zoom < 2.5 ? 400000 : zoom < 4 ? 150000 : zoom < 7 ? 50000 : zoom < 12 ? 15000 : 0;
+  const placed = [];
   labels.forEach((t, i) => {
     const s = ST[i];
-    const on = (i < shown || i === state.sel || state.cmp.includes(i)) && !(state.tab === "point" && zoom > 25);
+    const forced = zoom >= 3 && (i === state.sel || state.cmp.includes(i));
+    let on = (s.p >= minP || forced) && !(state.tab === "point" && zoom > 25);
+    if (on) {
+      const y = s.y - R(s.p) - 4 * px, w = s.n.length * 13 * px, h = 15 * px;
+      const box = { x0: s.x - w / 2, x1: s.x + w / 2, y0: y - h, y1: y + 2 * px };
+      if (!forced && placed.some(b => b.x0 < box.x1 && box.x0 < b.x1 && b.y0 < box.y1 && box.y0 < b.y1)) on = false;
+      else { placed.push(box); t.setAttribute("font-size", 13 * px); t.setAttribute("stroke-width", 3.5 * px); t.setAttribute("y", y); }
+    }
     t.style.display = on ? "" : "none";
-    if (on) { t.setAttribute("font-size", 13 * px); t.setAttribute("stroke-width", 3.5 * px); t.setAttribute("y", s.y - R(s.p) - 4 * px); }
   });
   gWN.querySelectorAll("text").forEach(t => t.setAttribute("font-size", 12 * px));
   gWN.style.display = zoom > 8 ? "none" : "";
@@ -628,6 +637,40 @@ function drawPoint() {
   }
   el("circle", { cx: x, cy: y, r: 6 * px, class: "pin" }, gP);
 }
+// 住所 → 緯度経度（国土交通省 位置参照情報の街区レベル。街区が見つからなければ丁目、町の中心）
+const KJ = { "〇": 0, "一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9 };
+function kanjiNum(t) { if (t.includes("十")) { const [a, b] = t.split("十"); return (a ? KJ[a] : 1) * 10 + (b ? KJ[b] : 0); } return KJ[t] ?? 0; }
+function geocode(v) {
+  if (!D.addr || !Object.keys(D.addr).length) return null;
+  let t = v.normalize("NFKC").replace(/\s/g, "").replace(/^東京都/, "")
+    .replace(/(\d)[ー‐－―−–—](?=\d)/g, "$1-").replace(/([〇一二三四五六七八九十]+)(?=丁目|番|号)/g, m => kanjiNum(m));
+  const wards = Object.keys(D.addr);
+  const w0 = wards.find(w => t.startsWith(w));
+  let best = null;
+  for (const w of (w0 ? [w0] : wards)) {
+    const rest = w0 ? t.slice(w.length) : t;
+    for (const town of Object.keys(D.addr[w])) {
+      if (rest.startsWith(town) && (!best || town.length > best.town.length)) best = { w, town, rest: rest.slice(town.length) };
+    }
+  }
+  if (!best) return null;
+  const chomes = D.addr[best.w][best.town];
+  const hasChome = Object.keys(chomes).some(k => k !== "0");
+  const nums = (best.rest.replace(/^大字/, "").match(/\d+/g) || []).map(Number);
+  const dec = e => [e[0] / 1e5 + 35, e[1] / 1e5 + 139];
+  let c = hasChome ? nums[0] : 0, blk = hasChome ? nums[1] : nums[0];
+  let label = best.w + best.town, prec = "町の中心";
+  let entry = chomes[c];
+  if (!entry) {
+    // 丁目が分からない・存在しない: 町に含まれる丁目の中心の平均
+    const es = Object.values(chomes);
+    const la = es.reduce((a, e) => a + e[0], 0) / es.length, lo = es.reduce((a, e) => a + e[1], 0) / es.length;
+    return { la: la / 1e5 + 35, lo: lo / 1e5 + 139, label, prec };
+  }
+  if (hasChome) { label += `${c}丁目`; prec = "丁目の中心"; }
+  if (blk != null && entry[2][String(blk)]) { const [la, lo] = dec(entry[2][String(blk)]); return { la, lo, label: label + `${blk}番`, prec: "街区（番）まで" }; }
+  const [la, lo] = dec(entry); return { la, lo, label, prec };
+}
 function parseCoords(v) {
   const m = v.match(/(-?\d+(?:\.\d+)?)\s*[,，\s]\s*(-?\d+(?:\.\d+)?)/);
   if (!m) return null; let a = +m[1], b = +m[2]; if (a > 90) [a, b] = [b, a];
@@ -635,7 +678,7 @@ function parseCoords(v) {
 }
 function renderPoint() {
   const p = state.point;
-  let body = `<div class="todo">地図をクリックするか、上の欄に駅名や座標を入れてください。座標は Google マップで地点を右クリックすると出る「35.6974, 139.8266」の形をそのまま貼り付けられます。</div>`;
+  let body = `<div class="todo">地図をクリックするか、上の欄に住所・駅名・座標を入れてください。座標は Google マップで地点を右クリックすると出る「35.6974, 139.8266」の形をそのまま貼り付けられます。</div>`;
   if (p) {
     const hits = storesNear(p.la, p.lo, state.pRadius);
     const byM = M.map(() => 0); const byMid = new Map();
@@ -652,13 +695,20 @@ function renderPoint() {
         <div class="list">${shown.map(h => `<div class="srow"><i style="background:${GCOL[SS.M[h.i]]}"></i><span class="n">${esc(SS.n[h.i])}</span><span class="g">${esc(genreLabel(h.i))}</span><span class="d">${Math.round(h.d)}m</span></div>`).join("")}</div></div>
       <p class="muted-t">地図上の濃い点が範囲内の店、薄い点が範囲のすぐ外の店です。店の位置は地図サービスの登録位置で、数十mずれることがあります。閉店済みの店が残っている場合があります。</p>`;
   }
-  $("p-point").innerHTML = `<div class="search"><input id="q4" type="search" list="q1-dl2" placeholder="駅名、または座標（35.6974, 139.8266）" autocomplete="off"><datalist id="q1-dl2">${ST.map(s => `<option value="${esc(s.n)}">`).join("")}</datalist><button class="btn primary" id="q4-go" type="button">分析</button></div>
-    <p class="muted-t">住所からの検索は準備中です（国土交通省の位置参照情報を取り込むと対応できます）。</p>${body}`;
+  $("p-point").innerHTML = `<div class="search"><input id="q4" type="search" list="q1-dl2" placeholder="住所・駅名・座標（例: 江東区亀戸2-17-8）" autocomplete="off"><datalist id="q1-dl2">${ST.map(s => `<option value="${esc(s.n)}">`).join("")}</datalist><button class="btn primary" id="q4-go" type="button">分析</button></div>
+    <p class="muted-t">住所は「区＋町名＋丁目＋番」まで（例: 江東区亀戸2丁目17番、亀戸2-17）。号までは使いません。番が見つからないときは丁目の中心で分析します。</p>${body}`;
   const go = () => {
     const v = $("q4").value.trim(); if (!v) return;
     const c = parseCoords(v); if (c) { setPoint(c[0], c[1], "指定した地点"); return; }
-    const n = v.replace(/駅$/, ""); let i = ST.findIndex(s => s.n === n); if (i < 0) i = ST.findIndex(s => s.n.includes(n));
-    if (i >= 0) setPoint(ST[i].la, ST[i].lo, `${ST[i].n}駅`); else { $("q4").setCustomValidity("駅名か座標を入れてください（23区内）"); $("q4").reportValidity(); }
+    // 「駅」で終わる・駅名と完全に一致するなら駅、区名・丁目・番地を含むなら住所を先に探す
+    const n = v.replace(/駅$/, ""), looksAddr = /区|丁目|番|\d/.test(v.normalize("NFKC")) && !/駅$/.test(v);
+    const station = () => { let i = ST.findIndex(s => s.n === n); if (i < 0 && !looksAddr) i = ST.findIndex(s => s.n.includes(n)); return i; };
+    const tryAddr = () => { const g = geocode(v); if (g) { setPoint(g.la, g.lo, `${g.label}（${g.prec}）`); return true; } return false; };
+    const i0 = station();
+    if (looksAddr && tryAddr()) return;
+    if (i0 >= 0) { setPoint(ST[i0].la, ST[i0].lo, `${ST[i0].n}駅`); return; }
+    if (tryAddr()) return;
+    $("q4").setCustomValidity("駅名・住所・座標のどれかを入れてください（23区内）"); $("q4").reportValidity();
   };
   $("q4-go").onclick = go; $("q4").addEventListener("keydown", e => { $("q4").setCustomValidity(""); if (e.key === "Enter") go(); });
   if (p) {

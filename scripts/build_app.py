@@ -6,6 +6,7 @@
       data/stations.csv（s12_stations.py）、data/stations/tokyo23_r{300,500,1000}_stations.csv（station_table.py）
       data/stations/tokyo23_population.csv・tokyo23_workers.csv（mesh_stats.py、任意。あれば駅カードに人口・働く人の数を出す）
       国土数値情報 N02（線路）、data/areas/tokyo23_wards.parquet（区の境界）
+      data/isj/13_2025.csv（位置参照情報 街区レベル、東京都。任意。あれば地点分析で住所から探せる）
 出力: docs/app.html（データを埋め込んだ1ファイル。ブラウザで開くだけで動く）
 
 画面:
@@ -72,6 +73,47 @@ def load_population():
             for v in st.values():
                 v.extend([0] * (len(cols) - len(v)))
     return out, cols  # out["_area"][0] は対象地域全体の合計
+
+
+KANJI_DIGIT = {"〇": 0, "一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
+
+
+def kanji_num(t):
+    """漢数字（二十三 など、99 まで）を数に。"""
+    if "十" in t:
+        a, _, b = t.partition("十")
+        return (KANJI_DIGIT.get(a, 1) if a else 1) * 10 + (KANJI_DIGIT.get(b, 0) if b else 0)
+    return KANJI_DIGIT.get(t, 0)
+
+
+def load_addresses():
+    """位置参照情報（街区レベル）から、23区の住所 → 緯度経度の索引を作る。
+    {区: {町名: {丁目(0=丁目なし): [緯度, 経度, {街区符号: [緯度, 経度]}]}}}。緯度経度は (値-35)*1e5, (値-139)*1e5 の整数。
+    丁目・町の位置は、含まれる街区の平均。"""
+    import re
+    path = "data/isj/13_2025.csv"
+    if not os.path.exists(path):
+        return {}
+    idx = {}
+    pts = {}
+    for r in csv.DictReader(open(path, encoding="cp932")):
+        ward = r["市区町村名"]
+        if ward not in WARD_EN or r["更新前履歴フラグ"] == "1":
+            continue
+        m = re.match(r"^(.*?)([〇一二三四五六七八九十]+)丁目$", r["大字・丁目名"])
+        town, chome = (m.group(1), kanji_num(m.group(2))) if m else (r["大字・丁目名"], 0)
+        key = (ward, town, chome, r["街区符号・地番"])
+        if key in pts and r["代表フラグ"] != "1":
+            continue
+        pts[key] = (int(round((float(r["緯度"]) - 35) * 1e5)), int(round((float(r["経度"]) - 139) * 1e5)))
+    groups = {}
+    for (ward, town, chome, block), (la, lo) in pts.items():
+        groups.setdefault((ward, town, chome), {})[block] = [la, lo]
+    for (ward, town, chome), blocks in groups.items():
+        la = round(sum(v[0] for v in blocks.values()) / len(blocks))
+        lo = round(sum(v[1] for v in blocks.values()) / len(blocks))
+        idx.setdefault(ward, {}).setdefault(town, {})[chome] = [la, lo, blocks]
+    return idx
 
 
 def area_km2(g):
@@ -143,7 +185,8 @@ def main():
             "wards": wards, "rails": rails, "stations": stations,
             "majors": MAJOR_ORDER, "mids": MID_ORDER, "midMajor": [MAJOR_ORDER.index(MID_MAJOR[m]) for m in MID_ORDER],
             "fine": fine_names, "stores": S, "base": base, "popCols": pop_cols, "radii": list(RADII),
-            "popArea": pop.get("_area", {}).get(0), "areaKm2": round(area_km2(area_geom), 1)}
+            "popArea": pop.get("_area", {}).get(0), "areaKm2": round(area_km2(area_geom), 1),
+            "addr": load_addresses()}
     blob = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     html = open("scripts/app_template.html", encoding="utf-8").read().replace("__DATA__", blob)
     with open("docs/app.html", "w", encoding="utf-8") as f:
