@@ -152,6 +152,10 @@ table.gt tr.maj td { font-weight: 700; background: var(--bg); }
 table.gt tr.mid td:first-child { padding-left: 1.6em; }
 table.gt tr.unk td { color: var(--ink-3); }
 .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+.pin-input { display: grid; gap: 8px; }
+.radios { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.radios label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 15px; }
+.radios input { width: 16px; height: 16px; accent-color: var(--pick); }
 .summary { border-left: 4px solid var(--pick); background: var(--bg); border-radius: 0 6px 6px 0; padding-block: 10px; padding-inline: 14px; display: grid; gap: 4px; }
 .summary p { margin: 0; font-size: 15px; line-height: 1.75; }
 .summary .tag { font-size: 12px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.04em; }
@@ -598,7 +602,7 @@ function renderStation() {
   $("p-station").innerHTML = `${ss.html}
     <div><h2>${esc(s.n)}</h2><p class="muted-t">${esc(s.o)}</p></div>
     <div class="summary"><span class="tag">駅の特徴（${state.radius}m圏）</span><p>${esc(describe(s))}</p></div>
-    <div class="actions">${radiusSeg("segR", D.radii, state.radius)}<button class="btn" id="toCmp" type="button">比較に追加</button><button class="btn" id="toPoint" type="button">この駅で地点分析</button></div>
+    <div class="actions">${radiusSeg("segR", D.radii, state.radius)}<button class="btn" id="toCmp" type="button">比較分析</button><button class="btn" id="toPoint" type="button">地点分析</button></div>
     <div class="actions"><button class="btn" id="gtOpen" type="button">ジャンル別構成表</button></div>
     <div class="stats">
       <div class="stat"><div class="v">${fmt(s.p)}</div><div class="l">乗降客数（人/日）・${rank}位</div></div>
@@ -757,7 +761,7 @@ function parseCoords(v) {
 }
 function renderPoint() {
   const p = state.point;
-  let body = `<div class="todo">地図をクリックするか、上の欄に住所・駅名・座標を入れてください。座標は Google マップで地点を右クリックすると出る「35.6974, 139.8266」の形をそのまま貼り付けられます。</div>`;
+  let body = `<div class="todo">上の欄に駅名・住所・座標を入れるか、地図をクリックしてください。</div>`;
   if (p) {
     const hits = storesNear(p.la, p.lo, state.pRadius);
     const byM = M.map(() => 0); const byMid = new Map();
@@ -774,20 +778,27 @@ function renderPoint() {
         <div class="list">${shown.map(h => `<div class="srow"><i style="background:${GCOL[SS.M[h.i]]}"></i><span class="n">${esc(SS.n[h.i])}</span><span class="g">${esc(genreLabel(h.i))}</span><span class="d">${Math.round(h.d)}m</span></div>`).join("")}</div></div>
       <p class="muted-t">地図上の濃い点が範囲内の店、薄い点が範囲のすぐ外の店です。店の位置は地図サービスの登録位置で、数十mずれることがあります。閉店済みの店が残っている場合があります。</p></div>`;
   }
-  $("p-point").innerHTML = `<div class="search"><input id="q4" type="search" list="q1-dl2" placeholder="住所・駅名・座標（例: 江東区亀戸2-17-8）" autocomplete="off"><datalist id="q1-dl2">${ST.map(s => `<option value="${esc(s.n)}">`).join("")}</datalist><button class="btn primary" id="q4-go" type="button">分析</button></div>
-    <p class="muted-t">住所は「区＋町名＋丁目＋番」まで（例: 江東区亀戸2丁目17番、亀戸2-17）。号までは使いません。番が見つからないときは丁目の中心で分析します。</p>${body}`;
+  // 地点の決め方: 駅名・住所・座標から選ぶ
+  const mode = state.pMode || "station";
+  const MODES = {
+    station: { label: "駅名", ph: "駅名（例: 亀戸）", note: "" },
+    address: { label: "住所", ph: "区＋町名＋丁目＋番（例: 江東区亀戸2-17）", note: "号までは使いません。番が見つからないときは丁目の中心で分析します。" },
+    coords: { label: "座標", ph: "例: 35.6974, 139.8266", note: "座標の調べ方: Google マップで調べたい地点を右クリック（スマホは長押し）すると、一番上に「35.6974, 139.8266」のような緯度・経度が出ます。それを押すとコピーされるので、ここに貼り付けてください。" },
+  };
+  $("p-point").innerHTML = `<div class="pin-input">
+      <h3>調べたい地点を入力</h3>
+      <div class="radios" role="radiogroup" aria-label="地点の指定方法">${Object.entries(MODES).map(([k, m]) => `<label for="pm-${k}"><input type="radio" name="pmode" id="pm-${k}" value="${k}" ${k === mode ? "checked" : ""}>${m.label}</label>`).join("")}</div>
+      <div class="search"><input id="q4" type="search" ${mode === "station" ? 'list="q1-dl2"' : ""} placeholder="${MODES[mode].ph}" autocomplete="off" inputmode="${mode === "coords" ? "decimal" : "text"}"><datalist id="q1-dl2">${ST.map(s => `<option value="${esc(s.n)}">`).join("")}</datalist><button class="btn primary" id="q4-go" type="button">分析</button></div>
+      ${MODES[mode].note ? `<p class="muted-t">${MODES[mode].note}</p>` : ""}
+    </div>${body}`;
+  $("p-point").querySelectorAll('input[name="pmode"]').forEach(r => r.onchange = () => { state.pMode = r.value; render(); $("q4").focus(); });
+  const fail = msg => { $("q4").setCustomValidity(msg); $("q4").reportValidity(); };
   const go = () => {
     const v = $("q4").value.trim(); if (!v) return;
-    const c = parseCoords(v); if (c) { setPoint(c[0], c[1], "指定した地点"); return; }
-    // 「駅」で終わる・駅名と完全に一致するなら駅、区名・丁目・番地を含むなら住所を先に探す
-    const n = v.replace(/駅$/, ""), looksAddr = /区|丁目|番|\d/.test(v.normalize("NFKC")) && !/駅$/.test(v);
-    const station = () => { let i = ST.findIndex(s => s.n === n); if (i < 0 && !looksAddr) i = ST.findIndex(s => s.n.includes(n)); return i; };
-    const tryAddr = () => { const g = geocode(v); if (g) { setPoint(g.la, g.lo, `${g.label}（${g.prec}）`); return true; } return false; };
-    const i0 = station();
-    if (looksAddr && tryAddr()) return;
-    if (i0 >= 0) { setPoint(ST[i0].la, ST[i0].lo, `${ST[i0].n}駅`); return; }
-    if (tryAddr()) return;
-    $("q4").setCustomValidity("駅名・住所・座標のどれかを入れてください（23区内）"); $("q4").reportValidity();
+    if (mode === "coords") { const c = parseCoords(v); return c ? setPoint(c[0], c[1], "指定した地点") : fail("「35.6974, 139.8266」の形で、23区内の座標を入れてください"); }
+    if (mode === "address") { const g = geocode(v); return g ? setPoint(g.la, g.lo, `${g.label}（${g.prec}）`) : fail("住所が見つかりません。「区＋町名＋丁目＋番」の形で入れてください（23区内）"); }
+    const n = v.replace(/駅$/, ""); let i = ST.findIndex(s => s.n === n); if (i < 0) i = ST.findIndex(s => s.n.includes(n));
+    return i >= 0 ? setPoint(ST[i].la, ST[i].lo, `${ST[i].n}駅`) : fail("駅が見つかりません（23区内の駅名を入れてください）");
   };
   $("q4-go").onclick = go; $("q4").addEventListener("keydown", e => { $("q4").setCustomValidity(""); if (e.key === "Enter") go(); });
   if (p) {
