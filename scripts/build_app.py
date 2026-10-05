@@ -27,7 +27,7 @@ from census import WARD_EN, load_weights, weight_of
 from genre_groups import GROUPS, MAJOR_ORDER, UNKNOWN, group_of
 from station_map import load_rails, ring_path, xy
 
-RADII = (300, 500, 1000)
+RADII = (250, 500, 1000)
 MID_ORDER = list(dict.fromkeys(mid for _, mid in GROUPS.values()))
 MID_MAJOR = {mid: major for major, mid in GROUPS.values()}
 

@@ -24,7 +24,7 @@ from collections import defaultdict
 
 from common import haversine_m
 
-RADII = (300, 500, 1000)
+RADII = (250, 500, 1000)
 
 
 def mesh_bounds(code):
