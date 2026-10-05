@@ -853,7 +853,7 @@ function renderPoint() {
         ${M.slice(0, UNKNOWN_M).map((m, i) => `<div class="stat"><div class="v" style="color:${GCOL[i]}">${byM[i]}</div><div class="l">${esc(m)}</div></div>`).join("")}</div>
       <div><h3>ジャンル別の店数</h3>${midGroups ? `<div class="mgrps">${midGroups}</div>` : `<p class="muted-t">この範囲に飲食店はありません</p>`}</div>
       <div><h3>近隣店の一覧（指定地点から近い順）</h3>
-        <div class="chips" role="group" aria-label="大分類で絞り込む"><button class="chip" type="button" data-f="-1" aria-pressed="${state.pFilter < 0}">すべて</button>${M.map((m, i) => byM[i] ? `<button class="chip" type="button" data-f="${i}" aria-pressed="${state.pFilter === i}"><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${GCOL[i]};margin-right:4px"></i>${esc(m)}</button>` : "").join("")}</div>
+        <div class="chips" role="group" aria-label="大分類で絞り込む"><button class="chip" type="button" data-f="-1" aria-pressed="${state.pFilter < 0}">すべて</button>${M.map((m, i) => byM[i] && i !== UNKNOWN_M ? `<button class="chip" type="button" data-f="${i}" aria-pressed="${state.pFilter === i}"><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${GCOL[i]};margin-right:4px"></i>${esc(m)}</button>` : "").join("")}</div>
         <div class="list" id="ptList">${shown.map(h => `<div class="srow" data-s="${h.i}" data-d="${Math.round(h.d)}"><i style="background:${GCOL[SS.M[h.i]]}"></i><span class="n">${esc(SS.n[h.i])}</span><span class="g">${esc(genreLabel(h.i))}</span><span class="d">${Math.round(h.d)}m</span></div>`).join("")}</div></div>
       <p class="muted-t">地図上の濃い点が範囲内の店、薄い点が範囲のすぐ外の店です。店の位置は地図サービスの登録位置で、数十mずれることがあります。閉店済みの店が残っている場合があります。</p></div>`;
   }
