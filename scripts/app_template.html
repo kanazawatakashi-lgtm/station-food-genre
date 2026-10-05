@@ -427,8 +427,8 @@ function popBlock(s) {
     </div>
     ${f.work != null ? `<div><h3>働いている人（${state.radius}m圏、2021年経済センサス）</h3>
       <div class="stats">
-        <div class="stat"><div class="v">${fmt(f.work)}</div><div class="l">従業者数</div></div>
         <div class="stat"><div class="v">${f.dayNight.toFixed(1)}倍</div><div class="l">働く人 ÷ 住む人</div>${cmp(0, a && a.dayNight, v => v.toFixed(1) + "倍")}</div>
+        <div class="stat"><div class="v">${fmt(f.work)}</div><div class="l">従業者数</div></div>
         <div class="stat"><div class="v">${fmt(f.workFood)}</div><div class="l">うち宿泊・飲食サービス</div></div>
         <div class="stat"><div class="v">${fmt(f.workRetail)}</div><div class="l">うち卸売・小売</div></div>
       </div>
