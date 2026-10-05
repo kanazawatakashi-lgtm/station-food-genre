@@ -2,13 +2,17 @@
 
   python scripts/fetch_overture_area.py tokyo23
 
-1. Overture divisions から23区の境界（subtype=county、region=JP-13）を取る
+1. 23区の境界を国土数値情報 N03 から作る（ksj.load_wards。data/ksj/ に N03 の GeoJSON が必要）
 2. 23区全体を囲む範囲の places を取り、飲食系（taxonomy.hierarchy[1]=food_and_drink など）に絞る
-3. 点が境界の内側にあるものだけ残し、区名を付ける
+3. 点が境界の内側にあるものだけ残し、区名（英語名）を付ける
 
 出力: data/areas/tokyo23_wards.parquet（区の境界。geometry は WKB）
       data/areas/tokyo23_food.parquet（飲食 POI。ward 列付き）
 HTTPS_PROXY が設定されていればそれを経由する。shapely が必要。
+取得する Overture のリリースは fetch_overture.py の RELEASE。
+
+以前は区の境界を Overture divisions（OpenStreetMap 由来、ODbL）から取っていたが、商用で使いやすい
+国土数値情報に置き換えた（2026-10-04）。このスクリプトも N03 を使うので、取得後に ksj.py を実行し直す必要はない。
 """
 import os
 import sys
@@ -17,40 +21,26 @@ import pyarrow as pa
 import pyarrow.compute as pc
 import pyarrow.dataset as ds
 import pyarrow.parquet as pq
-from shapely import wkb
 from shapely.geometry import Point
 from shapely.strtree import STRtree
 
 from fetch_overture import BASE, RELEASE, s3fs
 
-DIVISIONS = f"overturemaps-us-west-2/release/{RELEASE}/theme=divisions/type=division_area"
-WARDS_23 = ["Chiyoda", "Chuo", "Minato", "Shinjuku", "Bunkyo", "Taito", "Sumida", "Koto", "Shinagawa",
-            "Meguro", "Ota", "Setagaya", "Shibuya", "Nakano", "Suginami", "Toshima", "Kita", "Arakawa",
-            "Itabashi", "Nerima", "Adachi", "Katsushika", "Edogawa"]
 COLS = ["id", "names", "categories", "taxonomy", "basic_category", "confidence", "addresses", "bbox"]
 
 
-def fetch_wards(fs):
-    f = ((pc.field("country") == "JP") & (pc.field("region") == "JP-13") & (pc.field("subtype") == "county")
-         & (pc.field("bbox", "xmin") >= 139.4) & (pc.field("bbox", "xmax") <= 140.1))
-    t = ds.dataset(DIVISIONS, filesystem=fs, format="parquet").to_table(
-        columns=["names", "geometry", "bbox"], filter=f).to_pylist()
-    wards = {}
-    for r in t:
-        name = (r["names"] or {}).get("primary")
-        if name in WARDS_23:
-            wards[name] = wkb.loads(r["geometry"])
-    missing = set(WARDS_23) - set(wards)
-    if missing:
-        raise SystemExit(f"境界が見つからない区: {missing}")
-    return wards
+def fetch_wards():
+    """{区の英語名: 境界}（国土数値情報 N03）。"""
+    from census import WARD_EN
+    from ksj import load_wards
+    return {WARD_EN[n]: g for n, g in load_wards().items()}
 
 
 def main(name):
     if name != "tokyo23":
         raise SystemExit("今は tokyo23 だけ対応")
     fs = s3fs()
-    wards = fetch_wards(fs)
+    wards = fetch_wards()
     os.makedirs("data/areas", exist_ok=True)
     pq.write_table(pa.table({"ward": list(wards), "geometry": [w.wkb for w in wards.values()]}),
                    "data/areas/tokyo23_wards.parquet")

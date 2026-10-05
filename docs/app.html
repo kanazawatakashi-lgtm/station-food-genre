@@ -250,7 +250,8 @@ const ST = D.stations, SS = D.stores, M = D.majors, MID = D.mids;
 const UNKNOWN_M = M.length - 1;
 const GCOL = M.map((_, i) => `var(--g${i})`);
 const svg = $("map"), box = $("mapbox"), tip = $("tip");
-const stByKey = new Map(ST.map((s, i) => [s.k, i]));
+// 初期表示の駅は駅名で指す（乗降客数データの版が変わると駅の番号が変わることがあるため）。同名の駅は乗降客数の多い方
+const stByName = n => { const i = ST.findIndex(s => s.n === n); return i < 0 ? null : i; };
 
 // 座標 → 地図座標（Python 側の xy と同じ式）
 const P = D.proj;
@@ -448,7 +449,7 @@ function tap(e) {
 }
 
 // ---- 状態 ----
-const state = { pInput: { station: "渋谷", address: "東京都渋谷区渋谷二丁目21番", coords: "35.65927130491232, 139.70365490123814" }, tab: "station", sel: stByKey.get("003922") ?? 0, radius: 1000, cmp: [], genre: MID.indexOf("ラーメン"), gdir: "low", gmin: 30000, point: null, pRadius: 100, pFilter: -1 };
+const state = { pInput: { station: "渋谷", address: "東京都渋谷区渋谷二丁目21番", coords: "35.65927130491232, 139.70365490123814" }, tab: "station", sel: stByName("渋谷") ?? 0, radius: 1000, cmp: [], genre: MID.indexOf("ラーメン"), gdir: "low", gmin: 30000, point: null, pRadius: 100, pFilter: -1 };
 
 function genreLabel(i) { const f = D.fine[SS.f[i]]; const mi = SS.m[i]; return [M[SS.M[i]], mi >= 0 ? MID[mi] : "中分類不明", f && f !== (mi >= 0 ? MID[mi] : "") ? f : ""].filter(Boolean).join(" ／ "); }
 
@@ -465,7 +466,7 @@ function showTab(t) {
   // ジャンル別を初めて開いたときは、渋谷駅の周辺（およそ半径3km）を表示する
   if (t === "genre" && !state.genreSeen) {
     state.genreSeen = true;
-    const sb = ST[stByKey.get("003922") ?? 0];
+    const sb = ST[stByName("渋谷") ?? 0];
     focusOn(sb.x, sb.y, 6000 / mPerUnit);
   }
 }
@@ -915,7 +916,7 @@ function render() {
 }
 
 // 比較の初期表示: 渋谷と成城学園前
-state.cmp = ["003922", "004036"].map(k => stByKey.get(k)).filter(i => i != null);
+state.cmp = ["渋谷", "成城学園前"].map(stByName).filter(i => i != null);
 paintStations(); render(); draw();
 window.addEventListener("resize", draw);
 </script>

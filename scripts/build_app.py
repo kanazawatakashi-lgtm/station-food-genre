@@ -7,7 +7,7 @@
       data/stations/tokyo23_population.csv・tokyo23_workers.csv（mesh_stats.py、任意。あれば駅カードに人口・働く人の数を出す）
       国土数値情報 N02（線路）、data/areas/tokyo23_wards.parquet（区の境界。ksj.py が N03 から作る）
       docs/license_texts/*.txt（店舗データのライセンス文と Foursquare の NOTICE。出典欄から開く）
-      data/isj/13_2025.csv（位置参照情報 街区レベル、東京都。任意。あれば地点分析で住所から探せる）
+      data/isj/13_<年>.csv（位置参照情報 街区レベル、東京都。いちばん新しい年のものを使う。任意。あれば地点分析で住所から探せる）
 出力: docs/app.html（データを埋め込んだ1ファイル。公開ページ用）
 
 画面（タブ）:
@@ -94,9 +94,11 @@ def load_addresses():
     {区: {町名: {丁目(0=丁目なし): [緯度, 経度, {街区符号: [緯度, 経度]}]}}}。緯度経度は (値-35)*1e5, (値-139)*1e5 の整数。
     丁目・町の位置は、含まれる街区の平均。"""
     import re
-    path = "data/isj/13_2025.csv"
-    if not os.path.exists(path):
+    import glob
+    paths = sorted(glob.glob("data/isj/13_*.csv"))
+    if not paths:
         return {}
+    path = paths[-1]  # いちばん新しい年
     idx = {}
     pts = {}
     for r in csv.DictReader(open(path, encoding="cp932")):

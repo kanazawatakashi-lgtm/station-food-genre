@@ -1,8 +1,30 @@
 # station-food-genre（飲食出店ナビ・東京23区版）
 
 店舗物件の仲介会社向けの Web アプリ「飲食出店ナビ・東京23区版」（`docs/app.html`）を作るリポジトリ。
-駅の半径1km圏の飲食店をジャンル別に集計し、駅ごとの過不足（特化係数・乗降客1万人あたり店舗数）を比べる。
-試作は JR 亀戸駅。経緯と進み具合は `CLAUDE.md` と `docs/HANDOFF.md` を参照。
+駅の半径 250m・500m・1km 圏の飲食店をジャンル別に集計し、23区平均と比べた「平均比」（特化係数）、乗降客数、
+人口・働く人の数などを駅ごとに出す。経緯と決定事項は `CLAUDE.md`、画面に載せる注記は `docs/disclosures.md`。
+
+- データの定期更新と push の手順: `docs/update_guide.md`
+- ほかの地域で作るときの手順: `docs/new_area_guide.md`
+- ライセンスの確認結果: `docs/licenses.md`
+
+## 東京23区版を作る手順
+
+```
+pip install -r requirements.txt
+python scripts/fetch_overture_area.py tokyo23 # 23区の境界（国土数値情報 N03）と飲食 POI（Overture）
+python scripts/classify_area.py tokyo23       # ジャンル判定（AI 判定の結果 data/areas/tokyo23_claude.csv も反映）
+python scripts/census.py tokyo23              # 経済センサスで補正する重み
+python scripts/s12_stations.py data/s12/S12-25_NumberOfPassengers.geojson --passengers S12_061   # 駅の一覧
+python scripts/station_table.py tokyo23 --stations data/stations.csv --radius 250 --quiet       # 駅ごとの表（500・1000 も）
+python scripts/mesh_stats.py data/mesh/tblT001142Q5339.txt data/mesh/tblT001196Q5339.txt --cols "人口=人口（総数）,世帯数=世帯総数,0〜14歳=０～１４歳人口　総数,15〜19歳=１５～１９歳人口　総数,20〜34歳=２０～２４歳人口　総数+２５～２９歳人口　総数+３０～３４歳人口　総数,35〜49歳=３５～３９歳人口　総数+４０～４４歳人口　総数+４５～４９歳人口　総数,50〜64歳=５０～５４歳人口　総数+５５～５９歳人口　総数+６０～６４歳人口　総数,65歳以上=６５歳以上人口　総数,1人世帯=１人世帯数　一般世帯数,外国人=外国人人口　総数"   # 駅ごとの人口
+python scripts/mesh_stats.py data/mesh/tblT001147H5339.txt --cols "従業者=T001147022,オフィス・商業系従業者=T001147030+T001147032+T001147033+T001147034+T001147035+T001147041,飲食サービス従業者=T001147036,事業所=T001147001" --out data/stations/tokyo23_workers.csv   # 駅ごとの従業者数
+python scripts/build_app.py                   # 飲食出店ナビ・東京23区版 → docs/app.html
+```
+
+店名の AI 判定（`classify_area_with_claude.py`）は手元で実行する（`docs/update_guide.md` の 4.）。
+
+## 亀戸での試作（第1版）
 
 ```
 pip install -r requirements.txt
@@ -17,10 +39,6 @@ PYTHONPATH=scripts python scripts/genre_table.py kameido tokyo23   # 件数・�
 python scripts/classify_area.py tokyo23     # 23区を判定
 python scripts/census.py tokyo23            # 経済センサスで補正する重み
 python scripts/station_table.py tokyo23 [--stations data/stations.csv]   # 駅ごとの表
-python scripts/ksj.py tokyo23               # 区の境界を国土数値情報 N03 で作り直す
-python scripts/mesh_stats.py data/mesh/tblT001142Q5339.txt data/mesh/tblT001196Q5339.txt --cols "人口=人口（総数）,世帯数=世帯総数,0〜14歳=０～１４歳人口　総数,15〜19歳=１５～１９歳人口　総数,20〜34歳=２０～２４歳人口　総数+２５～２９歳人口　総数+３０～３４歳人口　総数,35〜49歳=３５～３９歳人口　総数+４０～４４歳人口　総数+４５～４９歳人口　総数,50〜64歳=５０～５４歳人口　総数+５５～５９歳人口　総数+６０～６４歳人口　総数,65歳以上=６５歳以上人口　総数,1人世帯=１人世帯数　一般世帯数,外国人=外国人人口　総数"   # 駅ごとの人口
-python scripts/mesh_stats.py data/mesh/tblT001147H5339.txt --cols "従業者=T001147022,オフィス・商業系従業者=T001147030+T001147032+T001147033+T001147034+T001147035+T001147041,飲食サービス従業者=T001147036,事業所=T001147001" --out data/stations/tokyo23_workers.csv   # 駅ごとの従業者数
-python scripts/build_app.py                 # 飲食出店ナビ・東京23区版 → docs/app.html
 ```
 
 亀戸の第1版の結果は `docs/kameido_results.md`。
