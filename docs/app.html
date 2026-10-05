@@ -152,6 +152,13 @@ table.gt tr.mid td:first-child { padding-left: 1.6em; }
 table.gt tr.unk td { color: var(--ink-3); }
 .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
 .pin-input { display: grid; gap: 8px; }
+.mgrps { display: grid; gap: 2px; }
+.mgrp { display: grid; grid-template-columns: 9.5em 1fr; gap: 10px; align-items: baseline; padding: 5px 0; border-bottom: 1px solid var(--rule); font-size: 14px; }
+.mgrp .mh { font-weight: 700; white-space: nowrap; }
+.mgrp .mh i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+.mgrp .mi b, .mgrp .mh b { font-weight: 700; }
+.mgrp .mi { color: var(--ink-2); line-height: 1.7; }
+@media (max-width: 520px) { .mgrp { grid-template-columns: 1fr; gap: 2px; } }
 .radios { display: flex; flex-wrap: wrap; gap: 6px 18px; }
 .radios label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 15px; }
 .radios input { width: 16px; height: 16px; accent-color: var(--pick); }
@@ -823,16 +830,24 @@ function renderPoint() {
   let body = `<div class="todo">上の欄に駅名・住所・座標を入れるか、地図をクリックしてください。</div>`;
   if (p) {
     const hits = storesNear(p.la, p.lo, state.pRadius);
-    const byM = M.map(() => 0); const byMid = new Map();
-    hits.forEach(h => { byM[SS.M[h.i]]++; const k = SS.m[h.i] >= 0 ? MID[SS.m[h.i]] : `${M[SS.M[h.i]]}（中分類不明）`; byMid.set(k, (byMid.get(k) || 0) + 1); });
+    // 大分類ごとに、中分類の店数を数える（中分類が分からない店は -1）
+    const byM = M.map(() => 0), byMid = M.map(() => new Map());
+    hits.forEach(h => { const j = SS.M[h.i], k = SS.m[h.i]; byM[j]++; byMid[j].set(k, (byMid[j].get(k) || 0) + 1); });
     const shown = hits.filter(h => state.pFilter < 0 || SS.M[h.i] === state.pFilter);
-    const midChips = [...byMid].sort((a, b) => b[1] - a[1]).map(([k, n]) => `<span class="chip" style="cursor:default">${esc(k)}<b>${n}</b></span>`).join("");
+    // 例: 和食 12：ラーメン 3、すし 2、中分類不明 1（店数の多い順。中分類不明は最後）
+    const midGroups = M.map((m, j) => {
+      if (!byM[j]) return "";
+      if (j === UNKNOWN_M) return `<div class="mgrp"><span class="mh"><i style="background:${GCOL[j]}"></i>ジャンル不明 <b class="num">${byM[j]}</b></span></div>`;
+      const items = [...byMid[j]].sort((a, b) => (a[0] < 0) - (b[0] < 0) || b[1] - a[1])
+        .map(([k, n]) => `${esc(k < 0 ? "中分類不明" : MID[k])} <b class="num">${n}</b>`).join("、");  // ジャンル名に「・」が入るので区切りは「、」
+      return `<div class="mgrp"><span class="mh"><i style="background:${GCOL[j]}"></i>${esc(m)} <b class="num">${byM[j]}</b></span><span class="mi">${items}</span></div>`;
+    }).join("");
     body = `<div id="ptBody"><div><h2>${esc(p.label)}</h2><p class="muted-t num">${p.la.toFixed(5)}, ${p.lo.toFixed(5)}</p></div>
       <div class="actions">${radiusSeg("segP", [50, 100, 250], state.pRadius)}</div>
       <div class="stats"><div class="stat"><div class="v">${hits.length}</div><div class="l">飲食店（半径${state.pRadius}m）</div></div>
         ${M.slice(0, UNKNOWN_M).map((m, i) => `<div class="stat"><div class="v" style="color:${GCOL[i]}">${byM[i]}</div><div class="l">${esc(m)}</div></div>`).join("")}</div>
-      <div><h3>ジャンル（中分類）</h3><div class="chips">${midChips || `<span class="muted-t">この範囲に飲食店はありません</span>`}</div></div>
-      <div><h3>店の一覧（近い順）</h3>
+      <div><h3>ジャンル別の店数</h3>${midGroups ? `<div class="mgrps">${midGroups}</div>` : `<p class="muted-t">この範囲に飲食店はありません</p>`}</div>
+      <div><h3>近隣店の一覧（指定地点から近い順）</h3>
         <div class="chips" role="group" aria-label="大分類で絞り込む"><button class="chip" type="button" data-f="-1" aria-pressed="${state.pFilter < 0}">すべて</button>${M.map((m, i) => byM[i] ? `<button class="chip" type="button" data-f="${i}" aria-pressed="${state.pFilter === i}"><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${GCOL[i]};margin-right:4px"></i>${esc(m)}</button>` : "").join("")}</div>
         <div class="list">${shown.map(h => `<div class="srow"><i style="background:${GCOL[SS.M[h.i]]}"></i><span class="n">${esc(SS.n[h.i])}</span><span class="g">${esc(genreLabel(h.i))}</span><span class="d">${Math.round(h.d)}m</span></div>`).join("")}</div></div>
       <p class="muted-t">地図上の濃い点が範囲内の店、薄い点が範囲のすぐ外の店です。店の位置は地図サービスの登録位置で、数十mずれることがあります。閉店済みの店が残っている場合があります。</p></div>`;
