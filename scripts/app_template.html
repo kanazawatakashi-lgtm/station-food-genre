@@ -583,10 +583,12 @@ function groupLQ(r, names) {
   names.forEach(n => { const i = MID.indexOf(n); if (i >= 0) { share += (r.q[i] || 0) * D.base.m[i]; base += D.base.m[i]; exp += known * D.base.rawm[i]; } });
   return exp >= 3 && base ? share / base : null;
 }
+const DESC_RADIUS = 250;
 function describe(s) {
   // 空港・展示場・市場など、まわりの人口や店のデータでは性格を表せない駅は、一般的な情報で書いた説明（data/station_notes.csv）
   if (s.note) return s.note;
-  const rk = String(state.radius), r = s.r[rk], km2 = Math.PI * (state.radius / 1000) ** 2;
+  // 駅の特徴は、選んだ半径に関わらず駅のすぐまわり（250m）の数字で作る（ユーザー決定 2026-10-05）
+  const rk = String(DESC_RADIUS), r = s.r[rk], km2 = Math.PI * (DESC_RADIUS / 1000) ** 2;
   const p = s.pop[rk], area = D.popArea ? popFacts(D.popArea, D.areaKm2) : null;
   const f = p && area ? popFacts(p, km2) : null;
   const few = !!f && f.pop < FEW_RESIDENTS;
@@ -603,9 +605,9 @@ function describe(s) {
   else if (dn != null && dn >= 3) town = "オフィスが集まり、働く人が中心の街";
   else if (office) town = "オフィスと住宅が混じり、住む人より働く人が多い街";
   else if (home) town = dRatio != null && dRatio >= 1.3 ? "住宅が密集した住宅街" : "住宅地が中心の街";
-  else if (dRatio != null && dRatio >= 1.3) town = "住宅が多く、商店も混じる街";
-  else town = "住宅と商業が混じる街";
-  const shops = sRatio >= 3 ? "飲食店が非常に多い" : sRatio >= 1.5 ? "飲食店が多い" : sRatio < 0.5 ? "飲食店は少ない" : "";
+  else if (dRatio != null && dRatio >= 1.3) town = sRatio >= 1.5 ? "住宅が多く、商店も混じる街" : "住宅が多い街";
+  else town = sRatio >= 1.5 ? "住宅と商業が混じる街" : "住む人と働く人が同じくらいの街";
+  const shops = r.t === 0 ? `駅から${DESC_RADIUS}m以内に飲食店はない` : sRatio >= 3 ? "飲食店が非常に多い" : sRatio >= 1.5 ? "飲食店が多い" : sRatio < 0.5 ? "飲食店は少ない" : "";
   out.push(`${town}${shops ? "で、" + shops : ""}。`);
 
   // 2. 時間帯ごとの需要。昼は働く人と住む人の釣り合いから、夜は居酒屋・バーの数の密度（割合 × 店の密度）から
