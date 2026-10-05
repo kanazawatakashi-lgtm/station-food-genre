@@ -7,7 +7,7 @@
       data/stations/tokyo23_population.csv・tokyo23_workers.csv（mesh_stats.py、任意。あれば駅カードに人口・働く人の数を出す）
       国土数値情報 N02（線路）、data/areas/tokyo23_wards.parquet（区の境界）
       data/isj/13_2025.csv（位置参照情報 街区レベル、東京都。任意。あれば地点分析で住所から探せる）
-出力: docs/app.html（データを埋め込んだ1ファイル。ブラウザで開くだけで動く）
+出力: docs/app.html（データを埋め込んだ1ファイル。公開ページ用）
 
 画面:
 - 駅カード: 乗降客数、半径 300/500/1000m の店数・ジャンル構成・多い／少ないジャンル（LQ、センサス補正後）、人口
@@ -143,6 +143,8 @@ def main():
     S = {"la": [], "lo": [], "n": [], "f": [], "M": [], "m": []}
     base_M = [0.0] * len(MAJOR_ORDER)
     base_m = [0.0] * len(MID_ORDER)
+    raw_M = [0] * len(MAJOR_ORDER)  # 補正なしの件数（構成表で駅の構成比と並べる用）
+    raw_m = [0] * len(MID_ORDER)
     for i, r in enumerate(rows):
         if r["cluster"] != i or r["genre"] == "対象外":
             continue
@@ -159,12 +161,17 @@ def main():
         S["m"].append(MID_ORDER.index(mid) if mid != UNKNOWN else -1)
         w = weight_of(weights, r["ward"], major, mid) if weights else 1
         base_M[MAJOR_ORDER.index(major)] += w
+        raw_M[MAJOR_ORDER.index(major)] += 1
         if mid != UNKNOWN:
             base_m[MID_ORDER.index(mid)] += w
+            raw_m[MID_ORDER.index(mid)] += 1
     # 23区全体の構成比（センサス補正後、分からない店を除いた分母）
     known_M = sum(v for k, v in zip(MAJOR_ORDER, base_M) if k != UNKNOWN)
     base = {"M": [round(v / known_M, 4) if k != UNKNOWN else None for k, v in zip(MAJOR_ORDER, base_M)],
-            "m": [round(v / sum(base_m), 4) for v in base_m]}
+            "m": [round(v / sum(base_m), 4) for v in base_m],
+            "rawM": [round(v / sum(x for k, x in zip(MAJOR_ORDER, raw_M) if k != UNKNOWN), 4) if k != UNKNOWN else None
+                     for k, v in zip(MAJOR_ORDER, raw_M)],
+            "rawm": [round(v / sum(raw_m), 4) for v in raw_m]}
 
     stats = load_station_stats()
     pop, pop_cols = load_population()
