@@ -419,7 +419,7 @@ function tap(e) {
 }
 
 // ---- 状態 ----
-const state = { pInput: { station: "渋谷", address: "東京都渋谷区渋谷二丁目21番-1", coords: "35.65927130491232, 139.70365490123814" }, tab: "station", sel: stByKey.get("003635") ?? 0, radius: 1000, cmp: [], genre: MID.indexOf("ラーメン"), gdir: "low", gmin: 30000, point: null, pRadius: 100, pFilter: -1 };
+const state = { pInput: { station: "渋谷", address: "東京都渋谷区渋谷二丁目21番-1", coords: "35.65927130491232, 139.70365490123814" }, tab: "station", sel: stByKey.get("003922") ?? 0, radius: 1000, cmp: [], genre: MID.indexOf("ラーメン"), gdir: "low", gmin: 30000, point: null, pRadius: 100, pFilter: -1 };
 
 function genreLabel(i) { const f = D.fine[SS.f[i]]; const mi = SS.m[i]; return [M[SS.M[i]], mi >= 0 ? MID[mi] : "中分類不明", f && f !== (mi >= 0 ? MID[mi] : "") ? f : ""].filter(Boolean).join(" ／ "); }
 
