@@ -192,10 +192,10 @@ table.gt tr.unk td { color: var(--ink-3); }
 
     <div class="card panel">
       <div class="tabs" role="tablist">
-        <button class="tab" role="tab" id="t-station" aria-selected="true" aria-controls="p-station">駅</button>
-        <button class="tab" role="tab" id="t-compare" aria-selected="false" aria-controls="p-compare">比較</button>
-        <button class="tab" role="tab" id="t-genre" aria-selected="false" aria-controls="p-genre">ジャンルで探す</button>
+        <button class="tab" role="tab" id="t-station" aria-selected="true" aria-controls="p-station">各駅</button>
         <button class="tab" role="tab" id="t-point" aria-selected="false" aria-controls="p-point">地点分析</button>
+        <button class="tab" role="tab" id="t-compare" aria-selected="false" aria-controls="p-compare">比較</button>
+        <button class="tab" role="tab" id="t-genre" aria-selected="false" aria-controls="p-genre">ジャンル別</button>
       </div>
       <section class="pane" id="p-station" role="tabpanel" aria-labelledby="t-station"></section>
       <section class="pane" id="p-compare" role="tabpanel" aria-labelledby="t-compare" hidden></section>
@@ -424,7 +424,7 @@ const state = { tab: "station", sel: stByKey.get("003635") ?? 0, radius: 1000, c
 function genreLabel(i) { const f = D.fine[SS.f[i]]; const mi = SS.m[i]; return [M[SS.M[i]], mi >= 0 ? MID[mi] : "中分類不明", f && f !== (mi >= 0 ? MID[mi] : "") ? f : ""].filter(Boolean).join(" ／ "); }
 
 // ---- タブ ----
-const TABS = ["station", "compare", "genre", "point"];
+const TABS = ["station", "point", "compare", "genre"];
 function showTab(t) {
   state.tab = t;
   TABS.forEach(x => { $("t-" + x).setAttribute("aria-selected", String(x === t)); $("p-" + x).hidden = x !== t; });
