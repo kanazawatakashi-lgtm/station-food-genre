@@ -419,7 +419,7 @@ function tap(e) {
 }
 
 // ---- 状態 ----
-const state = { pInput: { station: "渋谷", address: "東京都渋谷区渋谷二丁目21番-1", coords: "35.65927130491232, 139.70365490123814" }, tab: "station", sel: stByKey.get("003922") ?? 0, radius: 1000, cmp: [], genre: MID.indexOf("ラーメン"), gdir: "low", gmin: 30000, point: null, pRadius: 100, pFilter: -1 };
+const state = { pInput: { station: "渋谷", address: "東京都渋谷区渋谷二丁目21番", coords: "35.65927130491232, 139.70365490123814" }, tab: "station", sel: stByKey.get("003922") ?? 0, radius: 1000, cmp: [], genre: MID.indexOf("ラーメン"), gdir: "low", gmin: 30000, point: null, pRadius: 100, pFilter: -1 };
 
 function genreLabel(i) { const f = D.fine[SS.f[i]]; const mi = SS.m[i]; return [M[SS.M[i]], mi >= 0 ? MID[mi] : "中分類不明", f && f !== (mi >= 0 ? MID[mi] : "") ? f : ""].filter(Boolean).join(" ／ "); }
 
@@ -610,9 +610,8 @@ function renderStation() {
   const ss = stationSearch("q1", i => selectStation(i), "駅名（例: 渋谷）");
   $("p-station").innerHTML = `${ss.html}
     <div><h2>${esc(s.n)}</h2><p class="muted-t">${esc(s.o)}</p></div>
-    <div class="summary"><span class="tag">駅の特徴（${state.radius}m圏）</span><p>${esc(describe(s))}</p></div>
-    <div class="actions">${radiusSeg("segR", D.radii, state.radius)}<button class="btn" id="toCmp" type="button">比較分析</button><button class="btn" id="toPoint" type="button">地点分析</button></div>
-    <div class="actions"><button class="btn" id="gtOpen" type="button">ジャンル別構成表</button></div>
+    <div class="summary"><span class="tag">駅の特徴</span><p>${esc(describe(s))}</p></div>
+    <div class="actions">${radiusSeg("segR", D.radii, state.radius)}<button class="btn" id="toCmp" type="button">比較分析</button><button class="btn" id="toPoint" type="button">地点分析</button><button class="btn" id="gtOpen" type="button">ジャンル別構成表</button></div>
     <div class="stats">
       <div class="stat"><div class="v">${fmt(s.p)}</div><div class="l">乗降客数（人/日）・${rank}位</div></div>
       <div class="stat"><div class="v">${fmt(r.t)}</div><div class="l">飲食店（${state.radius}m圏）</div></div>
@@ -825,6 +824,8 @@ function render() {
   if (state.tab === "point") renderPoint();
 }
 
+// 比較の初期表示: 渋谷と成城学園前
+state.cmp = ["003922", "004036"].map(k => stByKey.get(k)).filter(i => i != null);
 paintStations(); render(); draw();
 window.addEventListener("resize", draw);
 </script>
