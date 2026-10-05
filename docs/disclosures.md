@@ -6,9 +6,12 @@
 ## 1. 出典表示（ライセンス上の条件。省略不可）
 
 画面下の「出典」欄（`scripts/app_template.html`）はこの節と同じ文面にする。使っていないデータは画面に出さない。
+CDLA-Permissive-2.0（第2.1条）と Apache License 2.0（第4条）は、データを配るときにライセンス文の全文を添えることが条件なので、
+出典欄のボタンから全文を開けるようにしている（原文は `docs/license_texts/`）。Foursquare の NOTICE ファイルの原文は
+この環境から取得できなかったため、権利表示の1行だけを載せている。公開前に NOTICE の原文を確認し、他の記載があれば足す
 
-- 店舗: © Overture Maps Foundation「Overture Maps Places」（2026-08-19 版、CDLA-Permissive-2.0）を加工して作成（2026年10月加工）
-- 上記のうち Foursquare 由来のデータ: Copyright 2024 Foursquare Labs, Inc. All rights reserved. Apache License 2.0（https://www.apache.org/licenses/LICENSE-2.0）。加工したこと・加工日（2026年10月）を書く
+- 店舗: © Overture Maps Foundation「Overture Maps Places」（2026-08-19 版、CDLA-Permissive-2.0）を加工して作成（2026年10月1日加工）
+- 上記のうち Foursquare 由来のデータ: Copyright 2024 Foursquare Labs, Inc. All rights reserved. Apache License 2.0（https://www.apache.org/licenses/LICENSE-2.0）。加工したこと・加工日（2026年10月1日）を書く
 - 乗降客数・駅の位置: 国土交通省「国土数値情報（駅別乗降客数データ）」S12-25（2024年の値）を加工して作成。公共データ利用規約（第1.0版）
 - 鉄道・行政区域: 国土交通省「国土数値情報（鉄道データ・行政区域データ）」を加工して作成。公共データ利用規約（第1.0版）
 - 人口: 総務省統計局「令和2年国勢調査 地域メッシュ統計（250mメッシュ）」（e-Stat）を加工して作成。政府標準利用規約（第2.0版）
