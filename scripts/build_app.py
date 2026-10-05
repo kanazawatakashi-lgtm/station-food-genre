@@ -25,7 +25,7 @@ from shapely.ops import unary_union
 
 from census import WARD_EN, load_weights, weight_of
 from genre_groups import GROUPS, MAJOR_ORDER, UNKNOWN, group_of
-from station_map import load_rails, ring_path, xy
+from svgmap import load_rails, ring_path, xy
 
 RADII = (250, 500, 1000)
 MID_ORDER = list(dict.fromkeys(mid for _, mid in GROUPS.values()))
@@ -187,7 +187,7 @@ def main():
     stations.sort(key=lambda s: -s["p"])
 
     w, h = xy(139.925, 35.515)
-    from station_map import MIN_LNG, MAX_LAT, SCALE, KX
+    from svgmap import MIN_LNG, MAX_LAT, SCALE, KX
     data = {"w": w, "h": h, "proj": {"lng0": MIN_LNG, "lat0": MAX_LAT, "s": SCALE, "kx": KX},
             "wards": wards, "rails": rails, "stations": stations,
             "majors": MAJOR_ORDER, "mids": MID_ORDER, "midMajor": [MAJOR_ORDER.index(MID_MAJOR[m]) for m in MID_ORDER],
