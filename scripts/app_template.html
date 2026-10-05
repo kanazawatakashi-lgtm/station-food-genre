@@ -84,6 +84,8 @@ svg.map.drag { cursor: grabbing; } svg.map.pointmode { cursor: crosshair; }
 .tip { position: absolute; z-index: 5; pointer-events: none; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; box-shadow: 0 4px 16px rgba(0,0,0,.14); font-size: 14px; max-width: 280px; }
 .tip b { font-family: var(--font-display); font-size: 16px; }
 .tip .s { color: var(--ink-2); font-size: 13px; }
+.rowtip { position: fixed; z-index: 25; pointer-events: none; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; box-shadow: 0 4px 16px rgba(0,0,0,.14); font-size: 14px; max-width: min(360px, calc(100vw - 32px)); line-height: 1.5; }
+.rowtip b { font-size: 15px; } .rowtip .s { color: var(--ink-2); font-size: 13px; }
 
 /* パネル */
 .panel { display: grid; min-width: 0; }
@@ -129,10 +131,12 @@ thead th { color: var(--ink-2); font-weight: 700; font-size: 13px; }
 .row .v { white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
 .row.head { cursor: default; color: var(--ink-3); font-size: 12px; } .row.head:hover { background: none; }
 .list { max-height: 460px; overflow-y: auto; border-top: 1px solid var(--rule); }
-.srow { display: grid; grid-template-columns: 10px minmax(6em, 1fr) minmax(5em, 9em) 3.5em; gap: 8px; align-items: center; padding: 5px 2px; border-bottom: 1px solid var(--rule); font-size: 14px; }
+/* 店名の欄は以前（ジャンル欄 9em の残り全部）より 20% 狭くし、その分をジャンルの欄に回す */
+.srow { display: grid; grid-template-columns: 10px max(4em, calc((100% - 12.5em - 34px) * 0.8)) minmax(0, 1fr) 3.5em; cursor: default; gap: 8px; align-items: center; padding: 5px 2px; border-bottom: 1px solid var(--rule); font-size: 14px; }
 .srow i { width: 10px; height: 10px; border-radius: 50%; }
 .srow .n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .srow .g { color: var(--ink-2); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.srow:hover { background: var(--bg); }
 .srow .d { text-align: right; color: var(--ink-3); font-variant-numeric: tabular-nums; font-size: 13px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font: inherit; font-size: 13px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
@@ -246,6 +250,7 @@ table.gt tr.unk td { color: var(--ink-3); }
   </div>
 </div>
 <div class="pop" id="pop" role="dialog" hidden></div>
+<div class="rowtip" id="rowtip" hidden></div>
 <script>
 const D = __DATA__;
 const NS = "http://www.w3.org/2000/svg";
@@ -782,7 +787,7 @@ function drawPoint() {
   for (const h of pointHits) {
     if (state.pFilter >= 0 && SS.M[h.i] !== state.pFilter) continue;
     const [sx, sy] = toXY(SS.la[h.i], SS.lo[h.i]);
-    el("circle", { cx: sx, cy: sy, r: (h.d <= state.pRadius ? 5 : 3.5) * px, class: "dot", fill: GCOL[SS.M[h.i]], "fill-opacity": h.d <= state.pRadius ? 1 : 0.35 }, gP);
+    el("circle", { cx: sx, cy: sy, r: (h.d <= state.pRadius ? 5 : 3.5) * px, class: "dot", "data-s": h.i, fill: GCOL[SS.M[h.i]], "fill-opacity": h.d <= state.pRadius ? 1 : 0.35 }, gP);
   }
   el("circle", { cx: x, cy: y, r: 6 * px, class: "pin" }, gP);
 }
@@ -849,7 +854,7 @@ function renderPoint() {
       <div><h3>ジャンル別の店数</h3>${midGroups ? `<div class="mgrps">${midGroups}</div>` : `<p class="muted-t">この範囲に飲食店はありません</p>`}</div>
       <div><h3>近隣店の一覧（指定地点から近い順）</h3>
         <div class="chips" role="group" aria-label="大分類で絞り込む"><button class="chip" type="button" data-f="-1" aria-pressed="${state.pFilter < 0}">すべて</button>${M.map((m, i) => byM[i] ? `<button class="chip" type="button" data-f="${i}" aria-pressed="${state.pFilter === i}"><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${GCOL[i]};margin-right:4px"></i>${esc(m)}</button>` : "").join("")}</div>
-        <div class="list">${shown.map(h => `<div class="srow"><i style="background:${GCOL[SS.M[h.i]]}"></i><span class="n">${esc(SS.n[h.i])}</span><span class="g">${esc(genreLabel(h.i))}</span><span class="d">${Math.round(h.d)}m</span></div>`).join("")}</div></div>
+        <div class="list" id="ptList">${shown.map(h => `<div class="srow" data-s="${h.i}" data-d="${Math.round(h.d)}"><i style="background:${GCOL[SS.M[h.i]]}"></i><span class="n">${esc(SS.n[h.i])}</span><span class="g">${esc(genreLabel(h.i))}</span><span class="d">${Math.round(h.d)}m</span></div>`).join("")}</div></div>
       <p class="muted-t">地図上の濃い点が範囲内の店、薄い点が範囲のすぐ外の店です。店の位置は地図サービスの登録位置で、数十mずれることがあります。閉店済みの店が残っている場合があります。</p></div>`;
   }
   // 地点の決め方: 駅名・住所・座標から選ぶ
@@ -880,8 +885,32 @@ function renderPoint() {
   if (p) {
     bindSeg("segP", v => { state.pRadius = v; const [x, y] = toXY(p.la, p.lo); focusOn(x, y, (v * 5.5) / mPerUnit); render(); });
     $("p-point").querySelectorAll("[data-f]").forEach(b => b.onclick = () => { state.pFilter = +b.dataset.f; render(); draw(); });
+    bindRowTip($("ptList"));
   }
 }
+
+// 近隣店の一覧: 行に触れると、店名・ジャンル・距離の全文をポップアップで出し、地図の点を強調する（スマホは行を押す）
+const rowTip = $("rowtip");
+function bindRowTip(list) {
+  if (!list) return;
+  const show = (row, x, y) => {
+    const i = +row.dataset.s;
+    rowTip.innerHTML = `<b>${esc(SS.n[i])}</b><div class="s">${esc(genreLabel(i))}</div><div class="s">指定地点から ${row.dataset.d}m</div>`;
+    rowTip.hidden = false;
+    const w = rowTip.offsetWidth, h = rowTip.offsetHeight;
+    rowTip.style.left = Math.max(8, Math.min(window.innerWidth - w - 8, x + 14)) + "px";
+    rowTip.style.top = (y + 16 + h > window.innerHeight - 8 ? y - h - 12 : y + 16) + "px";
+    gP.querySelectorAll(".dot.hot").forEach(d => d.classList.remove("hot"));
+    const dot = gP.querySelector(`.dot[data-s="${i}"]`); if (dot) dot.classList.add("hot");
+  };
+  const hide = () => { rowTip.hidden = true; gP.querySelectorAll(".dot.hot").forEach(d => d.classList.remove("hot")); };
+  list.addEventListener("mousemove", e => { const row = e.target.closest(".srow"); if (row) show(row, e.clientX, e.clientY); else hide(); });
+  list.addEventListener("mouseleave", hide);
+  list.addEventListener("click", e => { const row = e.target.closest(".srow"); if (row) { const r = row.getBoundingClientRect(); show(row, r.left + 20, r.bottom - 4); } });
+  list.addEventListener("scroll", hide, { passive: true });
+}
+window.addEventListener("scroll", () => { rowTip.hidden = true; }, { passive: true });
+document.addEventListener("click", e => { if (!rowTip.hidden && !(e.target.closest && e.target.closest("#ptList"))) rowTip.hidden = true; });
 
 // ---- 乗降客数（乗降客数の順位と路線） ----
 const gRL = $("gRL");
