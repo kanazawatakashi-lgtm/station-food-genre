@@ -1,6 +1,7 @@
 # CLAUDE.md
 
 駅圏（半径1km）の飲食店をジャンル別に数え、駅ごとの過不足を比べるための作業リポジトリ。
+アプリの名前は「飲食出店ナビ・東京23区版」（ユーザー決定 2026-10-05。旧称「駅まわり出店ナビ」。サブタイトルは付けない）。
 背景と決定事項の原本は `docs/HANDOFF.md`（2026-10-02 の claude.ai での相談）。
 
 ## 決定済み
@@ -184,7 +185,7 @@ python scripts/fetch_openpoi.py kameido
 - ライセンス: `docs/licenses.md`。S12-25（乗降客数）は公共データ利用規約 第1.0版で商用可（ユーザー確認）。古い版は非商用なので使わない。
   線路・区の境界（Overture、ODbL）は国土数値情報 N02・N03 に置き換える
 - **サービスに載せる注記（出典表示、データの時点、数字の限界）は `docs/disclosures.md` に作業のたびに足す**（ユーザーの指示。最後にまとめて載せる）
-- **アプリ**: `python scripts/build_app.py` → `docs/app.html`（データ埋め込みの1ファイル、約5MB）。
+- **アプリ（飲食出店ナビ・東京23区版）**: `python scripts/build_app.py` → `docs/app.html`（データ埋め込みの1ファイル、約6.6MB）。
   駅カード（300/500/1000m）、比較（5駅）、ジャンルで探す（LQ で地図を塗る）、地点分析（50/100/300m の店一覧）。
   公開先 https://claude.ai/artifact/LWtYAoxwNX1yRruwZFWMDF 。人口は取り込み済み（国勢調査2020 250mメッシュ、`data/mesh/`、`mesh_stats.py` の --cols は README 参照）。働く人の数も取り込み済み（経済センサス2021 500mメッシュ、T001147022＝全産業の従業者数。001〜021 は事業所数で項目名が重複するので列コードで指定する）。住所検索も対応済み（位置参照情報 街区レベル `data/isj/`、build_app.py の load_addresses と app の geocode()）。地価は見送り（ユーザー判断 2026-10-05）
 - 線路・区の境界は国土数値情報 N02・N03 に置き換え済み（`scripts/ksj.py`）。Overture の rail/divisions はもう使わない
