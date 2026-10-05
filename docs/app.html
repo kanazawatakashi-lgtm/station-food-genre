@@ -141,6 +141,9 @@ thead th { color: var(--ink-2); font-weight: 700; font-size: 13px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font: inherit; font-size: 13px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
 .chip b { margin-left: 4px; color: var(--ink-3); }
+/* 選ばれている絞り込み（近隣店の一覧のジャンル）は、背景を濃くして見分ける */
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--panel); border-color: var(--accent); font-weight: 700; }
+.chip[aria-pressed="true"] i { box-shadow: 0 0 0 1.5px var(--panel); }
 .help { font: inherit; font-size: 11px; font-weight: 700; width: 18px; height: 18px; line-height: 16px; padding: 0; margin-left: 4px; border-radius: 50%; border: 1px solid var(--ink-3); background: var(--panel); color: var(--ink-2); cursor: pointer; vertical-align: 1px; }
 .help:hover, .help[aria-expanded="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
 .pop { position: fixed; z-index: 20; max-width: min(340px, calc(100vw - 32px)); background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.18); padding-block: 12px; padding-inline: 14px; font-size: 14px; line-height: 1.7; text-align: left; white-space: normal; font-weight: 400; }
