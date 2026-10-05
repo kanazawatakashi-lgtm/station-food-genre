@@ -492,8 +492,8 @@ function legend() {
   const L = $("legend");
   if (state.tab === "genre") { L.innerHTML = `<span>${esc(MID[state.genre])} の平均比（${state.radius}m圏）${help()}</span><span>少ない 0.5倍</span><span class="ramp"></span><span>2倍 多い</span><span>灰色の円: 23区平均並み</span>`; return; }
   if (state.tab === "point") { L.innerHTML = M.map((m, i) => `<span class="key"><i style="background:${GCOL[i]}"></i>${esc(m)}</span>`).join("") + `<span>地図をクリックすると、その地点で分析します</span>`; return; }
-  L.innerHTML = `<span>円の大きさ＝1日平均乗降客数（2024年）</span><span>${state.tab === "compare" ? "円を押すと比較に追加" : "円を押すと駅を選べます"}</span>`;
-  if (state.tab === "pass") L.innerHTML = `<span>円の大きさ＝1日平均乗降客数（2024年）</span><span>円に触れると乗降客数が出ます。路線名を押すとその路線を強調します</span>`;
+  L.innerHTML = `<span>円の大きさ＝1日平均乗降客数</span><span>${state.tab === "compare" ? "円を押すと比較に追加" : "円を押すと駅を選べます"}</span>`;
+  if (state.tab === "pass") L.innerHTML = `<span>円の大きさ＝1日平均乗降客数</span><span>円に触れると乗降客数が出ます。路線名を押すとその路線を強調します</span>`;
 }
 
 // ---- 駅カード ----
@@ -539,7 +539,7 @@ function popBlock(s) {
   const km2 = Math.PI * (state.radius / 1000) ** 2;
   const f = popFacts(p, km2), a = D.popArea ? popFacts(D.popArea, D.areaKm2) : null;
   const cmp = (x, y, fmtf) => a ? `<span class="muted-t">23区 ${fmtf(y)}</span>` : "";
-  return `<div><h3>住んでいる人（${state.radius}m圏、2020年国勢調査）</h3>
+  return `<div><h3>住んでいる人</h3>
     <div class="stats">
       <div class="stat"><div class="v">${fmt(f.pop)}</div><div class="l">人口</div></div>
       <div class="stat"><div class="v">${fmt(f.dens)}</div><div class="l">人口密度（人/km²）</div>${cmp(f.dens, a && a.dens, v => fmt(v))}</div>
@@ -551,7 +551,7 @@ function popBlock(s) {
       ${a ? `<div class="barrow"><span>23区平均</span>${ageBar(a.ages)}</div>` : ""}
       <div class="keys">${AGES.map(([, l], i) => `<span class="key"><i style="background:var(--a${i})"></i>${l} <b class="num">${pct(f.ages[i])}</b></span>`).join("")}<span class="key"><i style="background:var(--a6)"></i>年齢不詳</span></div>
     </div>
-    ${f.work != null ? `<div><h3>働いている人（${state.radius}m圏、2021年経済センサス）</h3>
+    ${f.work != null ? `<div><h3>働いている人</h3>
       <div class="stats">
         <div class="stat"><div class="v">${f.dayNight.toFixed(1)}倍</div><div class="l">働く人 ÷ 住む人${help("dayNight")}</div>${cmp(0, a && a.dayNight, v => v.toFixed(1) + "倍")}</div>
         <div class="stat"><div class="v">${fmt(f.work)}</div><div class="l">従業者数${help("work")}</div></div>
@@ -890,7 +890,7 @@ function renderPass() {
     `<div class="lgrp"><span>${label}</span>${D.rails.filter(r => r.k === k).map(r => r.n).sort((a, b) => a.localeCompare(b, "ja")).map(x => `<button class="lchip ${k}" type="button" data-line="${esc(x)}" aria-pressed="${x === state.line}">${esc(x)}</button>`).join("")}</div>`).join("");
   $("p-pass").innerHTML = `
     ${pick != null ? `<div class="summary"><span class="tag">選んだ駅</span><p><b>${esc(ST[pick].n)}</b>　${fmt(ST[pick].p)}人/日（${pick + 1}位）　${esc(ST[pick].o)}</p></div>` : ""}
-    <div><h3>乗降客数の多い駅（1日平均、2024年）</h3>
+    <div><h3>乗降客数の多い駅（1日平均）</h3>
       <div>${ST.slice(0, n).map((s, i) => `<div class="prow" tabindex="0" role="button" data-i="${i}"><span class="r">${i + 1}</span><span class="n">${esc(s.n)}</span><span><div class="pb" style="width:${(s.p / maxP * 100).toFixed(2)}%"></div></span><span class="v">${fmt(s.p)}</span></div>`).join("")}</div>
       <div class="actions" style="margin-top:8px"><button class="btn" id="passAll" type="button">${state.passAll ? "上位30駅だけ表示" : `全${ST.length}駅を表示`}</button></div></div>
     <div class="lines ${state.line ? "dim" : ""}" style="display:grid;gap:10px"><h3>路線（押すと地図で強調）</h3>${lines}</div>
