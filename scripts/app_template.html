@@ -791,7 +791,7 @@ function renderPoint() {
   const mode = state.pMode || "station";
   const MODES = {
     station: { label: "駅名", ph: "駅名（例: 渋谷）", note: "" },
-    address: { label: "住所", ph: "区＋町名＋丁目＋番（例: 江東区亀戸2-17）", note: "号までは使いません。番が見つからないときは丁目の中心で分析します。" },
+    address: { label: "住所", ph: "区＋町名＋丁目＋番（例: 渋谷区渋谷2-21）", note: "号までは使いません。番が見つからないときは丁目の中心で分析します。" },
     coords: { label: "座標", ph: "例: 35.6974, 139.8266", note: "座標の調べ方: Google マップで調べたい地点を右クリック（スマホは長押し）すると、一番上に「35.6974, 139.8266」のような緯度・経度が出ます。それを押すとコピーされるので、ここに貼り付けてください。" },
   };
   $("p-point").innerHTML = `<div class="pin-input">
