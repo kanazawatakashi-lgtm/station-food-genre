@@ -570,7 +570,7 @@ function popBlock(s) {
       </div>
 </div>` : ""}`;
 }
-// ---- 駅の特徴（店の構成と人口から、決まった規則で文章にする） ----
+// ---- 駅周辺の特徴（店の構成と人口から、決まった規則で文章にする） ----
 const DAILY = ["定食・丼", "惣菜・弁当", "ラーメン", "そば・うどん", "ハンバーガー・ファストフード", "ファミレス", "とんかつ・揚げ物"];
 const DRINK = ["居酒屋", "焼き鳥・やきとん", "バー", "スナック・パブ", "串かつ・串揚げ"];
 const DINING = ["フレンチ・ビストロ", "イタリアン", "すし", "和食（割烹・天ぷら・うなぎ・郷土）", "鍋・しゃぶしゃぶ"];
@@ -587,7 +587,7 @@ const DESC_RADIUS = 250;
 function describe(s) {
   // 空港・展示場・市場など、まわりの人口や店のデータでは性格を表せない駅は、一般的な情報で書いた説明（data/station_notes.csv）
   if (s.note) return s.note;
-  // 駅の特徴は、選んだ半径に関わらず駅のすぐまわり（250m）の数字で作る（ユーザー決定 2026-10-05）
+  // 駅周辺の特徴は、選んだ半径に関わらず駅のすぐまわり（250m）の数字で作る（ユーザー決定 2026-10-05）
   const rk = String(DESC_RADIUS), r = s.r[rk], km2 = Math.PI * (DESC_RADIUS / 1000) ** 2;
   const p = s.pop[rk], area = D.popArea ? popFacts(D.popArea, D.areaKm2) : null;
   const f = p && area ? popFacts(p, km2) : null;
@@ -658,7 +658,7 @@ function renderStation() {
   const ss = stationSearch("q1", i => selectStation(i), "駅名（例: 渋谷）");
   $("p-station").innerHTML = `${ss.html}
     <div><h2>${esc(s.n)}</h2><p class="muted-t">${esc(s.o)}</p></div>
-    <div class="summary"><span class="tag">${s.note ? "駅の特徴（一般的な情報による）" : "駅の特徴"}</span><p>${esc(describe(s))}</p></div>
+    <div class="summary"><span class="tag">${s.note ? "駅周辺の特徴（一般的な情報による）" : "駅周辺の特徴"}</span><p>${esc(describe(s))}</p></div>
     <div class="actions">${radiusSeg("segR", D.radii, state.radius)}<button class="btn" id="toCmp" type="button">比較分析</button><button class="btn" id="toPoint" type="button">地点分析</button><button class="btn" id="gtOpen" type="button">ジャンル別構成表</button></div>
     <div class="stats">
       <div class="stat"><div class="v">${fmt(s.p)}</div><div class="l">乗降客数（人/日）・${rank}位</div></div>
