@@ -156,6 +156,24 @@ table.gt tr.unk td { color: var(--ink-3); }
 .radios { display: flex; flex-wrap: wrap; gap: 6px 18px; }
 .radios label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 15px; }
 .radios input { width: 16px; height: 16px; accent-color: var(--pick); }
+.prow { display: grid; grid-template-columns: 2.4em minmax(5em, 9em) 1fr 7em; gap: 10px; align-items: center; padding: 4px; border-bottom: 1px solid var(--rule); cursor: pointer; font-size: 14px; }
+.prow:hover { background: var(--bg); }
+.prow .r { color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
+.prow .n { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prow .pb { height: 10px; background: var(--ink-2); border-radius: 0 4px 4px 0; min-width: 2px; }
+.prow .v { text-align: right; font-variant-numeric: tabular-nums; }
+.lchip { font: inherit; font-size: 13px; font-weight: 700; border: 0; border-radius: 999px; padding: 4px 11px; cursor: pointer; color: var(--on-line); }
+.lchip.jr { background: var(--jr); } .lchip.private { background: var(--private); } .lchip.subway { background: var(--subway); }
+.lchip[aria-pressed="true"] { outline: 3px solid var(--ink); outline-offset: 2px; }
+.lines.dim .lchip[aria-pressed="false"] { opacity: 0.45; }
+.lgrp { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.lgrp > span { font-weight: 700; min-width: 4em; font-size: 14px; }
+#gR.dim .rl:not(.sel) { stroke-opacity: 0.12; }
+.rl.sel { stroke-width: 4; stroke-opacity: 1; stroke-dasharray: none; }
+.rail-lbl { pointer-events: none; }
+.rail-lbl rect { stroke: var(--land); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.rail-lbl.jr rect { fill: var(--jr); } .rail-lbl.private rect { fill: var(--private); } .rail-lbl.subway rect { fill: var(--subway); }
+.rail-lbl text { fill: var(--on-line); font-family: var(--font-body); font-weight: 700; dominant-baseline: central; text-anchor: middle; }
 .summary { border-left: 4px solid var(--pick); background: var(--bg); border-radius: 0 6px 6px 0; padding-block: 10px; padding-inline: 14px; display: grid; gap: 4px; }
 .summary p { margin: 0; font-size: 15px; line-height: 1.75; }
 .summary .tag { font-size: 12px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.04em; }
@@ -184,7 +202,7 @@ table.gt tr.unk td { color: var(--ink-3); }
         </div>
       </div>
       <svg class="map" id="map" role="img" aria-label="23区の駅と飲食店の地図">
-        <g id="gW"></g><g id="gWN"></g><g id="gR"></g><g id="gC"></g><g id="gP"></g><g id="gL"></g>
+        <g id="gW"></g><g id="gWN"></g><g id="gR"></g><g id="gC"></g><g id="gP"></g><g id="gL"></g><g id="gRL"></g>
       </svg>
       <div class="legend" id="legend"></div>
       <div class="tip" id="tip" hidden></div>
@@ -196,10 +214,12 @@ table.gt tr.unk td { color: var(--ink-3); }
         <button class="tab" role="tab" id="t-point" aria-selected="false" aria-controls="p-point">地点分析</button>
         <button class="tab" role="tab" id="t-compare" aria-selected="false" aria-controls="p-compare">比較</button>
         <button class="tab" role="tab" id="t-genre" aria-selected="false" aria-controls="p-genre">ジャンル別</button>
+        <button class="tab" role="tab" id="t-pass" aria-selected="false" aria-controls="p-pass">乗降客数</button>
       </div>
       <section class="pane" id="p-station" role="tabpanel" aria-labelledby="t-station"></section>
       <section class="pane" id="p-compare" role="tabpanel" aria-labelledby="t-compare" hidden></section>
       <section class="pane" id="p-genre" role="tabpanel" aria-labelledby="t-genre" hidden></section>
+      <section class="pane" id="p-pass" role="tabpanel" aria-labelledby="t-pass" hidden></section>
       <section class="pane" id="p-point" role="tabpanel" aria-labelledby="t-point" hidden></section>
     </div>
   </div>
@@ -347,6 +367,7 @@ function draw() {
   });
   gWN.querySelectorAll("text").forEach(t => t.setAttribute("font-size", 12 * px));
   gWN.style.display = zoom > 8 ? "none" : "";
+  drawRailLabels(px);
   // 拡大したときは駅の円を輪郭だけにして、店や地図を隠さない
   gC.classList.toggle("zoomed", zoom > 10);
   drawPoint();
@@ -415,7 +436,9 @@ function tap(e) {
   if (state.tab === "point") { const p = toMap(e.clientX, e.clientY); const [la, lo] = fromXY(p.x, p.y); setPoint(la, lo, "地図で選んだ地点"); return; }
   const i = nearestStation(e.clientX, e.clientY);
   if (i < 0) return;
-  if (state.tab === "compare") addCompare(i); else { selectStation(i, false); if (state.tab !== "station") showTab("station"); }
+  if (state.tab === "compare") addCompare(i);
+  else if (state.tab === "pass") { state.passPick = i; render(); }
+  else { selectStation(i, false); if (state.tab !== "station") showTab("station"); }
 }
 
 // ---- 状態 ----
@@ -424,7 +447,7 @@ const state = { pInput: { station: "渋谷", address: "東京都渋谷区渋谷�
 function genreLabel(i) { const f = D.fine[SS.f[i]]; const mi = SS.m[i]; return [M[SS.M[i]], mi >= 0 ? MID[mi] : "中分類不明", f && f !== (mi >= 0 ? MID[mi] : "") ? f : ""].filter(Boolean).join(" ／ "); }
 
 // ---- タブ ----
-const TABS = ["station", "point", "compare", "genre"];
+const TABS = ["station", "point", "compare", "genre", "pass"];
 let pointGo = null;
 function showTab(t) {
   state.tab = t;
@@ -451,7 +474,9 @@ function paintStations() {
       c.style.fill = q == null ? "" : lqColor(q); c.style.fillOpacity = q == null ? "" : 0.8;
     } else { c.style.fill = ""; c.style.fillOpacity = ""; }
   });
+  circles.forEach((c, i) => { if (state.tab === "pass" && i === state.passPick) c.classList.add("sel"); });
   gR.classList.toggle("muted", state.tab === "point" || state.tab === "genre");
+  gR.classList.toggle("dim", state.tab === "pass" && !!state.line);
   legend();
 }
 function lqColor(q) {
@@ -466,6 +491,7 @@ function legend() {
   if (state.tab === "genre") { L.innerHTML = `<span>${esc(MID[state.genre])} の平均比（${state.radius}m圏）${help()}</span><span>少ない 0.5倍</span><span class="ramp"></span><span>2倍 多い</span><span>灰色の円: 23区平均並み</span>`; return; }
   if (state.tab === "point") { L.innerHTML = M.map((m, i) => `<span class="key"><i style="background:${GCOL[i]}"></i>${esc(m)}</span>`).join("") + `<span>地図をクリックすると、その地点で分析します</span>`; return; }
   L.innerHTML = `<span>円の大きさ＝1日平均乗降客数（2024年）</span><span>${state.tab === "compare" ? "円を押すと比較に追加" : "円を押すと駅を選べます"}</span>`;
+  if (state.tab === "pass") L.innerHTML = `<span>円の大きさ＝1日平均乗降客数（2024年）</span><span>円に触れると乗降客数が出ます。路線名を押すとその路線を強調します</span>`;
 }
 
 // ---- 駅カード ----
@@ -817,11 +843,67 @@ function renderPoint() {
   }
 }
 
+// ---- 乗降客数（乗降客数の順位と路線） ----
+const gRL = $("gRL");
+function selectLine(n) {
+  state.line = state.line === n ? null : n;
+  gR.classList.toggle("dim", !!state.line);
+  railEls.forEach((p, i) => p.classList.toggle("sel", D.rails[i].n === state.line));
+  if (state.line) {
+    const i = D.rails.findIndex(r => r.n === state.line);
+    const k = D.rails[i].k, box = $({ jr: "lyJr", private: "lyPrivate", subway: "lySub" }[k]);
+    if (!box.checked) { box.checked = true; box.dispatchEvent(new Event("change")); }
+    railEls[i].parentNode.appendChild(railEls[i]);
+    const bb = railEls[i].getBBox();
+    vb.w = Math.max(bb.width, bb.height * full.w / full.h) * 1.16; vb.h = vb.w * full.h / full.w;
+    vb.x = bb.x + bb.width / 2 - vb.w / 2; vb.y = bb.y + bb.height / 2 - vb.h / 2; clampVb();
+  }
+  render(); draw();
+}
+function drawRailLabels(px) {
+  // 路線名の札は、乗降客数タブで路線を選んだときだけ、駅の円となるべく重ならない位置に出す
+  gRL.innerHTML = "";
+  if (state.tab !== "pass" || !state.line) return;
+  const r = D.rails.find(x => x.n === state.line); if (!r) return;
+  const fs = 15 * px, h = 24 * px, w = r.n.length * fs + 16 * px;
+  const hit = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+  const cand = r.a.filter(([x, y]) => x > vb.x && x < vb.x + vb.w && y > vb.y && y < vb.y + vb.h).map(([x, y]) => {
+    const box = { x0: x - w / 2, x1: x + w / 2, y0: y - h / 2, y1: y + h / 2 };
+    let cover = 0; ST.forEach(st => { const rr = R(st.p); if (hit(box, { x0: st.x - rr, x1: st.x + rr, y0: st.y - rr, y1: st.y + rr })) cover += rr * rr; });
+    return { x, y, box, cover };
+  }).sort((a, b) => a.cover - b.cover);
+  const placed = [];
+  for (const c of cand) {
+    if (placed.some(p => hit(p.box, c.box) || Math.hypot(p.x - c.x, p.y - c.y) < 260 * px)) continue;
+    placed.push(c);
+    const g = el("g", { class: `rail-lbl ${r.k}` }, gRL);
+    el("rect", { x: c.box.x0, y: c.box.y0, width: w, height: h, rx: h / 2 }, g);
+    el("text", { x: c.x, y: c.y, "font-size": fs }, g).textContent = r.n;
+  }
+}
+function renderPass() {
+  const n = state.passAll ? ST.length : 30;
+  const pick = state.passPick;
+  const lines = [["jr", "JR"], ["private", "私鉄"], ["subway", "地下鉄"]].map(([k, label]) =>
+    `<div class="lgrp"><span>${label}</span>${D.rails.filter(r => r.k === k).map(r => r.n).sort((a, b) => a.localeCompare(b, "ja")).map(x => `<button class="lchip ${k}" type="button" data-line="${esc(x)}" aria-pressed="${x === state.line}">${esc(x)}</button>`).join("")}</div>`).join("");
+  $("p-pass").innerHTML = `
+    ${pick != null ? `<div class="summary"><span class="tag">選んだ駅</span><p><b>${esc(ST[pick].n)}</b>　${fmt(ST[pick].p)}人/日（${pick + 1}位）　${esc(ST[pick].o)}</p></div>` : ""}
+    <div><h3>乗降客数の多い駅（1日平均、2024年）</h3>
+      <div>${ST.slice(0, n).map((s, i) => `<div class="prow" tabindex="0" role="button" data-i="${i}"><span class="r">${i + 1}</span><span class="n">${esc(s.n)}</span><span><div class="pb" style="width:${(s.p / maxP * 100).toFixed(2)}%"></div></span><span class="v">${fmt(s.p)}</span></div>`).join("")}</div>
+      <div class="actions" style="margin-top:8px"><button class="btn" id="passAll" type="button">${state.passAll ? "上位30駅だけ表示" : `全${ST.length}駅を表示`}</button></div></div>
+    <div class="lines ${state.line ? "dim" : ""}" style="display:grid;gap:10px"><h3>路線（押すと地図で強調）</h3>${lines}</div>
+    <p class="muted-t">乗換駅は事業者の合計。同じ駅名で500m以内の駅はまとめています。乗降客数が公表されていない駅は除いています。</p>`;
+  $("passAll").onclick = () => { state.passAll = !state.passAll; render(); };
+  $("p-pass").querySelectorAll(".prow").forEach(r => { const go = () => { const i = +r.dataset.i; state.passPick = i; focusOn(ST[i].x, ST[i].y, full.w / 6); render(); }; r.onclick = go; r.onkeydown = e => { if (e.key === "Enter") go(); }; });
+  $("p-pass").querySelectorAll("[data-line]").forEach(b => b.onclick = () => selectLine(b.dataset.line));
+}
+
 function render() {
   if (state.tab === "station") renderStation();
   if (state.tab === "compare") renderCompare();
   if (state.tab === "genre") renderGenre();
   if (state.tab === "point") renderPoint();
+  if (state.tab === "pass") renderPass();
 }
 
 // 比較の初期表示: 渋谷と成城学園前
