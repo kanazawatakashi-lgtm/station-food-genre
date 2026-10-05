@@ -573,11 +573,11 @@ const DINING = ["フレンチ・ビストロ", "イタリアン", "すし", "和
 function groupLQ(r, names) {
   // 中分類のまとまりの平均比（画面の平均比と同じくセンサス補正後）。
   // 補正後の割合は 平均比 × 23区の割合 なので、まとまりの平均比 ＝ Σ(平均比 × 23区の割合) ÷ Σ23区の割合。
-  // 23区平均なら2店未満のまとまりは、数店で大きく動くので判定しない
+  // 23区平均なら3店未満のまとまりは、数店で大きく動くので判定しない（「少ないジャンル」と同じ基準）
   const known = r.m.reduce((a, b) => a + b, 0);
   let share = 0, base = 0, exp = 0;
   names.forEach(n => { const i = MID.indexOf(n); if (i >= 0) { share += (r.q[i] || 0) * D.base.m[i]; base += D.base.m[i]; exp += known * D.base.rawm[i]; } });
-  return exp >= 2 && base ? share / base : null;
+  return exp >= 3 && base ? share / base : null;
 }
 function describe(s) {
   const rk = String(state.radius), r = s.r[rk], km2 = Math.PI * (state.radius / 1000) ** 2;
