@@ -19,7 +19,7 @@ python scripts/station_table.py tokyo23 [--stations data/stations.csv]   # 駅�
 python scripts/ksj.py tokyo23               # 区の境界を国土数値情報 N03 で作り直す
 python scripts/station_map.py               # 駅の乗降客数マップ → docs/station_map.html
 python scripts/mesh_stats.py data/mesh/tblT001142Q5339.txt data/mesh/tblT001196Q5339.txt --cols "人口=人口（総数）,世帯数=世帯総数,0〜14歳=０～１４歳人口　総数,15〜19歳=１５～１９歳人口　総数,20〜34歳=２０～２４歳人口　総数+２５～２９歳人口　総数+３０～３４歳人口　総数,35〜49歳=３５～３９歳人口　総数+４０～４４歳人口　総数+４５～４９歳人口　総数,50〜64歳=５０～５４歳人口　総数+５５～５９歳人口　総数+６０～６４歳人口　総数,65歳以上=６５歳以上人口　総数,1人世帯=１人世帯数　一般世帯数,外国人=外国人人口　総数"   # 駅ごとの人口
-python scripts/mesh_stats.py data/mesh/tblT001147H5339.txt --cols "従業者=T001147022,飲食サービス従業者=T001147036,卸売小売従業者=T001147032,事業所=T001147001" --out data/stations/tokyo23_workers.csv   # 駅ごとの従業者数
+python scripts/mesh_stats.py data/mesh/tblT001147H5339.txt --cols "従業者=T001147022,オフィス・商業系従業者=T001147030+T001147032+T001147033+T001147034+T001147035+T001147041,飲食サービス従業者=T001147036,事業所=T001147001" --out data/stations/tokyo23_workers.csv   # 駅ごとの従業者数
 python scripts/build_app.py                 # 出店エリア分析アプリ → docs/app.html
 ```
 

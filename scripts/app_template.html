@@ -444,7 +444,7 @@ function popFacts(p, km2) {
   const v = n => p[PC(n)] || 0, pop = v("人口") || 1;
   return { pop: v("人口"), hh: v("世帯数"), dens: v("人口") / km2, single: v("1人世帯") / Math.max(v("世帯数"), 1),
     foreign: v("外国人") / pop, ages: AGES.map(([k]) => v(k) / pop),
-    work: PC("従業者") >= 0 ? v("従業者") : null, workFood: v("飲食サービス従業者"), workRetail: v("卸売小売従業者"),
+    work: PC("従業者") >= 0 ? v("従業者") : null, workFood: v("飲食サービス従業者"), workOffice: v("オフィス・商業系従業者"),
     dayNight: PC("従業者") >= 0 ? v("従業者") / pop : null };
 }
 function ageBar(ages) {
@@ -473,10 +473,10 @@ function popBlock(s) {
       <div class="stats">
         <div class="stat"><div class="v">${f.dayNight.toFixed(1)}倍</div><div class="l">働く人 ÷ 住む人</div>${cmp(0, a && a.dayNight, v => v.toFixed(1) + "倍")}</div>
         <div class="stat"><div class="v">${fmt(f.work)}</div><div class="l">従業者数</div></div>
+        <div class="stat"><div class="v">${fmt(f.workOffice)}</div><div class="l">うちオフィス・商業系（${pct(f.workOffice / Math.max(f.work, 1))}）</div>${cmp(0, a && a.workOffice / Math.max(a.work, 1), pct)}</div>
         <div class="stat"><div class="v">${fmt(f.workFood)}</div><div class="l">うち宿泊・飲食サービス</div></div>
-        <div class="stat"><div class="v">${fmt(f.workRetail)}</div><div class="l">うち卸売・小売</div></div>
       </div>
-      <p class="muted-t">「働く人 ÷ 住む人」が大きいほど、昼間に人が集まる街（ランチ需要が大きい）です。従業者数は事業所で働く人の数で、通学者や買い物客は含みません。</p></div>` : ""}`;
+      <p class="muted-t">「働く人 ÷ 住む人」が大きいほど、昼間に人が集まる街（ランチ需要が大きい）です。従業者数は事業所で働く人の数で、通学者や買い物客は含みません。オフィス・商業系は、情報通信・卸売小売・金融保険・不動産・専門サービス・その他サービス（警備・ビル管理・派遣など）の合計です。</p></div>` : ""}`;
 }
 // ---- 駅の特徴（店の構成と人口から、決まった規則で文章にする） ----
 const DAILY = ["定食・丼", "惣菜・弁当", "ラーメン", "そば・うどん", "ハンバーガー・ファストフード", "ファミレス", "とんかつ・揚げ物"];
@@ -605,7 +605,7 @@ function renderCompare() {
       const pf = cs.map(s => s.pop[String(state.radius)] ? popFacts(s.pop[String(state.radius)], km2) : null);
       rows.push(["人口", pf.map(f => f ? fmt(f.pop) : "—")], ["人口密度（人/km²）", pf.map(f => f ? fmt(f.dens) : "—")],
         ["1人世帯の割合", pf.map(f => f ? pct(f.single) : "—")],
-        ["従業者数（働く人）", pf.map(f => f && f.work != null ? fmt(f.work) : "—")], ["働く人 ÷ 住む人", pf.map(f => f && f.dayNight != null ? f.dayNight.toFixed(1) + "倍" : "—")], ...AGES.map(([, l], i) => [`${l}の割合`, pf.map(f => f ? pct(f.ages[i]) : "—")]));
+        ["働く人 ÷ 住む人", pf.map(f => f && f.dayNight != null ? f.dayNight.toFixed(1) + "倍" : "—")], ["従業者数（働く人）", pf.map(f => f && f.work != null ? fmt(f.work) : "—")], ["オフィス・商業系の割合", pf.map(f => f && f.work ? pct(f.workOffice / f.work) : "—")], ...AGES.map(([, l], i) => [`${l}の割合`, pf.map(f => f ? pct(f.ages[i]) : "—")]));
     }
     table = `<div class="tablewrap"><table><thead><tr><th></th>${cs.map((s, k) => `<th>${esc(s.n)}<br><button class="chip" data-rm="${k}" type="button" aria-label="${esc(s.n)}を外す">外す</button></th>`).join("")}</tr></thead>
       <tbody>${rows.map(([h, v]) => `<tr><td>${h}</td>${v.map(x => `<td style="white-space:normal;vertical-align:top">${x}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
