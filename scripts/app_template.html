@@ -715,7 +715,7 @@ function renderGenre() {
   const g = state.genre, rkey = String(state.radius);
   const list = ST.map((s, i) => ({ s, i, r: s.r[rkey] })).filter(x => x.s.p >= state.gmin && x.r.q[g] != null)
     .map(x => { const known = x.r.m.reduce((a, b) => a + b, 0); return { ...x, q: x.r.q[g], c: x.r.m[g], exp: known * D.base.rawm[g] }; })
-    .filter(x => state.gdir === "low" ? x.exp >= 2 : x.c >= 3);
+    .filter(x => state.gdir === "low" ? x.exp >= 3 : x.c >= 3);
   list.sort((a, b) => state.gdir === "low" ? a.q - b.q || b.s.p - a.s.p : b.q - a.q);
   const opts = D.majors.slice(0, UNKNOWN_M).map((m, j) => `<optgroup label="${esc(m)}">${MID.map((x, i) => D.midMajor[i] === j ? `<option value="${i}" ${i === g ? "selected" : ""}>${esc(x)}</option>` : "").join("")}</optgroup>`).join("");
   $("p-genre").innerHTML = `
@@ -723,7 +723,7 @@ function renderGenre() {
       <div class="seg" role="group" id="gDir"><button type="button" data-v="low" aria-pressed="${state.gdir === "low"}">少ない駅</button><button type="button" data-v="high" aria-pressed="${state.gdir === "high"}">多い駅</button></div></div>
     <div class="actions">${radiusSeg("segR3", D.radii, state.radius)}
       <label class="muted-t" for="gMin">乗降客数</label><select class="inp" id="gMin">${[0, 10000, 30000, 100000, 300000].map(v => `<option value="${v}" ${v === state.gmin ? "selected" : ""}>${v ? fmt(v) + "人以上" : "すべて"}</option>`).join("")}</select></div>
-    <p class="muted-t">${state.gdir === "low" ? `23区平均なら2店以上あるはずなのに、${esc(MID[g])}の割合が低い駅を、平均比の低い順に並べています。` : `${esc(MID[g])}の割合が高い駅（3店以上）を、平均比の高い順に並べています。`}地図の円の色も平均比を表します。</p>
+    <p class="muted-t">${state.gdir === "low" ? `23区平均なら3店以上あるはずなのに、${esc(MID[g])}の割合が低い駅を、平均比の低い順に並べています。` : `${esc(MID[g])}の割合が高い駅（3店以上）を、平均比の高い順に並べています。`}地図の円の色も平均比を表します。</p>
     <div class="rows"><div class="row head"><span class="r">順位</span><span>駅</span><span class="v">乗降客数</span><span class="v">店数</span><span class="v">平均比${help()}</span></div>
       ${list.slice(0, 60).map((x, k) => `<div class="row" tabindex="0" role="button" data-i="${x.i}"><span class="r">${k + 1}</span><span class="n">${esc(x.s.n)}</span><span class="v">${fmt(x.s.p)}</span><span class="v">${x.c}</span><span class="v">${x.q.toFixed(2)}倍</span></div>`).join("") || `<p class="muted-t">条件に合う駅がありません。</p>`}</div>
     <p class="muted-t">${list.length}駅中 上位${Math.min(60, list.length)}駅。店数は${state.radius}m圏の${esc(MID[g])}の件数。</p>`;
