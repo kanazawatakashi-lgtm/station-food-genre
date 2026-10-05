@@ -8,7 +8,7 @@
       data/stations.csv（s12_stations.py の出力）
 出力: 駅 × 半径（300/500/1000m）ごとの合計（--out の CSV）
 
---cols は「出力の列名=元の項目名（の一部）」をカンマ区切りで並べる。項目名は --inspect で確認する。
+--cols は「出力の列名=元の項目名」をカンマ区切りで並べる（「+」でつなぐと合計）。項目名は --inspect で確認する。
 
 集計の仕方: メッシュの中に人口が均等に散らばっているとみなし、円と重なる面積の割合をかけて足す
 （メッシュを 10×10 の点に分け、円に入る点の割合で近似）。250m メッシュなら 300m の円でもおおむね正しい。
@@ -106,14 +106,20 @@ def main():
             print(f"  {k}: {v}")
         return
 
+    # 「出力名=項目名」。項目名は全角空白を除いて完全一致を優先し、なければ部分一致。「+」でつなぐと足し合わせる
+    norm = lambda t: t.replace("\u3000", "").strip()
+    labs = list(dict.fromkeys(labels.values()))
     cols = []
     for part in args.cols.split(","):
         out, src = part.split("=", 1)
-        hits = [lab for lab in labels.values() if src.strip() in lab]
-        if not hits:
-            raise SystemExit(f"項目が見つからない: {src}")
-        cols.append((out.strip(), hits[0]))
-        print(f"  {out.strip()} ← {hits[0]}")
+        srcs = []
+        for one in src.split("+"):
+            hits = [lab for lab in labs if norm(lab) == norm(one)] or [lab for lab in labs if norm(one) in norm(lab)]
+            if not hits:
+                raise SystemExit(f"項目が見つからない: {one}")
+            srcs.append(hits[0])
+        cols.append((out.strip(), srcs))
+        print(f"  {out.strip()} ← {' + '.join(norm(x) for x in srcs)}")
 
     # メッシュの中心で大まかに絞ってから面積の割合を計算する
     centers = {}
@@ -131,10 +137,25 @@ def main():
                     continue
                 f = coverage(code, lat, lng, radius)
                 if f:
-                    for out, src in cols:
-                        tot[out] += num(rows[code].get(src)) * f
+                    for out, srcs in cols:
+                        tot[out] += sum(num(rows[code].get(x)) for x in srcs) * f
             out_rows.append({"station": st["key"], "name": st["name"], "radius": radius,
                              **{out: round(tot[out]) for out, _ in cols}})
+    # 比較対象の地域全体（23区）の合計も1行加える（station="_area"、radius=0）。メッシュの中心が区の中にあるものを足す
+    import os
+    if os.path.exists("data/areas/tokyo23_wards.parquet"):
+        import pyarrow.parquet as pq
+        from shapely import wkb
+        from shapely.geometry import Point
+        from shapely.ops import unary_union
+        from shapely.prepared import prep
+        area = prep(unary_union([wkb.loads(r["geometry"]) for r in pq.read_table("data/areas/tokyo23_wards.parquet").to_pylist()]))
+        tot = defaultdict(float)
+        for code, (clat, clng, _) in centers.items():
+            if area.contains(Point(clng, clat)):
+                for out, srcs in cols:
+                    tot[out] += sum(num(rows[code].get(x)) for x in srcs)
+        out_rows.append({"station": "_area", "name": "対象地域全体", "radius": 0, **{out: round(tot[out]) for out, _ in cols}})
     with open(args.out, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=list(out_rows[0]))
         w.writeheader()

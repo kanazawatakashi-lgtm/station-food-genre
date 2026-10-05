@@ -65,7 +65,13 @@ def load_population():
     out = {}
     for r in rows:
         out.setdefault(r["station"], {})[int(r["radius"])] = [int(float(r[c] or 0)) for c in cols]
-    return out, cols
+    return out, cols  # out["_area"][0] は対象地域全体の合計
+
+
+def area_km2(g):
+    """経緯度のポリゴンの面積（km²、緯度35.7度での近似）。"""
+    import math
+    return g.area * 111.32 * 110.95 * math.cos(math.radians(35.7))
 
 
 def main():
@@ -130,7 +136,8 @@ def main():
     data = {"w": w, "h": h, "proj": {"lng0": MIN_LNG, "lat0": MAX_LAT, "s": SCALE, "kx": KX},
             "wards": wards, "rails": rails, "stations": stations,
             "majors": MAJOR_ORDER, "mids": MID_ORDER, "midMajor": [MAJOR_ORDER.index(MID_MAJOR[m]) for m in MID_ORDER],
-            "fine": fine_names, "stores": S, "base": base, "popCols": pop_cols, "radii": list(RADII)}
+            "fine": fine_names, "stores": S, "base": base, "popCols": pop_cols, "radii": list(RADII),
+            "popArea": pop.get("_area", {}).get(0), "areaKm2": round(area_km2(area_geom), 1)}
     blob = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     html = open("scripts/app_template.html", encoding="utf-8").read().replace("__DATA__", blob)
     with open("docs/app.html", "w", encoding="utf-8") as f:
