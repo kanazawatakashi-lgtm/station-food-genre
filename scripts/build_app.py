@@ -194,8 +194,9 @@ def main():
             "fine": fine_names, "stores": S, "base": base, "popCols": pop_cols, "radii": list(RADII),
             "popArea": pop.get("_area", {}).get(0), "areaKm2": round(area_km2(area_geom), 1),
             "addr": load_addresses(),
-            # 店舗データのライセンス文（CDLA-Permissive-2.0 は第2.1条、Apache-2.0 は第4条で、配るときに全文を添えることが条件）
-            "licenses": {n: open(f"docs/license_texts/{n}.txt", encoding="utf-8").read() for n in ("CDLA-Permissive-2.0", "Apache-2.0")}}
+            # 店舗データのライセンス文（CDLA-Permissive-2.0 は第2.1条、Apache-2.0 は第4条で、配るときに全文を添えることが条件）と、
+            # Foursquare の NOTICE（全文を残すことが条件。末尾に変更の内容を書き足してある）
+            "licenses": {n: open(f"docs/license_texts/{n}.txt", encoding="utf-8").read() for n in ("CDLA-Permissive-2.0", "Apache-2.0", "Foursquare-NOTICE")}}
     blob = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     html = open("scripts/app_template.html", encoding="utf-8").read().replace("__DATA__", blob)
     with open("docs/app.html", "w", encoding="utf-8") as f:

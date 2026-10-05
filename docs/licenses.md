@@ -8,7 +8,7 @@
 
 | データ | 使っている所 | 条件 | 有料サービスで |
 |---|---|---|---|
-| Overture Places（店舗） | 店の件数・ジャンル | CDLA-Permissive-2.0。一部（Foursquare 由来）は Apache-2.0、一部 CC0 | **使える**。出典表示が必要。Foursquare 由来分は Apache-2.0 の写しと NOTICE（"Copyright 2024 Foursquare Labs, Inc. All rights reserved" など）を残す。OSM 由来のデータは含まない |
+| Overture Places（店舗） | 店の件数・ジャンル | CDLA-Permissive-2.0。一部（Foursquare 由来）は Apache-2.0、一部 CC0 | **使える**。出典表示が必要。Foursquare 由来分は Apache-2.0 の写しと NOTICE.txt の全文（"© 2026 Foursquare Labs, Inc. All rights reserved" を含む）を残し、変更した点をはっきり書く。OSM 由来のデータは含まない |
 | Overture Transportation（線路） | 地図の路線 | ODbL（OpenStreetMap 由来） | 地図として見せるだけなら出典表示（© OpenStreetMap contributors）で可。線路データ自体を配る・他のデータと組み合わせたデータベースとして配ると、ODbL の継承条件がかかる → **国土数値情報 N02（鉄道）に置き換える** |
 | Overture Divisions（区の境界） | 店の区の割り当て、地図の区の線 | ODbL | 同上。店データに区を付ける処理にも使っているので、**国土数値情報 N03（行政区域）に置き換える** |
 | 国土数値情報 S12（駅別乗降客数）S12-25 | 乗降客数、駅の位置 | **公共データ利用規約（第1.0版）**（ユーザーがデータページで確認、2026-10-04。https://www.digital.go.jp/resources/open_data/public_data_license_v1.0） | **使える**。出典表示と、加工したことの表示が必要。CC BY 4.0 互換。検索で出る古い版（v2.x など）のページは「非商用」なので、**使う版は S12-25 以降に限る**。データページに第三者の権利などの個別の除外が書かれていないか確認する ★ |
@@ -25,7 +25,7 @@
 
 ## サービスで必要な出典表示（案）
 
-- 店舗データ: © Overture Maps Foundation（Places, CDLA-Permissive-2.0）。一部 © Foursquare Labs, Inc.（Apache-2.0）
+- 店舗データ: © Overture Maps Foundation（Places, CDLA-Permissive-2.0）。一部 © 2026 Foursquare Labs, Inc.（Apache-2.0）
 - 乗降客数: 東京都「東京都統計年鑑」（CC BY 4.0）を加工して作成
 - 人口・事業所: 総務省統計局「国勢調査」「経済センサス‐活動調査」（e-Stat）を加工して作成
 - 鉄道・行政区域: 国土交通省「国土数値情報（鉄道データ・行政区域データ）」を加工して作成
