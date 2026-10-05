@@ -1,4 +1,4 @@
-<title>駅まわり出店ナビ</title>
+<title>飲食出店ナビ－東京23区版</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+New:wght@700;900&display=swap">
@@ -186,8 +186,7 @@ table.gt tr.unk td { color: var(--ink-3); }
 
 <div class="wrap">
   <header>
-    <h1>駅まわり出店ナビ</h1>
-    <p class="sub">東京23区・<span class="num" id="nSt"></span>駅の飲食店の構成と乗降客数（試作版）</p>
+    <h1>飲食出店ナビ－東京23区版</h1>
   </header>
 
   <div class="main">
@@ -253,7 +252,6 @@ const UNKNOWN_M = M.length - 1;
 const GCOL = M.map((_, i) => `var(--g${i})`);
 const svg = $("map"), box = $("mapbox"), tip = $("tip");
 const stByKey = new Map(ST.map((s, i) => [s.k, i]));
-$("nSt").textContent = ST.length;
 
 // 座標 → 地図座標（Python 側の xy と同じ式）
 const P = D.proj;
