@@ -11,7 +11,7 @@
   --jr: #4f8a2e; --private: #c0457a; --subway: #2f5fb3; --on-line: #ffffff;
   --g0: #c2462e; --g1: #7d4fb5; --g2: #b07a12; --g3: #2a7fb8; --g4: #2f8a5f; --g5: #a7b0ad;
   --lo: #2a7fb8; --mid: #c3cac7; --hi: #c2462e;
-  --a0: #cfe6e3; --a1: #93c8c1; --a2: #569f98; --a3: #2f7770; --a4: #1b4f4a; --a5: #d6dbd9;
+  --a0: #d6ebe8; --a1: #a6d2cb; --a2: #75b3aa; --a3: #4b928a; --a4: #2e706a; --a5: #1a4c48; --a6: #d6dbd9;
   --font-display: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
   --font-body: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
 }
@@ -22,7 +22,7 @@
     --jr: #5f9e3f; --private: #d16a96; --subway: #5a88dc; --on-line: #111716;
     --g0: #d9604a; --g1: #9d78d4; --g2: #b38020; --g3: #4e94d0; --g4: #3f9a6e; --g5: #5d6966;
     --lo: #4e94d0; --mid: #46524f; --hi: #d9604a;
-    --a0: #1d4945; --a1: #2b6e67; --a2: #3f948b; --a3: #6bbab0; --a4: #a8ddd5; --a5: #3a4441;
+    --a0: #1b4440; --a1: #24625c; --a2: #33837b; --a3: #52a69c; --a4: #80c8bf; --a5: #b5e3dc; --a6: #3a4441;
     color-scheme: dark;
   }
 }
@@ -32,7 +32,7 @@
   --jr: #5f9e3f; --private: #d16a96; --subway: #5a88dc; --on-line: #111716;
   --g0: #d9604a; --g1: #9d78d4; --g2: #b38020; --g3: #4e94d0; --g4: #3f9a6e; --g5: #5d6966;
   --lo: #4e94d0; --mid: #46524f; --hi: #d9604a;
-  --a0: #1d4945; --a1: #2b6e67; --a2: #3f948b; --a3: #6bbab0; --a4: #a8ddd5; --a5: #3a4441;
+  --a0: #1b4440; --a1: #24625c; --a2: #33837b; --a3: #52a69c; --a4: #80c8bf; --a5: #b5e3dc; --a6: #3a4441;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -138,6 +138,9 @@ thead th { color: var(--ink-2); font-weight: 700; font-size: 13px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font: inherit; font-size: 13px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
 .chip b { margin-left: 4px; color: var(--ink-3); }
+.summary { border-left: 4px solid var(--pick); background: var(--bg); border-radius: 0 6px 6px 0; padding-block: 10px; padding-inline: 14px; display: grid; gap: 4px; }
+.summary p { margin: 0; font-size: 15px; line-height: 1.75; }
+.summary .tag { font-size: 12px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.04em; }
 .note { color: var(--ink-3); font-size: 12px; line-height: 1.7; margin: 0; }
 .foot { padding-block: 14px; padding-inline: 16px; display: grid; gap: 6px; }
 </style>
@@ -392,7 +395,7 @@ function lqList(list, empty) {
 }
 // 人口（国勢調査2020の250mメッシュを円で集計）。列は build_app.py / mesh_stats.py の --cols の順
 const PC = n => D.popCols.indexOf(n);
-const AGES = [["0〜14歳", "0〜14歳"], ["20〜34歳", "20〜34歳"], ["35〜49歳", "35〜49歳"], ["50〜64歳", "50〜64歳"], ["65歳以上", "65歳以上"]];
+const AGES = [["0〜14歳", "0〜14歳"], ["15〜19歳", "15〜19歳"], ["20〜34歳", "20〜34歳"], ["35〜49歳", "35〜49歳"], ["50〜64歳", "50〜64歳"], ["65歳以上", "65歳以上"]];
 function popFacts(p, km2) {
   const v = n => p[PC(n)] || 0, pop = v("人口") || 1;
   return { pop: v("人口"), hh: v("世帯数"), dens: v("人口") / km2, single: v("1人世帯") / Math.max(v("世帯数"), 1),
@@ -400,7 +403,7 @@ function popFacts(p, km2) {
 }
 function ageBar(ages) {
   const rest = Math.max(0, 1 - ages.reduce((a, b) => a + b, 0));
-  return `<div class="bar">${ages.map((a, i) => `<span style="width:${a * 100}%;background:var(--a${i})" title="${AGES[i][1]} ${pct(a)}"></span>`).join("")}<span style="width:${rest * 100}%;background:var(--a5)" title="15〜19歳・年齢不詳 ${pct(rest)}"></span></div>`;
+  return `<div class="bar">${ages.map((a, i) => `<span style="width:${a * 100}%;background:var(--a${i})" title="${AGES[i][1]} ${pct(a)}"></span>`).join("")}<span style="width:${rest * 100}%;background:var(--a6)" title="年齢不詳 ${pct(rest)}"></span></div>`;
 }
 function popBlock(s) {
   const p = s.pop[String(state.radius)];
@@ -418,9 +421,67 @@ function popBlock(s) {
     <div><h3>年齢構成</h3>
       <div class="barrow"><span>${state.radius}m圏</span>${ageBar(f.ages)}</div>
       ${a ? `<div class="barrow"><span>23区平均</span>${ageBar(a.ages)}</div>` : ""}
-      <div class="keys">${AGES.map(([, l], i) => `<span class="key"><i style="background:var(--a${i})"></i>${l} <b class="num">${pct(f.ages[i])}</b></span>`).join("")}<span class="key"><i style="background:var(--a5)"></i>15〜19歳・不詳</span></div>
+      <div class="keys">${AGES.map(([, l], i) => `<span class="key"><i style="background:var(--a${i})"></i>${l} <b class="num">${pct(f.ages[i])}</b></span>`).join("")}<span class="key"><i style="background:var(--a6)"></i>年齢不詳</span></div>
       <p class="muted-t">商業地の駅では住む人が少なく、通勤・買い物で来る人が中心です。働く人の数（昼間の人口の目安）は準備中です。</p></div>`;
 }
+// ---- 駅の特徴（店の構成と人口から、決まった規則で文章にする） ----
+const DAILY = ["定食・丼", "惣菜・弁当", "ラーメン", "そば・うどん", "ハンバーガー・ファストフード", "ファミレス", "とんかつ・揚げ物"];
+const DRINK = ["居酒屋", "焼き鳥・やきとん", "バー", "スナック・パブ", "串かつ・串揚げ"];
+const DINING = ["フレンチ・ビストロ", "イタリアン", "すし", "和食（割烹・天ぷら・うなぎ・郷土）", "鍋・しゃぶしゃぶ"];
+function groupLQ(r, names) {
+  // 中分類のまとまりの LQ（件数の合計 ÷ 23区平均なら何店か）
+  const known = r.m.reduce((a, b) => a + b, 0) || 1;
+  let c = 0, e = 0;
+  names.forEach(n => { const i = MID.indexOf(n); if (i >= 0) { c += r.m[i]; e += known * D.base.m[i]; } });
+  return e >= 2 ? c / e : null;
+}
+function describe(s) {
+  const rk = String(state.radius), r = s.r[rk], km2 = Math.PI * (state.radius / 1000) ** 2;
+  const out = [];
+  // 1. 街の性格（住む人の密度と店の密度を23区平均と比べる）
+  const p = s.pop[rk], area = D.popArea ? popFacts(D.popArea, D.areaKm2) : null;
+  const f = p && area ? popFacts(p, km2) : null;
+  const dRatio = f ? f.dens / area.dens : null;
+  const sRatio = (r.t / km2) / (SS.n.length / D.areaKm2);
+  let type;
+  if (dRatio == null) type = sRatio >= 1.5 ? "飲食店が集まる駅" : "住宅と商業が混在する駅";
+  else if (dRatio < 0.6 && sRatio >= 1.5) type = "住む人が少なく、飲食店が集まる商業・オフィス街の駅";
+  else if (dRatio < 0.6) type = "住む人も飲食店も少ない駅";
+  else if (dRatio >= 1.3 && sRatio >= 1.5) type = "住宅と商店がともに密集した駅";
+  else if (dRatio >= 1.3) type = "住宅が中心の駅";
+  else if (sRatio >= 1.5) type = "飲食店が多い駅";
+  else type = "住宅と商業が混在する駅";
+  const big = s.p >= 500000 ? "乗降客の多いターミナルで、" : s.p >= 150000 ? "乗降客が比較的多く、" : "";
+  out.push(`${big}${type}。`);
+  // 2. 住んでいる人
+  if (f && area) {
+    const ppl = [];
+    const ag = i => f.ages[i] / area.ages[i];
+    if (ag(2) >= 1.15 && f.single >= area.single) ppl.push("20〜34歳の単身者");
+    if (ag(0) >= 1.2) ppl.push("子どものいる世帯");
+    if (ag(1) >= 1.3) ppl.push("10代後半（学生）");
+    if (ag(5) >= 1.2) ppl.push("65歳以上の高齢者");
+    if (f.foreign / Math.max(area.foreign, 1e-6) >= 1.8) ppl.push("外国人");
+    if (dRatio >= 0.6) out.push(ppl.length ? `住民は${ppl.join("・")}が多い。` : "住民の年齢構成は23区平均に近い。");
+    else if (ppl.length) out.push(`住民は少ないが、${ppl.join("・")}の割合が高い。`);
+  }
+  // 3. 飲食店の構成
+  // まとまりの特徴は [つなぐ形, 言い切る形] で持ち、最後のものだけ言い切る
+  const tags = [];
+  const gd = groupLQ(r, DRINK), gy = groupLQ(r, DAILY), gn = groupLQ(r, DINING);
+  if (gd != null && gd >= 1.2) tags.push(["夜の飲み需要が強く（居酒屋・バーなどが多い）", "夜の飲み需要が強い（居酒屋・バーなどが多い）"]);
+  if (gy != null && gy >= 1.2) tags.push(["定食・惣菜・ラーメンなど日常使いの店が多く", "定食・惣菜・ラーメンなど日常使いの店が多い"]);
+  if (gn != null && gn >= 1.2) tags.push(["すし・割烹・洋食店などの食事処が多く", "すし・割烹・洋食店などの食事処が多い"]);
+  if (gn != null && gn <= 0.7) tags.push(["すし・割烹・洋食店などの食事処は少なめで", "すし・割烹・洋食店などの食事処は少なめ"]);
+  const q = xs => xs.map(x => `「${x.m}」`).join("");
+  const hi = features(r, "hi", 3), lo = features(r, "lo", 3);
+  const detail = `${hi.length ? `${q(hi)}が多く` : ""}${hi.length && lo.length ? "、" : ""}${lo.length ? `${q(lo)}は少ない` : ""}`.replace(/多く$/, "多い");
+  if (tags.length) out.push(`飲食店は${tags.map((t, i) => t[i === tags.length - 1 ? 1 : 0]).join("、")}。`);
+  if (detail) out.push(`${tags.length ? "ジャンル別では" : "飲食店は"}${detail}。`);
+  if (!tags.length && !detail) out.push("飲食店の構成は23区平均に近い。");
+  return out.join("");
+}
+
 function selectStation(i, scroll = true) {
   state.sel = i; paintStations(); render();
   const s = ST[i]; if (scroll) focusOn(s.x, s.y, full.w / 7); else draw();
@@ -435,6 +496,7 @@ function renderStation() {
   const ss = stationSearch("q1", i => selectStation(i), "駅名（例: 亀戸）");
   $("p-station").innerHTML = `${ss.html}
     <div><h2>${esc(s.n)}</h2><p class="muted-t">${esc(s.o)}</p></div>
+    <div class="summary"><span class="tag">駅の特徴（${state.radius}m圏）</span><p>${esc(describe(s))}</p></div>
     <div class="actions">${radiusSeg("segR", D.radii, state.radius)}<button class="btn" id="toCmp" type="button">比較に追加</button><button class="btn" id="toPoint" type="button">この駅で地点分析</button></div>
     <div class="stats">
       <div class="stat"><div class="v">${fmt(s.p)}</div><div class="l">乗降客数（人/日）・${rank}位</div></div>
@@ -450,7 +512,7 @@ function renderStation() {
     <div class="two"><div><h3>多いジャンル（LQ が高い）</h3>${lqList(features(r, "hi"), "目立って多いジャンルはありません")}</div>
       <div><h3>少ないジャンル（LQ が低い）</h3>${lqList(features(r, "lo"), "目立って少ないジャンルはありません")}</div></div>
     ${popBlock(s)}
-    <div class="todo"><b>駅周辺の地価</b>（準備中）<br>国土数値情報の地価公示を取り込むと、駅周辺の商業地の地価（中央値）が出ます。</div>`;
+`;
   ss.bind();
   bindSeg("segR", v => { state.radius = v; paintStations(); render(); });
   $("toCmp").onclick = () => { addCompare(state.sel); showTab("compare"); };
@@ -470,6 +532,7 @@ function renderCompare() {
     const rr = cs.map(s => s.r[String(state.radius)]);
     const known = r => r.M.reduce((a, v, i) => a + (i === UNKNOWN_M ? 0 : v), 0) || 1;
     const rows = [
+      ["駅の特徴", cs.map(s => `<span style="display:block;min-width:14em;text-align:left;line-height:1.6">${esc(describe(s))}</span>`)],
       ["乗降客数（人/日）", cs.map(s => fmt(s.p))],
       [`飲食店（${state.radius}m圏）`, rr.map(r => fmt(r.t))],
       ["1万人あたり（補正後）", cs.map((s, k) => (rr[k].tw / s.p * 10000).toFixed(1))],
