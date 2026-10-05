@@ -110,8 +110,8 @@ h3 { font-size: 15px; margin: 0; color: var(--ink-2); font-weight: 700; }
 .barrow { display: grid; grid-template-columns: 5.5em 1fr; gap: 8px; align-items: center; font-size: 13px; color: var(--ink-2); }
 .keys { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; }
 .lq { display: grid; gap: 4px; }
-.lqrow { display: grid; grid-template-columns: minmax(6em, 1fr) 4.5em 3.5em; gap: 8px; font-size: 14px; align-items: center; padding: 2px 0; border-bottom: 1px solid var(--rule); }
-.lqrow .v { text-align: right; font-variant-numeric: tabular-nums; }
+.lqrow { display: grid; grid-template-columns: minmax(6em, 1fr) 6em 3.5em; gap: 8px; font-size: 14px; align-items: center; padding: 2px 0; border-bottom: 1px solid var(--rule); }
+.lqrow .v { white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
 .lqrow .c { text-align: right; color: var(--ink-3); font-variant-numeric: tabular-nums; font-size: 13px; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 520px) { .two { grid-template-columns: 1fr; } }
@@ -123,11 +123,11 @@ th, td { padding: 6px 8px; border-bottom: 1px solid var(--rule); text-align: rig
 th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: var(--panel); }
 thead th { color: var(--ink-2); font-weight: 700; font-size: 13px; }
 .rows { display: grid; }
-.row { display: grid; grid-template-columns: 2em minmax(5em, 1fr) 5em 4em 4em; gap: 8px; align-items: center; padding: 5px 4px; border-bottom: 1px solid var(--rule); cursor: pointer; font-size: 14px; }
+.row { display: grid; grid-template-columns: 2em minmax(5em, 1fr) 5em 3.5em 6em; gap: 8px; align-items: center; padding: 5px 4px; border-bottom: 1px solid var(--rule); cursor: pointer; font-size: 14px; }
 .row:hover { background: var(--bg); }
 .row .r { color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
 .row .n { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.row .v { text-align: right; font-variant-numeric: tabular-nums; }
+.row .v { white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
 .row.head { cursor: default; color: var(--ink-3); font-size: 12px; } .row.head:hover { background: none; }
 .list { max-height: 460px; overflow-y: auto; border-top: 1px solid var(--rule); }
 .srow { display: grid; grid-template-columns: 10px minmax(6em, 1fr) minmax(5em, 9em) 3.5em; gap: 8px; align-items: center; padding: 5px 2px; border-bottom: 1px solid var(--rule); font-size: 14px; }
@@ -138,6 +138,12 @@ thead th { color: var(--ink-2); font-weight: 700; font-size: 13px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font: inherit; font-size: 13px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
 .chip b { margin-left: 4px; color: var(--ink-3); }
+.help { font: inherit; font-size: 11px; font-weight: 700; width: 18px; height: 18px; line-height: 16px; padding: 0; margin-left: 4px; border-radius: 50%; border: 1px solid var(--ink-3); background: var(--panel); color: var(--ink-2); cursor: pointer; vertical-align: 1px; }
+.help:hover, .help[aria-expanded="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+.pop { position: fixed; z-index: 20; max-width: min(340px, calc(100vw - 32px)); background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.18); padding-block: 12px; padding-inline: 14px; font-size: 14px; line-height: 1.7; text-align: left; white-space: normal; font-weight: 400; }
+.pop h4 { margin: 0 0 4px; font-size: 14px; }
+.pop p { margin: 0 0 8px; }
+.pop ul { margin: 4px 0 0; padding-left: 1.2em; }
 .summary { border-left: 4px solid var(--pick); background: var(--bg); border-radius: 0 6px 6px 0; padding-block: 10px; padding-inline: 14px; display: grid; gap: 4px; }
 .summary p { margin: 0; font-size: 15px; line-height: 1.75; }
 .summary .tag { font-size: 12px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.04em; }
@@ -187,11 +193,18 @@ thead th { color: var(--ink-2); font-weight: 700; font-size: 13px; }
   </div>
 
   <div class="card foot">
-    <p class="note"><b>この試作の数字について</b>　店の数は地図サービスに登録された飲食店の件数で、実際の店数とは一致しません（閉店済みの店が残っている場合があります）。ジャンルは店名や分類から自動で判定しており（AI による判定を含む）、判定率は約83%です。LQ（特化係数）は、駅周辺のジャンルの割合が23区全体の何倍かを示し、経済センサスの事業所数で地図サービスの偏りを補正した値です。店が少ないジャンルは数店の違いで大きく動くので、件数と合わせて見てください。円が重なる駅は同じ店をそれぞれの駅で数えています。乗降客数は2024年の1日平均で、乗換駅は事業者の合計です。「少ないジャンル」が出店の好機とは限りません。</p>
+    <p class="note"><b>この試作の数字について</b>　店の数は地図サービスに登録された飲食店の件数で、実際の店数とは一致しません（閉店済みの店が残っている場合があります）。ジャンルは店名や分類から自動で判定しており（AI による判定を含む）、判定率は約83%です。平均比は、駅周辺のジャンルの割合が23区全体の割合の何倍かを示し、経済センサスの事業所数で地図サービスの偏りを補正した値です。店が少ないジャンルは数店の違いで大きく動くので、件数と合わせて見てください。円が重なる駅は同じ店をそれぞれの駅で数えています。乗降客数は2024年の1日平均で、乗換駅は事業者の合計です。「少ないジャンル」が出店の好機とは限りません。</p>
     <p class="note"><b>出典</b>　店舗: © Overture Maps Foundation（Places、CDLA-Permissive-2.0。一部 © Foursquare Labs, Inc.、Apache-2.0）を加工して作成。乗降客数・鉄道・行政区域: 国土交通省「国土数値情報（駅別乗降客数データ S12-25、鉄道データ、行政区域データ）」（公共データ利用規約 第1.0版）を加工して作成。事業所数: 総務省・経済産業省「令和3年経済センサス‐活動調査」（e-Stat）を加工して作成。住所の位置: 「位置参照情報ダウンロードサービス」（国土交通省）（https://nlftp.mlit.go.jp/isj/）の街区レベル位置参照情報を加工して作成。人口: 総務省統計局「令和2年国勢調査 地域メッシュ統計」、従業者数: 総務省・経済産業省「令和3年経済センサス‐活動調査 地域メッシュ統計」（e-Stat）を加工して作成。</p>
   </div>
 </div>
 
+<div class="pop" id="pop" role="dialog" aria-label="平均比の説明" hidden>
+  <h4>平均比とは</h4>
+  <p>その駅のまわり（選んだ半径の範囲）にある飲食店のうち、あるジャンルが占める割合が、23区全体の割合の何倍かを表した数字です。</p>
+  <h4>例</h4>
+  <p>23区全体では飲食店の7%が居酒屋です。A駅のまわりでは飲食店の14%が居酒屋だとすると、A駅の居酒屋の平均比は 14% ÷ 7% ＝ <b>2.0倍</b> です。</p>
+  <ul><li>1.0倍：23区平均と同じ</li><li>2.0倍：23区平均の2倍ある（多い）</li><li>0.5倍：23区平均の半分しかない（少ない）</li></ul>
+</div>
 <script>
 const D = __DATA__;
 const NS = "http://www.w3.org/2000/svg";
@@ -215,6 +228,28 @@ function distM(la1, lo1, la2, lo2) {
   const r = Math.PI / 180, a = Math.sin((la2 - la1) * r / 2) ** 2 + Math.cos(la1 * r) * Math.cos(la2 * r) * Math.sin((lo2 - lo1) * r / 2) ** 2;
   return 12742000 * Math.asin(Math.sqrt(a));
 }
+
+// ---- 平均比の説明（? マーク）----
+const help = () => `<button class="help" type="button" aria-label="平均比の説明" aria-expanded="false" data-help>?</button>`;
+const pop = $("pop");
+let popBtn = null;
+function closePop() { pop.hidden = true; if (popBtn) popBtn.setAttribute("aria-expanded", "false"); popBtn = null; }
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-help]");
+  if (b) {
+    e.stopPropagation();
+    if (popBtn === b) { closePop(); return; }
+    closePop(); popBtn = b; b.setAttribute("aria-expanded", "true"); pop.hidden = false;
+    const r = b.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+    let x = Math.min(window.innerWidth - w - 16, Math.max(16, r.left - w / 2));
+    let y = r.bottom + 8; if (y + h > window.innerHeight - 8) y = Math.max(8, r.top - h - 8);
+    pop.style.left = x + "px"; pop.style.top = y + "px";
+    return;
+  }
+  if (!pop.hidden && !pop.contains(e.target)) closePop();
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") closePop(); });
+window.addEventListener("scroll", closePop, { passive: true });
 
 // ---- 地図の描画 ----
 function el(tag, attrs, parent) {
@@ -320,7 +355,7 @@ function hover(e) {
   if (i < 0) { hideTip(); return; }
   const s = ST[i], r = s.r[String(state.radius)] || s.r["1000"];
   let extra = "";
-  if (state.tab === "genre" && state.genre >= 0) { const q = r.q[state.genre]; extra = `<div class="s">${esc(MID[state.genre])}: ${r.m[state.genre]}店・LQ ${q == null ? "—" : q.toFixed(2)}</div>`; }
+  if (state.tab === "genre" && state.genre >= 0) { const q = r.q[state.genre]; extra = `<div class="s">${esc(MID[state.genre])}: ${r.m[state.genre]}店・平均比 ${q == null ? "—" : q.toFixed(2) + "倍"}</div>`; }
   placeTip(`<b>${esc(s.n)}</b><div class="s">乗降客数 ${fmt(s.p)}人/日・${state.radius}m圏 ${fmt(r.t)}店</div>${extra}`, e);
 }
 function placeTip(html, e) {
@@ -374,7 +409,7 @@ function lqColor(q) {
 }
 function legend() {
   const L = $("legend");
-  if (state.tab === "genre") { L.innerHTML = `<span>${esc(MID[state.genre])} の LQ（${state.radius}m圏）</span><span>少ない 0.5</span><span class="ramp"></span><span>2 多い</span><span>灰色の円: 23区平均並み</span>`; return; }
+  if (state.tab === "genre") { L.innerHTML = `<span>${esc(MID[state.genre])} の平均比（${state.radius}m圏）${help()}</span><span>少ない 0.5倍</span><span class="ramp"></span><span>2倍 多い</span><span>灰色の円: 23区平均並み</span>`; return; }
   if (state.tab === "point") { L.innerHTML = M.map((m, i) => `<span class="key"><i style="background:${GCOL[i]}"></i>${esc(m)}</span>`).join("") + `<span>地図をクリックすると、その地点で分析します</span>`; return; }
   L.innerHTML = `<span>円の大きさ＝1日平均乗降客数（2024年）</span><span>${state.tab === "compare" ? "円を押すと比較に追加" : "円を押すと駅を選べます"}</span>`;
 }
@@ -400,7 +435,7 @@ function features(r, dir, n = 6) {
 }
 function lqList(list, empty) {
   if (!list.length) return `<p class="muted-t">${empty}</p>`;
-  return `<div class="lq"><div class="lqrow" style="color:var(--ink-3);font-size:12px"><span>中分類</span><span class="v">LQ</span><span class="c">店数</span></div>${list.map(x => `<div class="lqrow"><span>${esc(x.m)}</span><span class="v">${x.q.toFixed(2)}</span><span class="c">${x.c}</span></div>`).join("")}</div>`;
+  return `<div class="lq"><div class="lqrow" style="color:var(--ink-3);font-size:12px"><span>中分類</span><span class="v">平均比${help()}</span><span class="c">店数</span></div>${list.map(x => `<div class="lqrow"><span>${esc(x.m)}</span><span class="v">${x.q.toFixed(2)}倍</span><span class="c">${x.c}</span></div>`).join("")}</div>`;
 }
 // 人口（国勢調査2020の250mメッシュを円で集計）。列は build_app.py / mesh_stats.py の --cols の順
 const PC = n => D.popCols.indexOf(n);
@@ -534,8 +569,8 @@ function renderStation() {
       ${majorKeys(r.M)}
       <p class="muted-t">中分類まで分からない店 ${fmt(r.u)}店（${pct(r.u / Math.max(r.t, 1))}）は、構成比の分母から除いています。</p>
     </div>
-    <div class="two"><div><h3>多いジャンル（LQ が高い）</h3>${lqList(features(r, "hi"), "目立って多いジャンルはありません")}</div>
-      <div><h3>少ないジャンル（LQ が低い）</h3>${lqList(features(r, "lo"), "目立って少ないジャンルはありません")}</div></div>
+    <div class="two"><div><h3>多いジャンル（平均比が高い）</h3>${lqList(features(r, "hi"), "目立って多いジャンルはありません")}</div>
+      <div><h3>少ないジャンル（平均比が低い）</h3>${lqList(features(r, "lo"), "目立って少ないジャンルはありません")}</div></div>
     ${popBlock(s)}
 `;
   ss.bind();
@@ -562,8 +597,8 @@ function renderCompare() {
       [`飲食店（${state.radius}m圏）`, rr.map(r => fmt(r.t))],
       ["1万人あたり（補正後）", cs.map((s, k) => (rr[k].tw / s.p * 10000).toFixed(1))],
       ...M.slice(0, UNKNOWN_M).map((m, j) => [`${m}の割合`, rr.map(r => pct(r.M[j] / known(r)))]),
-      ["多いジャンル", rr.map(r => features(r, "hi", 3).map(x => `${x.m} ${x.q.toFixed(1)}`).join("<br>") || "—")],
-      ["少ないジャンル", rr.map(r => features(r, "lo", 3).map(x => `${x.m} ${x.q.toFixed(1)}`).join("<br>") || "—")],
+      [`多いジャンル（平均比${help()}）`, rr.map(r => features(r, "hi", 3).map(x => `${x.m} ${x.q.toFixed(1)}倍`).join("<br>") || "—")],
+      [`少ないジャンル（平均比${help()}）`, rr.map(r => features(r, "lo", 3).map(x => `${x.m} ${x.q.toFixed(1)}倍`).join("<br>") || "—")],
     ];
     if (D.popCols.length) {
       const km2 = Math.PI * (state.radius / 1000) ** 2;
@@ -595,9 +630,9 @@ function renderGenre() {
       <div class="seg" role="group" id="gDir"><button type="button" data-v="low" aria-pressed="${state.gdir === "low"}">少ない駅</button><button type="button" data-v="high" aria-pressed="${state.gdir === "high"}">多い駅</button></div></div>
     <div class="actions">${radiusSeg("segR3", D.radii, state.radius)}
       <label class="muted-t" for="gMin">乗降客数</label><select class="inp" id="gMin">${[0, 10000, 30000, 100000, 300000].map(v => `<option value="${v}" ${v === state.gmin ? "selected" : ""}>${v ? fmt(v) + "人以上" : "すべて"}</option>`).join("")}</select></div>
-    <p class="muted-t">${state.gdir === "low" ? `23区平均なら2店以上あるはずなのに、${esc(MID[g])}の割合が低い駅を、LQ の低い順に並べています。` : `${esc(MID[g])}の割合が高い駅（3店以上）を、LQ の高い順に並べています。`}地図の円の色も LQ を表します。</p>
-    <div class="rows"><div class="row head"><span class="r">順位</span><span>駅</span><span class="v">乗降客数</span><span class="v">店数</span><span class="v">LQ</span></div>
-      ${list.slice(0, 60).map((x, k) => `<div class="row" tabindex="0" role="button" data-i="${x.i}"><span class="r">${k + 1}</span><span class="n">${esc(x.s.n)}</span><span class="v">${fmt(x.s.p)}</span><span class="v">${x.c}</span><span class="v">${x.q.toFixed(2)}</span></div>`).join("") || `<p class="muted-t">条件に合う駅がありません。</p>`}</div>
+    <p class="muted-t">${state.gdir === "low" ? `23区平均なら2店以上あるはずなのに、${esc(MID[g])}の割合が低い駅を、平均比の低い順に並べています。` : `${esc(MID[g])}の割合が高い駅（3店以上）を、平均比の高い順に並べています。`}地図の円の色も平均比を表します。</p>
+    <div class="rows"><div class="row head"><span class="r">順位</span><span>駅</span><span class="v">乗降客数</span><span class="v">店数</span><span class="v">平均比${help()}</span></div>
+      ${list.slice(0, 60).map((x, k) => `<div class="row" tabindex="0" role="button" data-i="${x.i}"><span class="r">${k + 1}</span><span class="n">${esc(x.s.n)}</span><span class="v">${fmt(x.s.p)}</span><span class="v">${x.c}</span><span class="v">${x.q.toFixed(2)}倍</span></div>`).join("") || `<p class="muted-t">条件に合う駅がありません。</p>`}</div>
     <p class="muted-t">${list.length}駅中 上位${Math.min(60, list.length)}駅。店数は${state.radius}m圏の${esc(MID[g])}の件数。</p>`;
   $("gSel").onchange = e => { state.genre = +e.target.value; paintStations(); render(); };
   $("gMin").onchange = e => { state.gmin = +e.target.value; render(); };
