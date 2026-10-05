@@ -21,6 +21,7 @@
 import csv
 import json
 import os
+from collections import Counter
 
 import pyarrow.parquet as pq
 from shapely import wkb
@@ -187,9 +188,19 @@ def main():
         x, y = xy(float(r["lng"]), float(r["lat"]))
         stations.append({"k": r["key"], "n": r["name"], "la": float(r["lat"]), "lo": float(r["lng"]), "x": x, "y": y,
                          "p": int(r["passengers"]), "o": r["operators"].replace("|", "・"),
+                         "lines": [x for x in (r.get("lines") or "").split("|") if x],
                          "r": {str(k): v for k, v in stats[r["key"]].items()},
                          "pop": {str(k): v for k, v in pop.get(r["key"], {}).items()}})
     stations.sort(key=lambda s: -s["p"])
+    # 同じ名前の別の駅（浅草・早稲田など）は、駅名に路線名を添えて区別する（ユーザー決定 2026-10-05。今後も同じ扱い）。
+    # 路線が3つ以上なら、乗降客数の多い事業者の路線から2つと「など」
+    dup = {n for n, c in Counter(s["n"] for s in stations).items() if c > 1}
+    for s in stations:
+        if s["n"] in dup:
+            ls = s.pop("lines")
+            s["n"] = f'{s["n"]}（{"・".join(ls[:2])}{"など" if len(ls) > 2 else ""}）' if ls else s["n"]
+        else:
+            s.pop("lines")
 
     w, h = xy(139.925, 35.515)
     from svgmap import MIN_LNG, MAX_LAT, SCALE, KX

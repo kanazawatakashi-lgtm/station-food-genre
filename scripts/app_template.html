@@ -251,6 +251,8 @@ const UNKNOWN_M = M.length - 1;
 const GCOL = M.map((_, i) => `var(--g${i})`);
 const svg = $("map"), box = $("mapbox"), tip = $("tip");
 // 初期表示の駅は駅名で指す（乗降客数データの版が変わると駅の番号が変わることがあるため）。同名の駅は乗降客数の多い方
+// 「○○駅」の形の呼び方。路線名を添えた駅は「浅草駅（つくばエクスプレス）」のように、かっこの前に「駅」を入れる
+const ekiName = s => s.n.includes("（") ? s.n.replace("（", "駅（") : `${s.n}駅`;
 const stByName = n => { const i = ST.findIndex(s => s.n === n); return i < 0 ? null : i; };
 
 // 座標 → 地図座標（Python 側の xy と同じ式）
@@ -665,8 +667,8 @@ function renderStation() {
   ss.bind();
   bindSeg("segR", v => { state.radius = v; paintStations(); render(); });
   $("toCmp").onclick = () => { addCompare(state.sel); showTab("compare"); };
-  $("toPoint").onclick = () => { showTab("point"); setPoint(s.la, s.lo, `${s.n}駅`); };
-  $("gtOpen").onclick = () => openModal(`${s.n}駅 ジャンル別構成表（${state.radius}m圏）`, genreTable(r));
+  $("toPoint").onclick = () => { showTab("point"); setPoint(s.la, s.lo, ekiName(s)); };
+  $("gtOpen").onclick = () => openModal(`${ekiName(s)} ジャンル別構成表（${state.radius}m圏）`, genreTable(r));
 }
 
 // ---- 比較 ----
@@ -842,7 +844,7 @@ function renderPoint() {
     if (mode === "coords") { const c = parseCoords(v); return c ? setPoint(c[0], c[1], "指定した地点") : fail("「35.6974, 139.8266」の形で、23区内の座標を入れてください"); }
     if (mode === "address") { const g = geocode(v); return g ? setPoint(g.la, g.lo, `${g.label}（${g.prec}）`) : fail("住所が見つかりません。「区＋町名＋丁目＋番」の形で入れてください（23区内）"); }
     const n = v.replace(/駅$/, ""); let i = ST.findIndex(s => s.n === n); if (i < 0) i = ST.findIndex(s => s.n.includes(n));
-    return i >= 0 ? setPoint(ST[i].la, ST[i].lo, `${ST[i].n}駅`) : fail("駅が見つかりません（23区内の駅名を入れてください）");
+    return i >= 0 ? setPoint(ST[i].la, ST[i].lo, ekiName(ST[i])) : fail("駅が見つかりません（23区内の駅名を入れてください）");
   };
   pointGo = go;
   $("q4-go").onclick = go; $("q4").addEventListener("keydown", e => { $("q4").setCustomValidity(""); if (e.key === "Enter") go(); });

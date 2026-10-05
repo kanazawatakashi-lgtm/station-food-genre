@@ -5,7 +5,7 @@
 
 入力: S12 の GeoJSON（ユーザーがローカルで取得。https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-S12-2024.html 等）
       data/areas/tokyo23_wards.parquet（区の境界）
-出力: data/stations.csv  列 key, name, lat, lng, passengers, operators
+出力: data/stations.csv  列 key, name, lat, lng, passengers, operators, lines（路線名。「|」区切り、乗降客数の多い事業者の順）
 
 S12 の列名（どの年の乗降客数が何番の列か）は版によって違うので、まず --inspect で確かめてから
 --passengers に最新年の乗降客数の列を指定する。
@@ -31,6 +31,7 @@ from shapely.geometry import Point
 from shapely.ops import unary_union
 
 from common import haversine_m
+from ksj import line_name
 
 MERGE_M = 500
 
@@ -61,6 +62,7 @@ def main():
     ap.add_argument("--group", default="S12_001g")
     ap.add_argument("--name", default="S12_001")
     ap.add_argument("--operator", default="S12_002")
+    ap.add_argument("--line", default="S12_003")
     ap.add_argument("--out", default="data/stations.csv")
     args = ap.parse_args()
 
@@ -112,8 +114,15 @@ def main():
         for p, _ in members:
             by_op[p.get(args.operator)] = max(by_op[p.get(args.operator)], num(p.get(args.passengers)))
         name = main_name(members)
+        # 路線名（地図と同じ呼び方。同じ名前の別の駅を区別するのに使う）。乗降客数の多い事業者の路線から並べる
+        lines = []
+        for p, _ in sorted(members, key=lambda m: -by_op[m[0].get(args.operator)]):
+            ln = line_name(p.get(args.operator) or "", p.get(args.line) or "")
+            if ln and ln not in lines:
+                lines.append(ln)
         rows.append({"key": str(g), "name": name, "lat": round(lat, 6), "lng": round(lng, 6),
-                     "passengers": int(sum(by_op.values())) or "", "operators": "|".join(sorted(map(str, by_op)))})
+                     "passengers": int(sum(by_op.values())) or "", "operators": "|".join(sorted(map(str, by_op))),
+                     "lines": "|".join(lines)})
 
     rows.sort(key=lambda r: -(r["passengers"] or 0))
     with open(args.out, "w", newline="", encoding="utf-8") as f:
