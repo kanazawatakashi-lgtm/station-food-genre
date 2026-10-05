@@ -157,7 +157,8 @@ git push
 
 ## 5. 公開
 
-`python scripts/build_app.py` で `docs/app.html` を作り直したら、Claude が画面を確認して
+`python scripts/build_app.py` で `docs/app.html` を作り直したら、Claude が画面を確認して（全駅 × 全半径 × 全ジャンルで画面を作り、
+エラーや「NaN」「undefined」の表示がないか、店が0軒の円・住む人がほとんどいない円で表示が崩れないかを確かめる）
 公開ページ（https://claude.ai/artifact/LWtYAoxwNX1yRruwZFWMDF）を同じ URL で更新し、コミットして push する。
 
 ## 6. 更新したら直す文面（チェックリスト）

@@ -267,7 +267,7 @@ function distM(la1, lo1, la2, lo2) {
 
 // ---- 平均比の説明（? マーク）----
 const HELP = {
-  lq: ["平均比の説明", `<h4>平均比とは</h4><p>その駅のまわり（選んだ半径の範囲）にある飲食店のうち、あるジャンルが占める割合が、23区全体の割合の何倍かを表した数字です。</p><h4>例</h4><p>23区全体では飲食店の7%が居酒屋です。A駅のまわりでは飲食店の14%が居酒屋だとすると、A駅の居酒屋の平均比は 14% ÷ 7% ＝ <b>2.0倍</b> です。</p><ul><li>1.0倍：23区平均と同じ</li><li>2.0倍：23区平均の2倍ある（多い）</li><li>0.5倍：23区平均の半分しかない（少ない）</li></ul>`],
+  lq: ["平均比の説明", `<h4>平均比とは</h4><p>その駅のまわり（選んだ半径の範囲）にある飲食店のうち、あるジャンルが占める割合が、23区全体の割合の何倍かを表した数字です。</p><h4>例</h4><p>仮に、23区全体では飲食店の10%が居酒屋だとします。A駅のまわりでは飲食店の20%が居酒屋だとすると、A駅の居酒屋の平均比は 20% ÷ 10% ＝ <b>2.0倍</b> です。</p><ul><li>1.0倍：23区平均と同じ</li><li>2.0倍：23区平均の2倍ある（多い）</li><li>0.5倍：23区平均の半分しかない（少ない）</li></ul>`],
   dayNight: ["働く人 ÷ 住む人の説明", `<p>「働く人 ÷ 住む人」が大きいほど、昼間に人が集まる街（ランチ需要が大きい）です。</p>`],
   work: ["従業者数の説明", `<p>従業者数は事業所で働く人の数で、通学者や買い物客は含みません。</p>`],
   per10k: ["乗降客1万人あたり店数の説明", `<p>地図サービスの店数を国の統計（経済センサス）の水準に補正した店数を、1日平均乗降客数で割り、1万人あたりにした値です。左の「飲食店」は補正前の件数なので、それを乗降客数で割った値とは一致しません。円が重なる駅は同じ店を数えるため、小さい駅ほど大きく出ます。</p>`],
@@ -310,7 +310,7 @@ function genreTable(r) {
     });
   });
   rows += `<tr class="unk"><td>大分類も分からない店</td><td>${fmt(r.M[UNKNOWN_M])}</td><td></td><td></td><td></td></tr>`;
-  rows += `<tr class="unk"><td>中分類まで分からない店（大分類は分かる店を含む）</td><td>${fmt(r.u)}</td><td></td><td></td><td></td></tr>`;
+  rows += `<tr class="unk"><td>中分類まで分からない店（上の大分類も分からない店を含む）</td><td>${fmt(r.u)}</td><td></td><td></td><td></td></tr>`;
   return `<div class="tablewrap"><table class="gt"><thead><tr><th>ジャンル</th><th>店数</th><th>構成比</th><th>23区の構成比</th><th>平均比${help()}</th></tr></thead><tbody>
     <tr class="maj"><td>飲食店 合計</td><td>${fmt(r.t)}</td><td></td><td></td><td></td></tr>${rows}</tbody></table></div>
     <p class="muted-t">構成比の分母は、大分類なら大分類が分かる店、中分類なら中分類が分かる店。平均比は国の統計（経済センサス）で地図サービスの偏りを補正した値のため、構成比どうしの比とは少し違います。</p>`;
@@ -527,10 +527,12 @@ function lqList(list, empty) {
 }
 // 人口（国勢調査2020の250mメッシュを円で集計）。列は build_app.py / mesh_stats.py の --cols の順
 const PC = n => D.popCols.indexOf(n);
+// 住む人がこれより少ない円は、割合（年齢構成・1人世帯・外国人）や「働く人 ÷ 住む人」が数人の違いで大きく動くので、文章にしない
+const FEW_RESIDENTS = 500;
 const AGES = [["0〜14歳", "0〜14歳"], ["15〜19歳", "15〜19歳"], ["20〜34歳", "20〜34歳"], ["35〜49歳", "35〜49歳"], ["50〜64歳", "50〜64歳"], ["65歳以上", "65歳以上"]];
 function popFacts(p, km2) {
   const v = n => p[PC(n)] || 0, pop = v("人口") || 1;
-  return { pop: v("人口"), hh: v("世帯数"), dens: v("人口") / km2, single: v("1人世帯") / Math.max(v("世帯数"), 1),
+  return { pop: v("人口"), hh: v("世帯数"), dens: v("人口") / km2, single: v("1人世帯") / Math.max(PC("一般世帯数") >= 0 ? v("一般世帯数") : v("世帯数"), 1),  // 1人世帯は一般世帯の内数なので、分母も一般世帯
     foreign: v("外国人") / pop, ages: AGES.map(([k]) => v(k) / pop),
     work: PC("従業者") >= 0 ? v("従業者") : null, workFood: v("飲食サービス従業者"), workOffice: v("オフィス・商業系従業者"),
     dayNight: PC("従業者") >= 0 ? v("従業者") / pop : null };
@@ -545,21 +547,23 @@ function popBlock(s) {
   const km2 = Math.PI * (state.radius / 1000) ** 2;
   const f = popFacts(p, km2), a = D.popArea ? popFacts(D.popArea, D.areaKm2) : null;
   const cmp = (x, y, fmtf) => a ? `<span class="muted-t">23区 ${fmtf(y)}</span>` : "";
+  const few = f.pop < FEW_RESIDENTS, share = v => few ? "—" : pct(v);
   return `<div><h3>住んでいる人</h3>
     <div class="stats">
       <div class="stat"><div class="v">${fmt(f.pop)}</div><div class="l">人口</div></div>
       <div class="stat"><div class="v">${fmt(f.dens)}</div><div class="l">人口密度（人/km²）</div>${cmp(f.dens, a && a.dens, v => fmt(v))}</div>
-      <div class="stat"><div class="v">${pct(f.single)}</div><div class="l">1人世帯の割合</div>${cmp(f.single, a && a.single, pct)}</div>
-      <div class="stat"><div class="v">${pct(f.foreign)}</div><div class="l">外国人の割合</div>${cmp(f.foreign, a && a.foreign, pct)}</div>
+      <div class="stat"><div class="v">${share(f.single)}</div><div class="l">1人世帯の割合</div>${cmp(f.single, a && a.single, pct)}</div>
+      <div class="stat"><div class="v">${share(f.foreign)}</div><div class="l">外国人の割合</div>${cmp(f.foreign, a && a.foreign, pct)}</div>
     </div></div>
+    ${few ? `<p class="muted-t">この範囲に住む人は${fmt(f.pop)}人と少ないため、割合（1人世帯・外国人・年齢構成）と「働く人 ÷ 住む人」は出していません。</p>` : `
     <div><h3>年齢構成</h3>
       <div class="barrow"><span>${state.radius}m圏</span>${ageBar(f.ages)}</div>
       ${a ? `<div class="barrow"><span>23区平均</span>${ageBar(a.ages)}</div>` : ""}
       <div class="keys">${AGES.map(([, l], i) => `<span class="key"><i style="background:var(--a${i})"></i>${l} <b class="num">${pct(f.ages[i])}</b></span>`).join("")}<span class="key"><i style="background:var(--a6)"></i>年齢不詳</span></div>
-    </div>
+    </div>`}
     ${f.work != null ? `<div><h3>働いている人</h3>
       <div class="stats">
-        <div class="stat"><div class="v">${f.dayNight.toFixed(1)}倍</div><div class="l">働く人 ÷ 住む人${help("dayNight")}</div>${cmp(0, a && a.dayNight, v => v.toFixed(1) + "倍")}</div>
+        <div class="stat"><div class="v">${few ? "—" : f.dayNight >= 100 ? fmt(f.dayNight) + "倍" : f.dayNight.toFixed(1) + "倍"}</div><div class="l">働く人 ÷ 住む人${help("dayNight")}</div>${cmp(0, a && a.dayNight, v => v.toFixed(1) + "倍")}</div>
         <div class="stat"><div class="v">${fmt(f.work)}</div><div class="l">従業者数${help("work")}</div></div>
         <div class="stat"><div class="v">${fmt(f.workOffice)}</div><div class="l">うちオフィス・商業系（${pct(f.workOffice / Math.max(f.work, 1))}）${help("office")}</div>${cmp(0, a && a.workOffice / Math.max(a.work, 1), pct)}</div>
         <div class="stat"><div class="v">${fmt(f.workFood)}</div><div class="l">うち宿泊・飲食サービス</div></div>
@@ -595,16 +599,19 @@ function describe(s) {
   else if (dRatio >= 1.3) type = "住宅が中心の駅";
   else if (sRatio >= 1.5) type = "飲食店が多い駅";
   else type = "住宅と商業が混在する駅";
+  // 住む人がほとんどいない円は、次の文で書くので「住む人が少なく」を重ねない
+  if (f && f.pop < FEW_RESIDENTS) type = type.replace("住む人が少なく、", "").replace("住む人も飲食店も少ない駅", "飲食店が少ない駅");
   const big = s.p >= 500000 ? "乗降客の多いターミナルで、" : s.p >= 150000 ? "乗降客が比較的多く、" : "";
   out.push(`${big}${type}。`);
-  if (f && f.dayNight != null && area) {
+  if (f && f.pop < FEW_RESIDENTS) out.push(f.work != null && f.work >= 3000 ? "住む人はほとんどおらず、働く人が中心の昼型の街で、平日のランチ需要が大きい。" : "住む人はほとんどいない。");
+  else if (f && f.dayNight != null && area) {
     const dn = f.dayNight;
-    if (dn >= 3) out.push(`働く人が住む人の${dn >= 10 ? Math.round(dn) : dn.toFixed(1)}倍いる昼型の街で、平日のランチ需要が大きい。`);
+    if (dn >= 3) out.push(`働く人が住む人の${dn >= 100 ? "100倍以上" : (dn >= 10 ? Math.round(dn) : dn.toFixed(1)) + "倍"}いる昼型の街で、平日のランチ需要が大きい。`);
     else if (dn >= 1.3) out.push("住む人より働く人が多く、昼の需要がやや強い。");
     else if (dn <= 0.5) out.push("働く人より住む人がずっと多い、夜・週末型の住宅地。");
   }
   // 2. 住んでいる人
-  if (f && area) {
+  if (f && area && f.pop >= FEW_RESIDENTS) {
     const ppl = [];
     const ag = i => f.ages[i] / area.ages[i];
     if (ag(2) >= 1.15 && f.single >= area.single) ppl.push("20〜34歳の単身者");
@@ -658,7 +665,7 @@ function renderStation() {
       <div class="barrow"><span>23区平均</span>${baseBar()}</div>
       ${majorKeys(r.M)}
       ${r.e ? `<p class="muted-t">この駅の${state.radius}m圏の一部は23区の外（隣の市や海・運河など）にかかります。区の外の店はデータに含まれないため、店の数が少なめに出ることがあります。</p>` : ""}
-      <p class="muted-t">中分類まで分からない店 ${fmt(r.u)}店（${pct(r.u / Math.max(r.t, 1))}）は、構成比の分母から除いています。</p>
+      <p class="muted-t">大分類の構成比は大分類が分かる店（大分類も分からない店 ${fmt(r.M[UNKNOWN_M])}店を除く）、下の多い・少ないジャンルは中分類まで分かる店（中分類まで分からない店 ${fmt(r.u)}店・${pct(r.u / Math.max(r.t, 1))}を除く）で計算しています。</p>
     </div>
     <div class="two"><div><h3>多いジャンル（平均比が高い）</h3>${lqList(features(r, "hi"), "目立って多いジャンルはありません")}</div>
       <div><h3>少ないジャンル（平均比が低い）</h3>${lqList(features(r, "lo"), "目立って少ないジャンルはありません")}</div></div>
@@ -740,8 +747,10 @@ const CELL = 0.005, grid = new Map();
 for (let i = 0; i < SS.n.length; i++) { const k = Math.floor(SS.la[i] / CELL) + ":" + Math.floor(SS.lo[i] / CELL); (grid.get(k) || grid.set(k, []).get(k)).push(i); }
 let pointHits = [];
 function storesNear(la, lo, rad) {
+  // 調べる格子の数は範囲の広さで決める（格子1つは南北約555m・東西約450m）
   const out = [], a = Math.floor(la / CELL), b = Math.floor(lo / CELL);
-  for (let i = a - 1; i <= a + 1; i++) for (let j = b - 1; j <= b + 1; j++) for (const s of grid.get(i + ":" + j) || []) {
+  const na = Math.ceil(rad / (CELL * 110000)), nb = Math.ceil(rad / (CELL * 110000 * Math.cos(la * Math.PI / 180)));
+  for (let i = a - na; i <= a + na; i++) for (let j = b - nb; j <= b + nb; j++) for (const s of grid.get(i + ":" + j) || []) {
     const d = distM(la, lo, SS.la[s], SS.lo[s]); if (d <= rad) out.push({ i: s, d });
   }
   return out.sort((x, y) => x.d - y.d);

@@ -38,12 +38,14 @@ MID_MAJOR = {mid: major for major, mid in GROUPS.values()}
 
 def load_station_stats():
     """{駅キー: {半径: {"t": 店数, "tw": 補正後店数, "M": 大分類ごとの件数, "m": 中分類ごとの件数, "q": 中分類の LQ_w}}}"""
+    def empty(edge=0):
+        return {"t": 0, "tw": 0.0, "M": [0] * len(MAJOR_ORDER), "m": [0] * len(MID_ORDER), "q": [None] * len(MID_ORDER),
+                "u": 0, "e": edge}
+
     out = {}
     for r in RADII:
         for row in csv.DictReader(open(f"data/stations/tokyo23_r{r}_stations.csv", encoding="utf-8-sig")):
-            st = out.setdefault(row["station"], {}).setdefault(r, {
-                "t": 0, "tw": 0.0, "M": [0] * len(MAJOR_ORDER), "m": [0] * len(MID_ORDER), "q": [None] * len(MID_ORDER),
-                "u": 0, "e": int(row["near_edge"] or 0)})
+            st = out.setdefault(row["station"], {}).setdefault(r, empty(int(row["near_edge"] or 0)))
             n = int(row["count"])
             if row["level"] == "major":
                 st["M"][MAJOR_ORDER.index(row["major"])] = n
@@ -55,7 +57,13 @@ def load_station_stats():
                 i = MID_ORDER.index(row["mid"])
                 st["m"][i] = n
                 st["q"][i] = round(float(row["LQ_w"]), 2) if row["LQ_w"] else None
-    for st in out.values():
+    # 円の中に飲食店が1軒もない半径は、station_table.py の表に行が無い（辰巳・舎人公園の 250m など）。
+    # 画面が半径を切り替えたときに止まらないよう、0 店の値で埋める
+    edge = {r: {row["station"]: int(row["near_edge"] or 0) for row in csv.DictReader(
+        open(f"data/stations/tokyo23_r{r}_lq_mid.csv", encoding="utf-8-sig"))} for r in RADII}
+    for key, st in out.items():
+        for r in RADII:
+            st.setdefault(r, empty(edge[r].get(key, 0)))
         for v in st.values():
             v["tw"] = round(v["tw"], 1)
     return out
