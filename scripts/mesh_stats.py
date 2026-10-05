@@ -67,7 +67,8 @@ def read_mesh_csv(paths):
             rec = dict(zip(head, r))
             code = rec.get("KEY_CODE", "").strip()
             if code.isdigit():
-                rows.setdefault(code, {}).update({labels[k]: v for k, v in rec.items() if k in labels})
+                # 列コード（T001142001 など）で持つ。経済センサスは事業所数と従業者数に同じ項目名が並ぶため
+                rows.setdefault(code, {}).update({k: v for k, v in rec.items() if k in labels})
     return rows, labels
 
 
@@ -108,18 +109,22 @@ def main():
 
     # 「出力名=項目名」。項目名は全角空白を除いて完全一致を優先し、なければ部分一致。「+」でつなぐと足し合わせる
     norm = lambda t: t.replace("\u3000", "").strip()
-    labs = list(dict.fromkeys(labels.values()))
+    # 項目は列コード（T001147022 など）でも指定できる。項目名で指定すると、同じ名前の列のうち最初のものになる
     cols = []
     for part in args.cols.split(","):
         out, src = part.split("=", 1)
         srcs = []
         for one in src.split("+"):
-            hits = [lab for lab in labs if norm(lab) == norm(one)] or [lab for lab in labs if norm(one) in norm(lab)]
+            one = one.strip()
+            if one in labels:
+                srcs.append(one)
+                continue
+            hits = [k for k, lab in labels.items() if norm(lab) == norm(one)] or [k for k, lab in labels.items() if norm(one) in norm(lab)]
             if not hits:
                 raise SystemExit(f"項目が見つからない: {one}")
             srcs.append(hits[0])
         cols.append((out.strip(), srcs))
-        print(f"  {out.strip()} ← {' + '.join(norm(x) for x in srcs)}")
+        print(f"  {out.strip()} ← {' + '.join(f'{x}（{norm(labels[x])}）' for x in srcs)}")
 
     # メッシュの中心で大まかに絞ってから面積の割合を計算する
     centers = {}

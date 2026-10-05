@@ -4,7 +4,7 @@
 
 入力: data/areas/tokyo23_genre.parquet（classify_area.py）、data/census/weights_tokyo23.csv（census.py）
       data/stations.csv（s12_stations.py）、data/stations/tokyo23_r{300,500,1000}_stations.csv（station_table.py）
-      data/stations/tokyo23_population.csv（mesh_stats.py、任意。あれば駅カードに人口を出す）
+      data/stations/tokyo23_population.csv・tokyo23_workers.csv（mesh_stats.py、任意。あれば駅カードに人口・働く人の数を出す）
       国土数値情報 N02（線路）、data/areas/tokyo23_wards.parquet（区の境界）
 出力: docs/app.html（データを埋め込んだ1ファイル。ブラウザで開くだけで動く）
 
@@ -57,14 +57,20 @@ def load_station_stats():
 
 
 def load_population():
-    path = "data/stations/tokyo23_population.csv"
-    if not os.path.exists(path):
-        return {}, []
-    rows = list(csv.DictReader(open(path, encoding="utf-8-sig")))
-    cols = [c for c in rows[0] if c not in ("station", "name", "radius")]
-    out = {}
-    for r in rows:
-        out.setdefault(r["station"], {})[int(r["radius"])] = [int(float(r[c] or 0)) for c in cols]
+    """駅 × 半径ごとの人口（mesh_stats.py の出力）。国勢調査の人口と経済センサスの従業者数を列としてつなぐ。"""
+    out, cols = {}, []
+    for path in ("data/stations/tokyo23_population.csv", "data/stations/tokyo23_workers.csv"):
+        if not os.path.exists(path):
+            continue
+        rows = list(csv.DictReader(open(path, encoding="utf-8-sig")))
+        these = [c for c in rows[0] if c not in ("station", "name", "radius")]
+        for r in rows:
+            cur = out.setdefault(r["station"], {}).setdefault(int(r["radius"]), [0] * len(cols))
+            cur.extend(int(float(r[c] or 0)) for c in these)
+        cols += these
+        for st in out.values():  # この表に無い駅も列の数をそろえる
+            for v in st.values():
+                v.extend([0] * (len(cols) - len(v)))
     return out, cols  # out["_area"][0] は対象地域全体の合計
 
 
