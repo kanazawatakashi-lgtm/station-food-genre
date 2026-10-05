@@ -433,6 +433,12 @@ function showTab(t) {
   paintStations(); render(); draw();
   // 地点分析を初めて開いたときは、入力欄の初期値（渋谷駅）で分析した状態から始める
   if (t === "point" && !state.point && pointGo) pointGo();
+  // ジャンル別を初めて開いたときは、渋谷駅の周辺（およそ半径3km）を表示する
+  if (t === "genre" && !state.genreSeen) {
+    state.genreSeen = true;
+    const sb = ST[stByKey.get("003922") ?? 0];
+    focusOn(sb.x, sb.y, 6000 / mPerUnit);
+  }
 }
 TABS.forEach(t => $("t-" + t).addEventListener("click", () => showTab(t)));
 
@@ -601,7 +607,7 @@ function stationSearch(id, onPick, placeholder) {
 function renderStation() {
   const s = ST[state.sel], r = s.r[String(state.radius)];
   const rank = state.sel + 1;
-  const ss = stationSearch("q1", i => selectStation(i), "駅名（例: 亀戸）");
+  const ss = stationSearch("q1", i => selectStation(i), "駅名（例: 渋谷）");
   $("p-station").innerHTML = `${ss.html}
     <div><h2>${esc(s.n)}</h2><p class="muted-t">${esc(s.o)}</p></div>
     <div class="summary"><span class="tag">駅の特徴（${state.radius}m圏）</span><p>${esc(describe(s))}</p></div>
@@ -784,7 +790,7 @@ function renderPoint() {
   // 地点の決め方: 駅名・住所・座標から選ぶ
   const mode = state.pMode || "station";
   const MODES = {
-    station: { label: "駅名", ph: "駅名（例: 亀戸）", note: "" },
+    station: { label: "駅名", ph: "駅名（例: 渋谷）", note: "" },
     address: { label: "住所", ph: "区＋町名＋丁目＋番（例: 江東区亀戸2-17）", note: "号までは使いません。番が見つからないときは丁目の中心で分析します。" },
     coords: { label: "座標", ph: "例: 35.6974, 139.8266", note: "座標の調べ方: Google マップで調べたい地点を右クリック（スマホは長押し）すると、一番上に「35.6974, 139.8266」のような緯度・経度が出ます。それを押すとコピーされるので、ここに貼り付けてください。" },
   };
