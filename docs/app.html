@@ -419,17 +419,20 @@ function tap(e) {
 }
 
 // ---- 状態 ----
-const state = { tab: "station", sel: stByKey.get("003635") ?? 0, radius: 1000, cmp: [], genre: MID.indexOf("ラーメン"), gdir: "low", gmin: 30000, point: null, pRadius: 100, pFilter: -1 };
+const state = { pInput: { station: "渋谷", address: "東京都渋谷区渋谷二丁目21番-1", coords: "35.65927130491232, 139.70365490123814" }, tab: "station", sel: stByKey.get("003635") ?? 0, radius: 1000, cmp: [], genre: MID.indexOf("ラーメン"), gdir: "low", gmin: 30000, point: null, pRadius: 100, pFilter: -1 };
 
 function genreLabel(i) { const f = D.fine[SS.f[i]]; const mi = SS.m[i]; return [M[SS.M[i]], mi >= 0 ? MID[mi] : "中分類不明", f && f !== (mi >= 0 ? MID[mi] : "") ? f : ""].filter(Boolean).join(" ／ "); }
 
 // ---- タブ ----
 const TABS = ["station", "point", "compare", "genre"];
+let pointGo = null;
 function showTab(t) {
   state.tab = t;
   TABS.forEach(x => { $("t-" + x).setAttribute("aria-selected", String(x === t)); $("p-" + x).hidden = x !== t; });
   svg.classList.toggle("pointmode", t === "point");
   paintStations(); render(); draw();
+  // 地点分析を初めて開いたときは、入力欄の初期値（渋谷駅）で分析した状態から始める
+  if (t === "point" && !state.point && pointGo) pointGo();
 }
 TABS.forEach(t => $("t-" + t).addEventListener("click", () => showTab(t)));
 
@@ -788,10 +791,11 @@ function renderPoint() {
   $("p-point").innerHTML = `<div class="pin-input">
       <h3>調べたい地点を入力</h3>
       <div class="radios" role="radiogroup" aria-label="地点の指定方法">${Object.entries(MODES).map(([k, m]) => `<label for="pm-${k}"><input type="radio" name="pmode" id="pm-${k}" value="${k}" ${k === mode ? "checked" : ""}>${m.label}</label>`).join("")}</div>
-      <div class="search"><input id="q4" type="search" ${mode === "station" ? 'list="q1-dl2"' : ""} placeholder="${MODES[mode].ph}" autocomplete="off" inputmode="${mode === "coords" ? "decimal" : "text"}"><datalist id="q1-dl2">${ST.map(s => `<option value="${esc(s.n)}">`).join("")}</datalist><button class="btn primary" id="q4-go" type="button">分析</button></div>
+      <div class="search"><input id="q4" type="search" ${mode === "station" ? 'list="q1-dl2"' : ""} value="${esc(state.pInput[mode])}" placeholder="${MODES[mode].ph}" autocomplete="off" inputmode="${mode === "coords" ? "decimal" : "text"}"><datalist id="q1-dl2">${ST.map(s => `<option value="${esc(s.n)}">`).join("")}</datalist><button class="btn primary" id="q4-go" type="button">分析</button></div>
       ${MODES[mode].note ? `<p class="muted-t">${MODES[mode].note}</p>` : ""}
     </div>${body}`;
   $("p-point").querySelectorAll('input[name="pmode"]').forEach(r => r.onchange = () => { state.pMode = r.value; render(); $("q4").focus(); });
+  $("q4").addEventListener("input", () => { state.pInput[mode] = $("q4").value; });
   const fail = msg => { $("q4").setCustomValidity(msg); $("q4").reportValidity(); };
   const go = () => {
     const v = $("q4").value.trim(); if (!v) return;
@@ -800,6 +804,7 @@ function renderPoint() {
     const n = v.replace(/駅$/, ""); let i = ST.findIndex(s => s.n === n); if (i < 0) i = ST.findIndex(s => s.n.includes(n));
     return i >= 0 ? setPoint(ST[i].la, ST[i].lo, `${ST[i].n}駅`) : fail("駅が見つかりません（23区内の駅名を入れてください）");
   };
+  pointGo = go;
   $("q4-go").onclick = go; $("q4").addEventListener("keydown", e => { $("q4").setCustomValidity(""); if (e.key === "Enter") go(); });
   if (p) {
     bindSeg("segP", v => { state.pRadius = v; const [x, y] = toXY(p.la, p.lo); focusOn(x, y, (v * 5.5) / mPerUnit); render(); });
