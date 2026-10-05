@@ -6,12 +6,12 @@
 入力: e-Stat 統計GIS の地域メッシュ統計 CSV（1次メッシュごとのファイル。1行目が列コード、2行目が項目名、
       KEY_CODE 列がメッシュコード。秘匿値は "*"、該当なしは "-"）。複数ファイルを渡すとまとめて読む
       data/stations.csv（s12_stations.py の出力）
-出力: 駅 × 半径（300/500/1000m）ごとの合計（--out の CSV）
+出力: 駅 × 半径（250/500/1000m）ごとの合計（--out の CSV）。最後に対象地域全体（23区）の合計の行（station=_area）
 
 --cols は「出力の列名=元の項目名」をカンマ区切りで並べる（「+」でつなぐと合計）。項目名は --inspect で確認する。
 
 集計の仕方: メッシュの中に人口が均等に散らばっているとみなし、円と重なる面積の割合をかけて足す
-（メッシュを 10×10 の点に分け、円に入る点の割合で近似）。250m メッシュなら 300m の円でもおおむね正しい。
+（メッシュを 10×10 の点に分け、円に入る点の割合で近似）。500m メッシュ（経済センサス）は 250m の円には粗い。
 秘匿値（"*"）は 0 として扱う（少人数のメッシュなので影響は小さい）。
 
 出典の書き方: 総務省統計局「令和2年国勢調査 地域メッシュ統計」（e-Stat）を加工して作成。
@@ -137,7 +137,11 @@ def main():
         lat, lng = float(st["lat"]), float(st["lng"])
         for radius in RADII:
             tot = defaultdict(float)
+            reach = radius + 1500  # メッシュの大きさ（1km メッシュまで）を見込んだ余裕
             for code, (clat, clng, size) in centers.items():
+                # 緯度・経度の差だけで遠いメッシュを先に外す（1度あたりの距離を少なめに見積もり、近いものを外さない）
+                if abs(clat - lat) * 110000 > reach or abs(clng - lng) * 89000 > reach:
+                    continue
                 if haversine_m(lat, lng, clat, clng) > radius + size:
                     continue
                 f = coverage(code, lat, lng, radius)

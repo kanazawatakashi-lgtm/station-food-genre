@@ -32,7 +32,7 @@ import pyarrow.parquet as pq
 
 from census import load_weights, weight_of
 from shapely import wkb
-from shapely.geometry import Point
+from shapely.geometry import Point, Polygon
 from shapely.ops import transform, unary_union
 
 from common import EARTH_R, RADIUS_M, STATIONS
@@ -64,7 +64,10 @@ def edge_checker(area, radius):
         return x * kx, y * ky
 
     wards = pq.read_table(f"data/areas/{area}_wards.parquet").to_pylist()
-    boundary = transform(to_m, unary_union([wkb.loads(w["geometry"]) for w in wards])).boundary
+    union = unary_union([wkb.loads(w["geometry"]) for w in wards])
+    # 区の境界データには川・堀の部分に穴があるので、穴を埋めて外周だけで判定する（内陸の駅を端と誤らない）
+    filled = unary_union([Polygon(p.exterior) for p in getattr(union, "geoms", [union])])
+    boundary = transform(to_m, filled).boundary
     return lambda lat, lng: int(boundary.distance(Point(lng * kx, lat * ky)) < radius)
 
 

@@ -1,2 +1,6 @@
 duckdb>=1.1
 pyarrow>=15
+numpy
+shapely>=2
+openpyxl            # census.py（経済センサスの Excel を読む）
+anthropic           # classify_area_with_claude.py（店名の AI 判定。ローカルで実行）

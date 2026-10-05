@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+New:wght@700;900&display=swap">
 <style>
-/* 左に地図、右に分析パネル（タブ: 駅・比較・ジャンルで探す・地点分析）。狭い画面では縦に積む */
+/* 左に地図、右に分析パネル（タブ: 各駅情報・地点分析・比較・ジャンル別・乗降客数）。狭い画面では縦に積む */
 :root {
   --bg: #eef1ef; --panel: #ffffff; --land: #fbfcfb; --ward-line: #c9d1cd; --rule: #d8dfdc;
   --ink: #1d2523; --ink-2: #4d5a56; --ink-3: #7c8985;
@@ -41,7 +41,6 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-body); 
 .wrap { max-width: 1400px; margin: 0 auto; padding-inline: 16px; padding-block: 18px 40px; display: grid; gap: 14px; }
 header { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; }
 h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(22px, 2.6vw, 28px); margin: 0; letter-spacing: 0.02em; }
-.sub { color: var(--ink-2); margin: 0; }
 .num { font-variant-numeric: tabular-nums; }
 .main { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; align-items: start; }
 @media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr); } }
@@ -227,8 +226,8 @@ table.gt tr.unk td { color: var(--ink-3); }
   </div>
 
   <div class="card foot">
-    <div class="note"><b>留意点</b><ul class="src"><li>店の数は地図サービスに登録された飲食店の件数で、実際の店数とは一致しません（閉店済みの店が残っている場合があります）</li><li>ジャンルは店名や分類から自動で判定しており（AI による判定を含む）、判定率は約83%です</li><li>平均比は、駅周辺のジャンルの割合が23区全体の割合の何倍かを示します。地図サービスは業種によって登録されやすさが違う（渋谷区ではバー・カフェが国の統計の約3〜4倍、居酒屋は約1.1倍）ため、区ごと・業種ごとに経済センサスの事業所数に合わせた重みを店1件ずつに掛けて計算しています。補正は区の単位なので、駅ごとの偏りまでは消せません</li><li>店が少ないジャンルは数店の違いで平均比が大きく動くので、件数と合わせて見てください</li><li>円が重なる駅は、同じ店をそれぞれの駅で数えています</li><li>乗降客数は1日平均で、乗換駅は事業者の合計です</li><li>「少ないジャンル」が出店の好機とは限りません</li></ul></div>
-    <div class="note"><b>出典</b><ul class="src"><li>店舗: © Overture Maps Foundation「Overture Maps Places」（2026-08-19 版、CDLA-Permissive-2.0）を加工して作成（2026年10月1日加工）。うち Foursquare 由来のデータ: © 2026 Foursquare Labs, Inc. All rights reserved.（Foursquare OS Places、Apache License 2.0）。飲食店の抽出・確信度の低い店の除外・ジャンル付け・範囲内の店数の集計という変更を加えている</li><li>乗降客数・駅の位置: 国土交通省「国土数値情報（駅別乗降客数データ）」S12-25（2024年の値）を加工して作成（公共データ利用規約 第1.0版）</li><li>鉄道・行政区域: 国土交通省「国土数値情報（鉄道データ・行政区域データ）」を加工して作成（公共データ利用規約 第1.0版）</li><li>人口: 総務省統計局「令和2年国勢調査 地域メッシュ統計（250mメッシュ）」（e-Stat）を加工して作成（政府標準利用規約 第2.0版）</li><li>事業所・従業者: 総務省・経済産業省「令和3年経済センサス‐活動調査」「同 地域メッシュ統計（500mメッシュ）」（e-Stat）を加工して作成（政府標準利用規約 第2.0版）</li><li>住所の位置: 「位置参照情報ダウンロードサービス」（国土交通省）（https://nlftp.mlit.go.jp/isj/）の街区レベル位置参照情報（2025年）を加工して作成</li><li>ジャンル判定の一部に AI（Anthropic の Claude）を使用</li></ul>ライセンス文・通知: <button class="linkbtn" type="button" data-lic="CDLA-Permissive-2.0">CDLA-Permissive-2.0</button>　<button class="linkbtn" type="button" data-lic="Apache-2.0">Apache License 2.0</button>　<button class="linkbtn" type="button" data-lic="Foursquare-NOTICE">Foursquare OS Places Notice</button></div>
+    <div class="note"><b>留意点</b><ul class="src"><li>店の数は地図サービスに登録された飲食店の件数で、実際の店数とは一致しません（閉店済みの店が残っている場合があります）</li><li>ジャンルは店名や分類から自動で判定しています（AI による判定を含む）。中分類（ラーメン・居酒屋など）まで判定できた店は約83%、大分類（和食・洋食など）まで判定できた店は約98%です</li><li>平均比は、駅周辺のジャンルの割合が23区全体の割合の何倍かを示します。地図サービスは業種によって登録されやすさが違う（渋谷区ではバー・カフェが国の統計の約3〜4倍、居酒屋は約1.1倍）ため、区ごと・業種ごとに経済センサスの事業所数に合わせた重みを店1件ずつに掛けて計算しています。補正は区の単位なので、駅ごとの偏りまでは消せません</li><li>店が少ないジャンルは数店の違いで平均比が大きく動くので、件数と合わせて見てください</li><li>円が重なる駅は、同じ店をそれぞれの駅で数えています</li><li>乗降客数は1日平均で、乗換駅は事業者の合計です</li><li>「少ないジャンル」が出店の好機とは限りません</li></ul></div>
+    <div class="note"><b>出典</b><ul class="src"><li>店舗: © Overture Maps Foundation「Overture Maps Places」（2026-08-19 版、CDLA-Permissive-2.0）を加工して作成（2026年10月1日加工）。うち Foursquare 由来のデータ: © 2026 Foursquare Labs, Inc. All rights reserved.（Foursquare OS Places、Apache License 2.0）。変更点: 飲食店の抽出・確信度の低い店の除外・ジャンル付け・範囲内の店数の集計</li><li>乗降客数・駅の位置: 国土交通省「国土数値情報（駅別乗降客数データ）」S12-25（2024年の値）を加工して作成（公共データ利用規約 第1.0版）</li><li>鉄道・行政区域: 国土交通省「国土数値情報（鉄道データ・行政区域データ）」を加工して作成（公共データ利用規約 第1.0版）</li><li>人口: 総務省統計局「令和2年国勢調査 地域メッシュ統計（250mメッシュ）」（e-Stat）を加工して作成（政府標準利用規約 第2.0版）</li><li>事業所・従業者: 総務省・経済産業省「令和3年経済センサス‐活動調査」「同 地域メッシュ統計（500mメッシュ）」（e-Stat）を加工して作成（政府標準利用規約 第2.0版）</li><li>住所の位置: 「位置参照情報ダウンロードサービス」（国土交通省）（https://nlftp.mlit.go.jp/isj/）の街区レベル位置参照情報（2025年）を加工して作成</li><li>ジャンル判定の一部に AI（Anthropic の Claude）を使用</li></ul>ライセンス文・通知: <button class="linkbtn" type="button" data-lic="CDLA-Permissive-2.0">CDLA-Permissive-2.0</button>　<button class="linkbtn" type="button" data-lic="Apache-2.0">Apache License 2.0</button>　<button class="linkbtn" type="button" data-lic="Foursquare-NOTICE">Foursquare OS Places Notice</button></div>
   </div>
 </div>
 
@@ -268,6 +267,7 @@ const HELP = {
   lq: ["平均比の説明", `<h4>平均比とは</h4><p>その駅のまわり（選んだ半径の範囲）にある飲食店のうち、あるジャンルが占める割合が、23区全体の割合の何倍かを表した数字です。</p><h4>例</h4><p>23区全体では飲食店の7%が居酒屋です。A駅のまわりでは飲食店の14%が居酒屋だとすると、A駅の居酒屋の平均比は 14% ÷ 7% ＝ <b>2.0倍</b> です。</p><ul><li>1.0倍：23区平均と同じ</li><li>2.0倍：23区平均の2倍ある（多い）</li><li>0.5倍：23区平均の半分しかない（少ない）</li></ul>`],
   dayNight: ["働く人 ÷ 住む人の説明", `<p>「働く人 ÷ 住む人」が大きいほど、昼間に人が集まる街（ランチ需要が大きい）です。</p>`],
   work: ["従業者数の説明", `<p>従業者数は事業所で働く人の数で、通学者や買い物客は含みません。</p>`],
+  per10k: ["乗降客1万人あたり店数の説明", `<p>地図サービスの店数を国の統計（経済センサス）の水準に補正した店数を、1日平均乗降客数で割り、1万人あたりにした値です。左の「飲食店」は補正前の件数なので、それを乗降客数で割った値とは一致しません。円が重なる駅は同じ店を数えるため、小さい駅ほど大きく出ます。</p>`],
   office: ["オフィス・商業系の説明", `<p>オフィス・商業系は、情報通信・卸売小売・金融保険・不動産・専門サービス・その他サービス（警備・ビル管理・派遣など）の合計です。</p>`],
 };
 const help = (k = "lq") => `<button class="help" type="button" aria-label="${HELP[k][0]}" aria-expanded="false" data-help="${k}">?</button>`;
@@ -443,7 +443,7 @@ function tap(e) {
   const i = nearestStation(e.clientX, e.clientY);
   if (i < 0) return;
   if (state.tab === "compare") addCompare(i);
-  else if (state.tab === "pass") { state.passPick = i; render(); }
+  else if (state.tab === "pass") { state.passPick = i; paintStations(); render(); }
   else { selectStation(i, false); if (state.tab !== "station") showTab("station"); }
 }
 
@@ -488,7 +488,6 @@ function paintStations() {
 function lqColor(q) {
   // LQ 1 を中間の灰色に、0.5 以下を青、2 以上を赤にする（対数で対称）
   const t = Math.max(-1, Math.min(1, Math.log2(q)));
-  const css = getComputedStyle(document.documentElement);
   const mix = (a, b, k) => `color-mix(in oklab, ${a} ${Math.round((1 - k) * 100)}%, ${b})`;
   return t < 0 ? mix("var(--mid)", "var(--lo)", -t) : mix("var(--mid)", "var(--hi)", t);
 }
@@ -497,7 +496,7 @@ function legend() {
   if (state.tab === "genre") { L.innerHTML = `<span>${esc(MID[state.genre])} の平均比（${state.radius}m圏）${help()}</span><span>少ない 0.5倍</span><span class="ramp"></span><span>2倍 多い</span><span>灰色の円: 23区平均並み</span>`; return; }
   if (state.tab === "point") { L.innerHTML = M.map((m, i) => `<span class="key"><i style="background:${GCOL[i]}"></i>${esc(m)}</span>`).join("") + `<span>地図をクリックすると、その地点で分析します</span>`; return; }
   L.innerHTML = `<span>円の大きさ＝1日平均乗降客数</span><span>${state.tab === "compare" ? "円を押すと比較に追加" : "円を押すと駅を選べます"}</span>`;
-  if (state.tab === "pass") L.innerHTML = `<span>円の大きさ＝1日平均乗降客数</span><span>円に触れると乗降客数が出ます。路線名を押すとその路線を強調します</span>`;
+  if (state.tab === "pass") L.innerHTML = `<span>円の大きさ＝1日平均乗降客数</span><span>円を押すと駅を選べます。路線を選ぶとその路線を強調します</span>`;
 }
 
 // ---- 駅カード ----
@@ -507,7 +506,7 @@ function majorBar(counts) {
   const known = counts.reduce((a, v, i) => a + (i === UNKNOWN_M ? 0 : v), 0) || 1;
   return `<div class="bar">${counts.map((v, i) => i === UNKNOWN_M || !v ? "" : `<span style="width:${v / known * 100}%;background:${GCOL[i]}" title="${esc(M[i])} ${pct(v / known)}"></span>`).join("")}</div>`;
 }
-function baseBar() { return `<div class="bar">${D.base.M.map((v, i) => v ? `<span style="width:${v * 100}%;background:${GCOL[i]}" title="${esc(M[i])} ${pct(v)}"></span>` : "").join("")}</div>`; }
+function baseBar() { return `<div class="bar">${D.base.rawM.map((v, i) => v ? `<span style="width:${v * 100}%;background:${GCOL[i]}" title="${esc(M[i])} ${pct(v)}"></span>` : "").join("")}</div>`; }
 function majorKeys(counts) {
   const known = counts.reduce((a, v, i) => a + (i === UNKNOWN_M ? 0 : v), 0) || 1;
   return `<div class="keys">${counts.map((v, i) => i === UNKNOWN_M ? "" : `<span class="key"><i style="background:${GCOL[i]}"></i>${esc(M[i])} <b class="num">${pct(v / known)}</b></span>`).join("")}</div>`;
@@ -515,7 +514,7 @@ function majorKeys(counts) {
 function features(r, dir, n = 6) {
   // 多い: LQ が高く 3 店以上。少ない: LQ が低く、23区平均なら 3 店以上あるはずのジャンル
   const known = r.m.reduce((a, b) => a + b, 0);
-  const rows = MID.map((m, i) => ({ m, i, q: r.q[i], c: r.m[i], exp: known * D.base.m[i] })).filter(x => x.q != null);
+  const rows = MID.map((m, i) => ({ m, i, q: r.q[i], c: r.m[i], exp: known * D.base.rawm[i] })).filter(x => x.q != null);
   return (dir === "hi" ? rows.filter(x => x.c >= 3 && x.q > 1).sort((a, b) => b.q - a.q)
     : rows.filter(x => x.exp >= 3 && x.q < 1).sort((a, b) => a.q - b.q)).slice(0, n);
 }
@@ -569,11 +568,13 @@ const DAILY = ["定食・丼", "惣菜・弁当", "ラーメン", "そば・う�
 const DRINK = ["居酒屋", "焼き鳥・やきとん", "バー", "スナック・パブ", "串かつ・串揚げ"];
 const DINING = ["フレンチ・ビストロ", "イタリアン", "すし", "和食（割烹・天ぷら・うなぎ・郷土）", "鍋・しゃぶしゃぶ"];
 function groupLQ(r, names) {
-  // 中分類のまとまりの LQ（件数の合計 ÷ 23区平均なら何店か）
-  const known = r.m.reduce((a, b) => a + b, 0) || 1;
-  let c = 0, e = 0;
-  names.forEach(n => { const i = MID.indexOf(n); if (i >= 0) { c += r.m[i]; e += known * D.base.m[i]; } });
-  return e >= 2 ? c / e : null;
+  // 中分類のまとまりの平均比（画面の平均比と同じくセンサス補正後）。
+  // 補正後の割合は 平均比 × 23区の割合 なので、まとまりの平均比 ＝ Σ(平均比 × 23区の割合) ÷ Σ23区の割合。
+  // 23区平均なら2店未満のまとまりは、数店で大きく動くので判定しない
+  const known = r.m.reduce((a, b) => a + b, 0);
+  let share = 0, base = 0, exp = 0;
+  names.forEach(n => { const i = MID.indexOf(n); if (i >= 0) { share += (r.q[i] || 0) * D.base.m[i]; base += D.base.m[i]; exp += known * D.base.rawm[i]; } });
+  return exp >= 2 && base ? share / base : null;
 }
 function describe(s) {
   const rk = String(state.radius), r = s.r[rk], km2 = Math.PI * (state.radius / 1000) ** 2;
@@ -617,8 +618,8 @@ function describe(s) {
   const gd = groupLQ(r, DRINK), gy = groupLQ(r, DAILY), gn = groupLQ(r, DINING);
   if (gd != null && gd >= 1.2) tags.push(["夜の飲み需要が強く（居酒屋・バーなどが多い）", "夜の飲み需要が強い（居酒屋・バーなどが多い）"]);
   if (gy != null && gy >= 1.2) tags.push(["定食・惣菜・ラーメンなど日常使いの店が多く", "定食・惣菜・ラーメンなど日常使いの店が多い"]);
-  if (gn != null && gn >= 1.2) tags.push(["すし・割烹・洋食店などの食事処が多く", "すし・割烹・洋食店などの食事処が多い"]);
-  if (gn != null && gn <= 0.7) tags.push(["すし・割烹・洋食店などの食事処は少なめで", "すし・割烹・洋食店などの食事処は少なめ"]);
+  if (gn != null && gn >= 1.2) tags.push(["すし・割烹・イタリアン・フレンチなどの食事処が多く", "すし・割烹・イタリアン・フレンチなどの食事処が多い"]);
+  if (gn != null && gn <= 0.7) tags.push(["すし・割烹・イタリアン・フレンチなどの食事処は少なめで", "すし・割烹・イタリアン・フレンチなどの食事処は少なめ"]);
   const q = xs => xs.map(x => `「${x.m}」`).join("");
   const hi = features(r, "hi", 3), lo = features(r, "lo", 3);
   const detail = `${hi.length ? `${q(hi)}が多く` : ""}${hi.length && lo.length ? "、" : ""}${lo.length ? `${q(lo)}は少ない` : ""}`.replace(/多く$/, "多い");
@@ -647,12 +648,13 @@ function renderStation() {
     <div class="stats">
       <div class="stat"><div class="v">${fmt(s.p)}</div><div class="l">乗降客数（人/日）・${rank}位</div></div>
       <div class="stat"><div class="v">${fmt(r.t)}</div><div class="l">飲食店（${state.radius}m圏）</div></div>
-      <div class="stat"><div class="v">${(r.tw / s.p * 10000).toFixed(1)}</div><div class="l">乗降客1万人あたり店数（補正後）</div></div>
+      <div class="stat"><div class="v">${(r.tw / s.p * 10000).toFixed(1)}</div><div class="l">乗降客1万人あたり店数（補正後）${help("per10k")}</div></div>
     </div>
     <div><h3>ジャンル構成（大分類）</h3>
       <div class="barrow"><span>${state.radius}m圏</span>${majorBar(r.M)}</div>
       <div class="barrow"><span>23区平均</span>${baseBar()}</div>
       ${majorKeys(r.M)}
+      ${r.e ? `<p class="muted-t">この駅の${state.radius}m圏の一部は23区の外（隣の市や海・運河など）にかかります。区の外の店はデータに含まれないため、店の数が少なめに出ることがあります。</p>` : ""}
       <p class="muted-t">中分類まで分からない店 ${fmt(r.u)}店（${pct(r.u / Math.max(r.t, 1))}）は、構成比の分母から除いています。</p>
     </div>
     <div class="two"><div><h3>多いジャンル（平均比が高い）</h3>${lqList(features(r, "hi"), "目立って多いジャンルはありません")}</div>
@@ -709,7 +711,7 @@ function renderCompare() {
 function renderGenre() {
   const g = state.genre, rkey = String(state.radius);
   const list = ST.map((s, i) => ({ s, i, r: s.r[rkey] })).filter(x => x.s.p >= state.gmin && x.r.q[g] != null)
-    .map(x => { const known = x.r.m.reduce((a, b) => a + b, 0); return { ...x, q: x.r.q[g], c: x.r.m[g], exp: known * D.base.m[g] }; })
+    .map(x => { const known = x.r.m.reduce((a, b) => a + b, 0); return { ...x, q: x.r.q[g], c: x.r.m[g], exp: known * D.base.rawm[g] }; })
     .filter(x => state.gdir === "low" ? x.exp >= 2 : x.c >= 3);
   list.sort((a, b) => state.gdir === "low" ? a.q - b.q || b.s.p - a.s.p : b.q - a.q);
   const opts = D.majors.slice(0, UNKNOWN_M).map((m, j) => `<optgroup label="${esc(m)}">${MID.map((x, i) => D.midMajor[i] === j ? `<option value="${i}" ${i === g ? "selected" : ""}>${esc(x)}</option>` : "").join("")}</optgroup>`).join("");
@@ -900,7 +902,7 @@ function renderPass() {
     <div class="lines ${state.line ? "dim" : ""}" style="display:grid;gap:10px"><h3>路線（押すと地図で強調）</h3>${lines}</div>
     <p class="muted-t">乗換駅は事業者の合計。同じ駅名で500m以内の駅はまとめています。乗降客数が公表されていない駅は除いています。</p>`;
   $("passAll").onclick = () => { state.passAll = !state.passAll; render(); };
-  $("p-pass").querySelectorAll(".prow").forEach(r => { const go = () => { const i = +r.dataset.i; state.passPick = i; focusOn(ST[i].x, ST[i].y, full.w / 6); render(); }; r.onclick = go; r.onkeydown = e => { if (e.key === "Enter") go(); }; });
+  $("p-pass").querySelectorAll(".prow").forEach(r => { const go = () => { const i = +r.dataset.i; state.passPick = i; paintStations(); focusOn(ST[i].x, ST[i].y, full.w / 6); render(); }; r.onclick = go; r.onkeydown = e => { if (e.key === "Enter") go(); }; });
   $("p-pass").querySelectorAll("[data-line]").forEach(b => b.onclick = () => selectLine(b.dataset.line));
 }
 

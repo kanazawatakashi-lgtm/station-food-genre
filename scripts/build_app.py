@@ -1,19 +1,22 @@
-"""出店エリア分析アプリ（docs/app.html）を作る。店舗物件の仲介会社向けの試作。
+"""飲食出店ナビ・東京23区版（docs/app.html）を作る。店舗物件の仲介会社向け。
 
   python scripts/build_app.py
 
 入力: data/areas/tokyo23_genre.parquet（classify_area.py）、data/census/weights_tokyo23.csv（census.py）
-      data/stations.csv（s12_stations.py）、data/stations/tokyo23_r{300,500,1000}_stations.csv（station_table.py）
+      data/stations.csv（s12_stations.py）、data/stations/tokyo23_r{250,500,1000}_stations.csv（station_table.py）
       data/stations/tokyo23_population.csv・tokyo23_workers.csv（mesh_stats.py、任意。あれば駅カードに人口・働く人の数を出す）
-      国土数値情報 N02（線路）、data/areas/tokyo23_wards.parquet（区の境界）
+      国土数値情報 N02（線路）、data/areas/tokyo23_wards.parquet（区の境界。ksj.py が N03 から作る）
+      docs/license_texts/*.txt（店舗データのライセンス文と Foursquare の NOTICE。出典欄から開く）
       data/isj/13_2025.csv（位置参照情報 街区レベル、東京都。任意。あれば地点分析で住所から探せる）
 出力: docs/app.html（データを埋め込んだ1ファイル。公開ページ用）
 
-画面:
-- 駅カード: 乗降客数、半径 300/500/1000m の店数・ジャンル構成・多い／少ないジャンル（LQ、センサス補正後）、人口
-- 比較: 最大5駅を並べる
-- ジャンルで探す: 中分類を選ぶと、そのジャンルが少ない（多い）駅を並べ、地図を LQ で塗る
-- 地点分析: 地図をクリック・座標の貼り付け・駅名で地点を決め、半径 50/100/300m の店の一覧と分布を出す
+画面（タブ）:
+- 各駅情報: 駅の特徴（規則で作る文章）、乗降客数、半径 250/500/1000m の店数・ジャンル構成・多い／少ないジャンル
+  （平均比＝LQ、センサス補正後）、住んでいる人・働いている人
+- 地点分析: 駅名・住所・座標・地図のクリックで地点を決め、半径 50/100/250m の店の一覧と分布を出す
+- 比較: 最大5駅のジャンル別構成表を並べる（構成比・店数・平均比）
+- ジャンル別: 中分類を選ぶと、そのジャンルが少ない（多い）駅を並べ、地図を平均比で塗る
+- 乗降客数: 乗降客数の順位と、路線ごとの強調表示
 """
 import csv
 import json
@@ -39,7 +42,7 @@ def load_station_stats():
         for row in csv.DictReader(open(f"data/stations/tokyo23_r{r}_stations.csv", encoding="utf-8-sig")):
             st = out.setdefault(row["station"], {}).setdefault(r, {
                 "t": 0, "tw": 0.0, "M": [0] * len(MAJOR_ORDER), "m": [0] * len(MID_ORDER), "q": [None] * len(MID_ORDER),
-                "u": 0})
+                "u": 0, "e": int(row["near_edge"] or 0)})
             n = int(row["count"])
             if row["level"] == "major":
                 st["M"][MAJOR_ORDER.index(row["major"])] = n
