@@ -584,34 +584,42 @@ function groupLQ(r, names) {
   return exp >= 3 && base ? share / base : null;
 }
 function describe(s) {
+  // 空港・展示場・市場など、まわりの人口や店のデータでは性格を表せない駅は、一般的な情報で書いた説明（data/station_notes.csv）
+  if (s.note) return s.note;
   const rk = String(state.radius), r = s.r[rk], km2 = Math.PI * (state.radius / 1000) ** 2;
-  const out = [];
-  // 1. 街の性格（住む人の密度と店の密度を23区平均と比べる）
   const p = s.pop[rk], area = D.popArea ? popFacts(D.popArea, D.areaKm2) : null;
   const f = p && area ? popFacts(p, km2) : null;
-  const dRatio = f ? f.dens / area.dens : null;
-  const sRatio = (r.t / km2) / (SS.n.length / D.areaKm2);
-  let type;
-  if (dRatio == null) type = sRatio >= 1.5 ? "飲食店が集まる駅" : "住宅と商業が混在する駅";
-  else if (dRatio < 0.6 && sRatio >= 1.5) type = "住む人が少なく、飲食店が集まる商業・オフィス街の駅";
-  else if (dRatio < 0.6) type = "住む人も飲食店も少ない駅";
-  else if (dRatio >= 1.3 && sRatio >= 1.5) type = "住宅と商店がともに密集した駅";
-  else if (dRatio >= 1.3) type = "住宅が中心の駅";
-  else if (sRatio >= 1.5) type = "飲食店が多い駅";
-  else type = "住宅と商業が混在する駅";
-  // 住む人がほとんどいない円は、次の文で書くので「住む人が少なく」を重ねない
-  if (f && f.pop < FEW_RESIDENTS) type = type.replace("住む人が少なく、", "").replace("住む人も飲食店も少ない駅", "飲食店が少ない駅");
-  const big = s.p >= 500000 ? "乗降客の多いターミナルで、" : s.p >= 150000 ? "乗降客が比較的多く、" : "";
-  out.push(`${big}${type}。`);
-  if (f && f.pop < FEW_RESIDENTS) out.push(f.work != null && f.work >= 3000 ? "住む人はほとんどおらず、働く人が中心の昼型の街で、平日のランチ需要が大きい。" : "住む人はほとんどいない。");
-  else if (f && f.dayNight != null && area) {
-    const dn = f.dayNight;
-    if (dn >= 3) out.push(`働く人が住む人の${dn >= 100 ? "100倍以上" : (dn >= 10 ? Math.round(dn) : dn.toFixed(1)) + "倍"}いる昼型の街で、平日のランチ需要が大きい。`);
-    else if (dn >= 1.3) out.push("住む人より働く人が多く、昼の需要がやや強い。");
-    else if (dn <= 0.5) out.push("働く人より住む人がずっと多い、夜・週末型の住宅地。");
-  }
-  // 2. 住んでいる人
-  if (f && area && f.pop >= FEW_RESIDENTS) {
+  const few = !!f && f.pop < FEW_RESIDENTS;
+  const dRatio = f ? f.dens / area.dens : null;                       // 人口密度（23区平均＝1）
+  const sRatio = (r.tw / km2) / (D.totalW / D.areaKm2);                // 飲食店の密度（補正後の店数。23区平均＝1）
+  const dn = f && f.dayNight != null && !few ? f.dayNight : null;      // 働く人 ÷ 住む人
+  const office = few ? f.work != null && f.work >= 3000 : dn != null && dn >= 1.3;
+  const home = dn != null && dn <= 0.5;
+  const out = [];
+
+  // 1. どんな街か（住む人と働く人の釣り合い）と、飲食店の多さ
+  let town;
+  if (few) town = office ? "住む人がほとんどいない、オフィスや商業施設の街" : "住む人も働く人も少ない地区";
+  else if (dn != null && dn >= 3) town = "オフィスが集まり、働く人が中心の街";
+  else if (office) town = "オフィスと住宅が混じり、住む人より働く人が多い街";
+  else if (home) town = dRatio != null && dRatio >= 1.3 ? "住宅が密集した住宅街" : "住宅地が中心の街";
+  else if (dRatio != null && dRatio >= 1.3) town = "住宅が多く、商店も混じる街";
+  else town = "住宅と商業が混じる街";
+  const shops = sRatio >= 3 ? "飲食店が非常に多い" : sRatio >= 1.5 ? "飲食店が多い" : sRatio < 0.5 ? "飲食店は少ない" : "";
+  out.push(`${town}${shops ? "で、" + shops : ""}。`);
+
+  // 2. 時間帯ごとの需要。昼は働く人と住む人の釣り合いから、夜は居酒屋・バーの数の密度（割合 × 店の密度）から
+  const gd = groupLQ(r, DRINK), dd = gd == null ? null : gd * sRatio;
+  if (office) out.push(dn != null && dn < 3 ? "平日の昼は働く人のランチ需要もある。" : "平日の昼は働く人のランチ需要が大きい。");
+  else if (home) out.push("主な客は住民で、平日の昼より夕方以降や週末の需要が中心になりやすい。");
+  const after = office ? "仕事帰りの" : "", also = office ? "夜も" : "夜は";
+  if (dd != null && dd >= 2.5) out.push(gd >= 1.3 ? `${also}居酒屋・バーが特に多く、${after}飲み需要が強い。` : `${also}居酒屋・バーの数が多く、${after}飲み需要が大きい。`);
+  else if (dd != null && dd >= 1.2) out.push(`${also}居酒屋・バーが一定数あり、${after}飲み需要が見込める。`);
+  else if (dd != null && dd < 0.6) out.push("居酒屋・バーは少なく、夜の飲み需要は小さい。");
+  else if (dd != null) out.push("夜の飲み需要は23区平均並み。");
+
+  // 3. 住んでいる人（住む人が十分いて、23区平均より目立つ層があるときだけ）
+  if (f && area && !few && dRatio >= 0.3) {
     const ppl = [];
     const ag = i => f.ages[i] / area.ages[i];
     if (ag(2) >= 1.15 && f.single >= area.single) ppl.push("20〜34歳の単身者");
@@ -619,26 +627,21 @@ function describe(s) {
     if (ag(1) >= 1.3) ppl.push("10代後半（学生）");
     if (ag(5) >= 1.2) ppl.push("65歳以上の高齢者");
     if (f.foreign / Math.max(area.foreign, 1e-6) >= 1.8) ppl.push("外国人");
-    if (dRatio >= 0.6) out.push(ppl.length ? `住民は${ppl.join("・")}が多い。` : "住民の年齢構成は23区平均に近い。");
-    else if (ppl.length) out.push(`住民は少ないが、${ppl.join("・")}の割合が高い。`);
+    if (ppl.length) out.push(`住民は${ppl.join("・")}が多い。`);
   }
-  // 3. 飲食店の構成
-  // まとまりの特徴は [つなぐ形, 言い切る形] で持ち、最後のものだけ言い切る
-  const tags = [];
-  const gd = groupLQ(r, DRINK), gy = groupLQ(r, DAILY), gn = groupLQ(r, DINING);
-  if (gd != null && gd >= 1.2) tags.push(["夜の飲み需要が強く（居酒屋・バーなどが多い）", "夜の飲み需要が強い（居酒屋・バーなどが多い）"]);
-  if (gy != null && gy >= 1.2) tags.push(["定食・惣菜・ラーメンなど日常使いの店が多く", "定食・惣菜・ラーメンなど日常使いの店が多い"]);
-  if (gn != null && gn >= 1.2) tags.push(["すし・割烹・イタリアン・フレンチなどの食事処が多く", "すし・割烹・イタリアン・フレンチなどの食事処が多い"]);
-  if (gn != null && gn <= 0.7) tags.push(["すし・割烹・イタリアン・フレンチなどの食事処は少なめで", "すし・割烹・イタリアン・フレンチなどの食事処は少なめ"]);
+
+  // 4. 飲食店の構成（多いものだけ書く。少ないジャンルは書かない）
+  const gy = groupLQ(r, DAILY), gn = groupLQ(r, DINING);
+  const kinds = [];
+  if (gn != null && gn >= 1.2) kinds.push("すし・割烹・イタリアン・フレンチなどの食事処");
+  if (gy != null && gy >= 1.2) kinds.push("定食・ラーメン・惣菜など日常使いの店");
+  const hi = features(r, "hi", 3).filter(x => x.q >= 1.3);
   const q = xs => xs.map(x => `「${x.m}」`).join("");
-  const hi = features(r, "hi", 3), lo = features(r, "lo", 3);
-  const detail = `${hi.length ? `${q(hi)}が多く` : ""}${hi.length && lo.length ? "、" : ""}${lo.length ? `${q(lo)}は少ない` : ""}`.replace(/多く$/, "多い");
-  if (tags.length) out.push(`飲食店は${tags.map((t, i) => t[i === tags.length - 1 ? 1 : 0]).join("、")}。`);
-  if (detail) out.push(`${tags.length ? "ジャンル別では" : "飲食店は"}${detail}。`);
-  if (!tags.length && !detail) out.push("飲食店の構成は23区平均に近い。");
+  if (kinds.length) out.push(`飲食店は${kinds.join("と、")}が多い。`);
+  if (hi.length) out.push(`ジャンル別に見ると、${q(hi)}の割合が23区平均より高い。`);
+  if (!kinds.length && !hi.length && r.t) out.push("飲食店のジャンル構成は23区平均に近い。");
   return out.join("");
 }
-
 function selectStation(i, scroll = true) {
   state.sel = i; paintStations(); render();
   const s = ST[i]; if (scroll) focusOn(s.x, s.y, full.w / 7); else draw();
@@ -653,7 +656,7 @@ function renderStation() {
   const ss = stationSearch("q1", i => selectStation(i), "駅名（例: 渋谷）");
   $("p-station").innerHTML = `${ss.html}
     <div><h2>${esc(s.n)}</h2><p class="muted-t">${esc(s.o)}</p></div>
-    <div class="summary"><span class="tag">駅の特徴</span><p>${esc(describe(s))}</p></div>
+    <div class="summary"><span class="tag">${s.note ? "駅の特徴（一般的な情報による）" : "駅の特徴"}</span><p>${esc(describe(s))}</p></div>
     <div class="actions">${radiusSeg("segR", D.radii, state.radius)}<button class="btn" id="toCmp" type="button">比較分析</button><button class="btn" id="toPoint" type="button">地点分析</button><button class="btn" id="gtOpen" type="button">ジャンル別構成表</button></div>
     <div class="stats">
       <div class="stat"><div class="v">${fmt(s.p)}</div><div class="l">乗降客数（人/日）・${rank}位</div></div>

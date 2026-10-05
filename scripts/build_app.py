@@ -7,6 +7,7 @@
       data/stations/tokyo23_population.csv・tokyo23_workers.csv（mesh_stats.py、任意。あれば駅カードに人口・働く人の数を出す）
       国土数値情報 N02（線路）、data/areas/tokyo23_wards.parquet（区の境界。ksj.py が N03 から作る）
       docs/license_texts/*.txt（店舗データのライセンス文と Foursquare の NOTICE。出典欄から開く）
+      data/station_notes.csv（空港など特殊な駅の説明。一般的な情報で手で書いたもの。駅の特徴の文章の代わりに出す）
       data/isj/13_<年>.csv（位置参照情報 街区レベル、東京都。いちばん新しい年のものを使う。任意。あれば地点分析で住所から探せる）
 出力: docs/app.html（データを埋め込んだ1ファイル。公開ページ用）
 
@@ -188,6 +189,9 @@ def main():
             "rawm": [round(v / sum(raw_m), 4) for v in raw_m]}
 
     stats = load_station_stats()
+    # 空港・展示場・市場など、駅のまわりの人口・店のデータでは性格を表せない駅は、一般的な情報で書いた説明を使う
+    notes = {r["name"]: r["note"] for r in csv.DictReader(open("data/station_notes.csv", encoding="utf-8"))} \
+        if os.path.exists("data/station_notes.csv") else {}
     pop, pop_cols = load_population()
     stations = []
     for r in csv.DictReader(open("data/stations.csv", encoding="utf-8")):
@@ -199,7 +203,11 @@ def main():
                          "lines": [x for x in (r.get("lines") or "").split("|") if x],
                          "r": {str(k): v for k, v in stats[r["key"]].items()},
                          "pop": {str(k): v for k, v in pop.get(r["key"], {}).items()}})
+        if r["name"] in notes:
+            stations[-1]["note"] = notes.pop(r["name"])
     stations.sort(key=lambda s: -s["p"])
+    if notes:
+        raise SystemExit(f"data/station_notes.csv の駅名が駅の一覧に無い: {list(notes)}")
     # 同じ名前の別の駅（浅草・早稲田など）は、駅名に路線名を添えて区別する（ユーザー決定 2026-10-05。今後も同じ扱い）。
     # 路線が3つ以上なら、乗降客数の多い事業者の路線から2つと「など」
     dup = {n for n, c in Counter(s["n"] for s in stations).items() if c > 1}
@@ -217,6 +225,7 @@ def main():
             "majors": MAJOR_ORDER, "mids": MID_ORDER, "midMajor": [MAJOR_ORDER.index(MID_MAJOR[m]) for m in MID_ORDER],
             "fine": fine_names, "stores": S, "base": base, "popCols": pop_cols, "radii": list(RADII),
             "popArea": pop.get("_area", {}).get(0), "areaKm2": round(area_km2(area_geom), 1),
+            "totalW": round(sum(base_M), 1),  # 23区全体の補正後の店数（駅の特徴で飲食店の密度を比べる基準）
             "addr": load_addresses(),
             # 店舗データのライセンス文（CDLA-Permissive-2.0 は第2.1条、Apache-2.0 は第4条で、配るときに全文を添えることが条件）と、
             # Foursquare の NOTICE（全文を残すことが条件。末尾に変更の内容を書き足してある）
