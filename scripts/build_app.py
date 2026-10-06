@@ -10,6 +10,7 @@
       data/station_notes.csv（空港など特殊な駅の説明。一般的な情報で手で書いたもの。駅の特徴の文章の代わりに出す）
       data/isj/13_<年>.csv（位置参照情報 街区レベル、東京都。いちばん新しい年のものを使う。任意。あれば地点分析で住所から探せる）
 出力: docs/app.html（データを埋め込んだ1ファイル。公開ページ用）
+      docs/notes.html（留意点・出典・ライセンス文の別ページ。文面は scripts/notes_template.html。公開ページに一緒に載せる）
 
 画面（タブ）:
 - 各駅情報: 駅の特徴（規則で作る文章）、乗降客数、半径 250/500/1000m の店数・ジャンル構成・多い／少ないジャンル
@@ -22,6 +23,7 @@
 import csv
 import json
 import os
+import re
 from collections import Counter
 
 import pyarrow.parquet as pq
@@ -137,6 +139,35 @@ def area_km2(g):
     return g.area * 111.32 * 110.95 * math.cos(math.radians(35.7))
 
 
+LICENSES = [("CDLA-Permissive-2.0", "Community Data License Agreement – Permissive – Version 2.0（Overture Maps Places）"),
+            ("Apache-2.0", "Apache License 2.0（Foursquare OS Places）"),
+            ("Foursquare-NOTICE", "Foursquare OS Places Notice")]
+
+
+def lic_html(text):
+    """ライセンス文を段落ごとの HTML に。原文のまま、固定幅の改行・字下げだけを外す（「–」「©」で始まる行は改行を残す）。"""
+    import html
+    out = []
+    for para in re.split(r"\n\s*\n", text.strip()):
+        acc = ""
+        for line in (l.strip() for l in para.split("\n")):
+            acc += ("<br>" if acc and re.match(r"^[–©]", line) else " " if acc else "") + html.escape(line)
+        out.append(f"<p>{acc}</p>")
+    return "".join(out)
+
+
+def write_notes():
+    """留意点・出典・ライセンス文の別ページ（docs/notes.html）。地図のページのフッターからリンクする。
+    店舗データのライセンス文（CDLA-Permissive-2.0 は第2.1条、Apache-2.0 は第4条で、配るときに全文を添えることが条件）と、
+    Foursquare の NOTICE（全文を残すことが条件。末尾に変更の内容を書き足してある）を全文載せる。"""
+    lic = "".join(f'<details><summary>{title}</summary><div class="lic">'
+                  f'{lic_html(open(f"docs/license_texts/{n}.txt", encoding="utf-8").read())}</div></details>'
+                  for n, title in LICENSES)
+    html = open("scripts/notes_template.html", encoding="utf-8").read().replace("__LICENSES__", lic)
+    with open("docs/notes.html", "w", encoding="utf-8") as f:
+        f.write(html)
+
+
 def main():
     ja = {en: name for name, en in WARD_EN.items()}
     ward_rows = pq.read_table("data/areas/tokyo23_wards.parquet").to_pylist()
@@ -226,14 +257,12 @@ def main():
             "fine": fine_names, "stores": S, "base": base, "popCols": pop_cols, "radii": list(RADII),
             "popArea": pop.get("_area", {}).get(0), "areaKm2": round(area_km2(area_geom), 1),
             "totalW": round(sum(base_M), 1),  # 23区全体の補正後の店数（駅の特徴で飲食店の密度を比べる基準）
-            "addr": load_addresses(),
-            # 店舗データのライセンス文（CDLA-Permissive-2.0 は第2.1条、Apache-2.0 は第4条で、配るときに全文を添えることが条件）と、
-            # Foursquare の NOTICE（全文を残すことが条件。末尾に変更の内容を書き足してある）
-            "licenses": {n: open(f"docs/license_texts/{n}.txt", encoding="utf-8").read() for n in ("CDLA-Permissive-2.0", "Apache-2.0", "Foursquare-NOTICE")}}
+            "addr": load_addresses()}
     blob = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     html = open("scripts/app_template.html", encoding="utf-8").read().replace("__DATA__", blob)
     with open("docs/app.html", "w", encoding="utf-8") as f:
         f.write(html)
+    write_notes()
     print(f"駅 {len(stations)}・店 {len(S['n'])}・路線 {len(rails)}・人口列 {len(pop_cols)} -> docs/app.html（{len(html) / 1e6:.1f} MB）")
 
 

@@ -15,7 +15,7 @@
 | E | 位置参照情報 街区レベル（東京都） | 地点分析の住所検索 | 年1回 | 年1回 | ユーザー |
 | F | 国勢調査 地域メッシュ統計（250m） | 住んでいる人・年齢構成 | 5年ごと | 2025年調査のメッシュ統計の公表後（2027年ごろの見込み） | ユーザー |
 | G | 経済センサス‐活動調査（市区町村別の事業所数、地域メッシュ統計 500m） | 平均比の補正・働いている人 | 5年ごと | 2026年調査の公表後（2027〜2028年ごろの見込み） | ユーザー |
-| H | ライセンス文・Foursquare の NOTICE | 出典欄のライセンス文 | 不定期 | A を取り直すたびに確認 | ユーザー（Foursquare のページを開いて確認） |
+| H | ライセンス文・Foursquare の NOTICE | 別ページ（留意点・出典）のライセンス文 | 不定期 | A を取り直すたびに確認 | ユーザー（Foursquare のページを開いて確認） |
 
 「次の更新の目安」の F・G の時期は見込み。e-Stat の公表予定で確かめる。
 
@@ -159,12 +159,12 @@ git push
 
 `python scripts/build_app.py` で `docs/app.html` を作り直したら、Claude が画面を確認して（全駅 × 全半径 × 全ジャンルで画面を作り、
 エラーや「NaN」「undefined」の表示がないか、店が0軒の円・住む人がほとんどいない円で表示が崩れないかを確かめる）
-公開ページ（https://claude.ai/artifact/LWtYAoxwNX1yRruwZFWMDF）を同じ URL で更新し、コミットして push する。
+公開ページ（https://claude.ai/artifact/LWtYAoxwNX1yRruwZFWMDF）を同じ URL で更新し（`docs/notes.html` も `notes.html` として一緒に載せる）、コミットして push する。
 
 ## 6. 更新したら直す文面（チェックリスト）
 
-- [ ] 画面の出典欄（`scripts/app_template.html` の「出典」）: データの版・年、加工日
-- [ ] 画面の留意点: 判定率（`classify_area.py` の出力と、`build_app.py` 後の中分類・大分類の割合）、補正の例の数字
+- [ ] 別ページの出典（`scripts/notes_template.html` の「出典」）: データの版・年、加工日
+- [ ] 別ページの留意点（`scripts/notes_template.html`）: 判定率（`classify_area.py` の出力と、`build_app.py` 後の中分類・大分類の割合）、補正の例の数字
 - [ ] `docs/license_texts/Foursquare-NOTICE.txt` の末尾「Notice of changes」の日付と Overture のリリース
 - [ ] `docs/disclosures.md` の 1.（出典）と 2.（データの時点）
 - [ ] `docs/licenses.md`（利用条件を確かめた日）
