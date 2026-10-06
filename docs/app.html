@@ -152,6 +152,7 @@ thead th { color: var(--ink-2); font-weight: 700; font-size: 13px; }
 .pop h4 { margin: 0 0 4px; font-size: 14px; }
 .pop p { margin: 0 0 8px; }
 .pop ul { margin: 4px 0 0; padding-left: 1.2em; }
+.pop ul.plain { list-style: none; padding-left: 0; }
 .modal { position: fixed; inset: 0; z-index: 30; background: rgba(0,0,0,.35); display: grid; place-items: start center; overflow-y: auto; padding-block: 24px; padding-inline: 16px; }
 .sheet { background: var(--panel); color: var(--ink); border-radius: 10px; width: min(860px, 100%); padding-block: 18px 24px; padding-inline: 20px; display: grid; gap: 14px; box-shadow: 0 12px 40px rgba(0,0,0,.25); }
 .sheet-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
@@ -289,7 +290,7 @@ const HELP = {
   lq: ["平均比の説明", `<h4>平均比とは</h4><p>その駅のまわり（選んだ半径の範囲）にある飲食店のうち、あるジャンルが占める割合が、23区全体の割合の何倍かを表した数字です。</p><h4>例</h4><p>仮に、23区全体では飲食店の10%が居酒屋だとします。A駅のまわりでは飲食店の20%が居酒屋だとすると、A駅の居酒屋の平均比は 20% ÷ 10% ＝ <b>2.0倍</b> です。</p><ul><li>1.0倍：23区平均と同じ</li><li>2.0倍：23区平均の2倍ある（多い）</li><li>0.5倍：23区平均の半分しかない（少ない）</li></ul>`],
   dayNight: ["働く人 ÷ 住む人の説明", `<p>「働く人 ÷ 住む人」が大きいほど、昼間に人が集まる街（ランチ需要が大きい）です。</p>`],
   work: ["従業者数の説明", `<p>従業者数は事業所で働く人の数で、通学者や買い物客は含みません。</p>`],
-  majorShare: ["構成比の分母の説明", `<h4>構成比の分母</h4><p>大分類（和食・洋食など）の構成比は、大分類まで分かった店だけを分母にして計算しています。大分類も分からない店は除いています。</p>`],
+  majorShare: ["構成比の分母の説明", `<h4>構成比の分母</h4><p>大分類（和食・洋食など）の構成比は、大分類まで分かった店だけを分母にして計算しています。大分類も分からない店は除いています。</p><h4>大分類</h4><ul class="plain">${M.slice(0, UNKNOWN_M).map((m, i) => `<li><span class="swatch" style="background:${GCOL[i]}"></span>${esc(m)}</li>`).join("")}</ul>`],
   per10k: ["乗降客1万人あたり店数の説明", `<p>地図サービスの店数を国の統計（経済センサス）の水準に補正した店数を、1日平均乗降客数で割り、1万人あたりにした値です。左の「飲食店」は補正前の件数なので、それを乗降客数で割った値とは一致しません。円が重なる駅は同じ店を数えるため、小さい駅ほど大きく出ます。</p>`],
   office: ["オフィス・商業系の説明", `<p>オフィス・商業系は、情報通信・卸売小売・金融保険・不動産・専門サービス・その他サービス（警備・ビル管理・派遣など）の合計です。</p>`],
 };
