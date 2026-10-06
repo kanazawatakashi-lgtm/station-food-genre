@@ -93,6 +93,8 @@ svg.map.drag { cursor: grabbing; } svg.map.pointmode { cursor: crosshair; }
 .tab { font: inherit; font-weight: 700; font-size: 15px; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--ink-2); padding: 12px 14px 9px; cursor: pointer; white-space: nowrap; }
 .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--pick); }
 .pane { padding-block: 16px; padding-inline: 16px; display: grid; gap: 16px; min-width: 0; }
+/* 中の要素が広い表に合わせて広がらないようにする（表は .tablewrap の中で横スクロールさせる） */
+.pane > * { min-width: 0; }
 .search { display: flex; gap: 8px; flex-wrap: wrap; }
 .search input, .search select, select.inp, input.inp { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 10px; min-height: 36px; min-width: 0; }
 .search input { flex: 1 1 12em; }
@@ -157,6 +159,8 @@ table.gt td, table.gt th { white-space: nowrap; }
 table.gt tr.maj td { font-weight: 700; background: var(--bg); }
 table.gt tr.mid td:first-child { padding-left: 1.6em; }
 table.gt tr.unk td { color: var(--ink-3); }
+/* 狭い画面では、左に固定したジャンル名の列を折り返して、数字の列を広く見せる */
+@media (max-width: 520px) { table.gt th:first-child, table.gt td:first-child { white-space: normal; min-width: 7.5em; max-width: 9em; } }
 .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
 .pin-input { display: grid; gap: 8px; }
 .mgrps { display: grid; gap: 2px; }
