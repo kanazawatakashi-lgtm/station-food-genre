@@ -11,6 +11,7 @@
       data/isj/13_<年>.csv（位置参照情報 街区レベル、東京都。いちばん新しい年のものを使う。任意。あれば地点分析で住所から探せる）
 出力: docs/app.html（データを埋め込んだ1ファイル。公開ページ用）
       docs/notes.html（留意点・出典・ライセンス文の別ページ。文面は scripts/notes_template.html。公開ページに一緒に載せる）
+      docs/about.html（運営者・お問い合わせ・利用条件の別ページ。文面は scripts/about_template.html。公開ページに一緒に載せる）
 
 画面（タブ。この順）:
 - 地点分析: 住所・座標・地図のクリックで地点を決め、半径 50/100/250m の店の一覧と分布を出す
@@ -159,6 +160,25 @@ def lic_html(text):
     return "".join(out)
 
 
+# お問い合わせフォームの URL（Microsoft Forms などの外部フォーム）。送信先のメールアドレスはフォーム側の設定にあり、このサイトには載せない。
+# 空のあいだは「準備中」と出す
+CONTACT_FORM_URL = ""
+
+
+def write_about():
+    """運営者・お問い合わせ・利用条件の別ページ（docs/about.html）。文面は scripts/about_template.html。"""
+    import html
+    if CONTACT_FORM_URL:
+        contact = ('<p>本サービスについてのご質問・ご意見は、お問い合わせフォームからお送りください。</p>'
+                   f'<a class="formbtn" href="{html.escape(CONTACT_FORM_URL)}" target="_blank" rel="noopener">お問い合わせフォームを開く</a>'
+                   '<p class="muted">外部のフォームサービスが新しいタブで開きます。</p>')
+    else:
+        contact = '<p>お問い合わせフォームは準備中です。</p>'
+    page = open("scripts/about_template.html", encoding="utf-8").read().replace("__CONTACT__", contact)
+    with open("docs/about.html", "w", encoding="utf-8") as f:
+        f.write(page)
+
+
 def write_notes():
     """留意点・出典・ライセンス文の別ページ（docs/notes.html）。地図のページのフッターからリンクする。
     店舗データのライセンス文（CDLA-Permissive-2.0 は第2.1条、Apache-2.0 は第4条で、配るときに全文を添えることが条件）と、
@@ -266,6 +286,7 @@ def main():
     with open("docs/app.html", "w", encoding="utf-8") as f:
         f.write(html)
     write_notes()
+    write_about()
     print(f"駅 {len(stations)}・店 {len(S['n'])}・路線 {len(rails)}・人口列 {len(pop_cols)} -> docs/app.html（{len(html) / 1e6:.1f} MB）")
 
 

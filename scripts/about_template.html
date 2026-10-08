@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>運営者・お問い合わせ・利用条件｜飲食出店ナビ・東京23区版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+New:wght@700;900&display=swap">
+<style>
+/* 地図のページ（app_template.html）と同じ色・文字 */
+:root {
+  --bg: #eef1ef; --panel: #ffffff; --rule: #d8dfdc; --ink: #1d2523; --ink-2: #4d5a56; --ink-3: #7c8985; --pick: #b4531f;
+  --font-display: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --font-body: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #111716; --panel: #171e1d; --rule: #2a3331; --ink: #e6ecea; --ink-2: #aab6b2; --ink-3: #7d8a86; --pick: #f08a4b; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #111716; --panel: #171e1d; --rule: #2a3331; --ink: #e6ecea; --ink-2: #aab6b2; --ink-3: #7d8a86; --pick: #f08a4b; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.75; margin: 0; }
+.wrap { max-width: 860px; margin: 0 auto; padding-inline: 16px; padding-block: 18px 48px; display: grid; gap: 14px; }
+header { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; justify-content: space-between; }
+h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(22px, 2.6vw, 28px); margin: 0; }
+h2 { font-family: var(--font-display); font-size: 20px; margin: 0 0 8px; }
+h3 { font-size: 15px; margin: 14px 0 6px; color: var(--ink-2); }
+a { color: var(--ink-2); }
+.back { font-size: 14px; }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding-block: 18px; padding-inline: 18px; scroll-margin-top: 12px; }
+ul { margin: 0; padding-left: 1.3em; }
+li { margin: 4px 0; }
+nav.toc { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; }
+details { border-top: 1px solid var(--rule); padding-block: 8px; }
+details:last-child { border-bottom: 1px solid var(--rule); }
+summary { cursor: pointer; font-weight: 700; }
+.lic { font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; color: var(--ink-2); margin-top: 8px; }
+.lic p { margin: 0 0 10px; }
+.terms h3 { color: var(--ink); margin: 18px 0 4px; }
+.terms p, .terms ol { margin: 0 0 6px; }
+.terms ol { padding-left: 1.4em; }
+.formbtn { display: inline-block; margin-top: 8px; padding: 10px 18px; border-radius: 6px; background: var(--ink); color: var(--panel); text-decoration: none; font-weight: 700; }
+.muted { color: var(--ink-3); font-size: 13px; }
+dl { display: grid; grid-template-columns: 7em 1fr; gap: 6px 12px; margin: 0; } dt { color: var(--ink-3); } dd { margin: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>運営者・お問い合わせ・利用条件</h1>
+    <a class="back" href="index.html">← 飲食出店ナビ・東京23区版に戻る</a>
+  </header>
+  <nav class="toc"><a href="#operator">運営者</a><a href="#contact">お問い合わせ</a><a href="#terms">利用条件</a></nav>
+
+  <section class="card" id="operator">
+    <h2>運営者</h2>
+    <dl><dt>サービス名</dt><dd>飲食出店ナビ・東京23区版</dd><dt>運営会社</dt><dd>株式会社ゴールドリッジ</dd></dl>
+  </section>
+
+  <section class="card" id="contact">
+    <h2>お問い合わせ</h2>
+    __CONTACT__
+  </section>
+
+  <section class="card terms" id="terms">
+    <h2>利用条件</h2>
+    <p>この利用条件（以下「本条件」）は、株式会社ゴールドリッジ（以下「当社」）が提供する「飲食出店ナビ・東京23区版」（以下「本サービス」）の利用について定めます。本サービスを利用した方は、本条件に同意したものとみなします。</p>
+
+    <h3>第1条（本サービスの内容）</h3>
+    <p>本サービスは、公開されているデータ（地図サービスの店舗情報、国の統計、国土数値情報など）を当社が加工し、駅や指定した地点のまわりの飲食店の数・業態の構成、住む人・働く人の数などを参考情報として提供するものです。</p>
+
+    <h3>第2条（情報の性質）</h3>
+    <ol>
+      <li>本サービスの数字や文章には、推計、自動判定（AI による判定を含む）、規則による自動作成の文章が含まれます。当社は、その正確性・完全性・最新性を保証しません。</li>
+      <li>店舗の情報は作成時点のもので、閉店や開店が反映されていない場合があります。</li>
+      <li>出店、物件の契約、提案などの判断は、利用者ご自身の責任で、現地の確認や専門家への相談と合わせて行ってください。</li>
+    </ol>
+
+    <h3>第3条（免責）</h3>
+    <p>当社は、本サービスの利用または利用できなかったことにより利用者または第三者に生じた損害について、当社の故意または重大な過失による場合を除き、責任を負いません。</p>
+
+    <h3>第4条（出典とライセンス）</h3>
+    <p>本サービスが使っているデータの出典とライセンスは、<a href="notes.html#sources">出典・ライセンス</a>のページに記載しています。本サービスの画面や数字を資料などに引用する場合は、「飲食出店ナビ・東京23区版（株式会社ゴールドリッジ）」と、元のデータの出典を明記してください。</p>
+
+    <h3>第5条（禁止事項）</h3>
+    <p>利用者は、次の行為をしてはなりません。</p>
+    <ol>
+      <li>法令または公序良俗に反する行為</li>
+      <li>本サービスに過度な負荷をかける行為、不正にアクセスする行為、本サービスの運営を妨げる行為</li>
+      <li>本サービスの画面・数字・文章を、当社の許可なく、まとめて複製して有償で販売・提供する行為（顧客への提案資料などで、出典を明記して引用する場合を除きます）</li>
+      <li>本サービスの情報を使って、掲載されている店舗その他の第三者の権利や名誉を侵害する行為</li>
+      <li>その他、当社が不適切と判断する行為</li>
+    </ol>
+    <p>なお、本サービスが使っている元のデータ（オープンデータ）は、それぞれのライセンスの条件に従って誰でも利用できます。本条は、元のデータの利用を制限するものではありません。</p>
+
+    <h3>第6条（外部のサービス）</h3>
+    <p>本サービスから利用できる外部のサービス（Google マップへのリンク、「AIで調べる用にコピー」で貼り付ける AI チャットなど）は、それぞれの提供者の利用規約に従ってご利用ください。外部のサービスで得た情報の内容について、当社は責任を負いません。</p>
+
+    <h3>第7条（お問い合わせで受け取る情報）</h3>
+    <p>お問い合わせでいただいた氏名・連絡先などは、お問い合わせへの回答と、そのための連絡にのみ使います。</p>
+
+    <h3>第8条（本サービスの変更・停止）</h3>
+    <p>当社は、利用者への予告なく、本サービスの内容を変更し、または提供を中断・終了することがあります。</p>
+
+    <h3>第9条（知的財産）</h3>
+    <p>本サービスの画面の構成、文章、プログラムに関する権利は、当社または正当な権利者に帰属します。元のデータの権利は、それぞれの権利者に帰属します。</p>
+
+    <h3>第10条（本条件の変更）</h3>
+    <p>当社は、本条件を変更することがあります。変更後の本条件は、このページに掲載した時点から効力を持ちます。</p>
+
+    <h3>第11条（準拠法・管轄）</h3>
+    <p>本条件は日本法に従って解釈します。本サービスに関して紛争が生じた場合は、東京地方裁判所を第一審の専属的合意管轄裁判所とします。</p>
+
+    <p class="muted">2026年10月　制定</p>
+  </section>
+</div>
+</body>
+</html>
