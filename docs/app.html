@@ -165,6 +165,9 @@ table.gt tr.unk td { color: var(--ink-3); }
 .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
 .pin-input { display: grid; gap: 8px; }
 .gmap { color: var(--ink-2); white-space: nowrap; }
+.listhead { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.listhead .btn { margin-left: auto; }
+.copybox { width: 100%; min-height: 50vh; font: inherit; font-size: 13px; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 6px; padding: 8px; }
 .mgrps { display: grid; gap: 2px; }
 .mgrp { display: grid; grid-template-columns: 9.5em 1fr; gap: 10px; align-items: baseline; padding: 5px 0; border-bottom: 1px solid var(--rule); font-size: 14px; }
 .mgrp .mh { font-weight: 700; white-space: nowrap; }
@@ -852,12 +855,13 @@ function renderPoint() {
         .map(([k, n]) => `${esc(k < 0 ? "中分類不明" : MID[k])} <b class="num">${n}</b>`).join("、");  // ジャンル名に「・」が入るので区切りは「、」
       return `<div class="mgrp"><span class="mh"><i style="background:${GCOL[j]}"></i>${esc(m)} <b class="num">${byM[j]}</b></span><span class="mi">${items}</span></div>`;
     }).join("");
-    body = `<div id="ptBody"><div><h2>${esc(p.label)}</h2><p class="muted-t num">${p.la.toFixed(5)}, ${p.lo.toFixed(5)}　<a class="gmap" href="https://www.google.com/maps/search/?api=1&query=${p.la.toFixed(6)},${p.lo.toFixed(6)}" target="_blank" rel="noopener">Googleマップでこの地点を開く</a></p></div>
+    body = `<div id="ptBody"><div><h2>${esc(p.label)}</h2><p class="muted-t num">${p.la.toFixed(5)}, ${p.lo.toFixed(5)}</p></div>
       <div class="actions">${radiusSeg("segP", [50, 100, 250], state.pRadius)}</div>
       <div class="stats"><div class="stat"><div class="v">${hits.length}</div><div class="l">飲食店（半径${state.pRadius}m）</div></div>
         ${M.slice(0, UNKNOWN_M).map((m, i) => `<div class="stat"><div class="v" style="color:${GCOL[i]}">${byM[i]}</div><div class="l">${esc(m)}</div></div>`).join("")}</div>
       <div><h3>ジャンル別の店数</h3>${midGroups ? `<div class="mgrps">${midGroups}</div>` : `<p class="muted-t">この範囲に飲食店はありません</p>`}</div>
-      <div><h3>近隣店の一覧（指定地点から近い順）</h3>
+      <div><div class="listhead"><h3>近隣店の一覧（指定地点から近い順）</h3><a class="gmap" href="https://www.google.com/maps/search/?api=1&query=${p.la.toFixed(6)},${p.lo.toFixed(6)}" target="_blank" rel="noopener">Googleマップでこの地点を開く</a><button class="btn" id="aiCopy" type="button">AIで調べる用にコピー</button></div>
+        <p class="muted-t" id="aiCopyMsg">表示中の店（近い順に最大${AI_MAX}店）を、調べてほしい内容の文と一緒にコピーします。お使いの AI チャットに貼り付けてください。AI の調べた結果には誤りや古い情報が含まれることがあるので、必ず確かめてください。</p>
         <div class="chips" role="group" aria-label="大分類で絞り込む"><button class="chip" type="button" data-f="-1" aria-pressed="${state.pFilter < 0}">すべて</button>${M.map((m, i) => byM[i] && i !== UNKNOWN_M ? `<button class="chip" type="button" data-f="${i}" aria-pressed="${state.pFilter === i}"><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${GCOL[i]};margin-right:4px"></i>${esc(m)}</button>` : "").join("")}</div>
         <div class="list" id="ptList">${shown.map(h => `<div class="srow" data-s="${h.i}" data-d="${Math.round(h.d)}"><i style="background:${GCOL[SS.M[h.i]]}"></i><span class="n">${esc(SS.n[h.i])}</span><span class="g">${esc(genreLabel(h.i))}</span><span class="d">${Math.round(h.d)}m</span></div>`).join("")}</div></div>
       <p class="muted-t">地図上の濃い点が範囲内の店、薄い点が範囲のすぐ外の店です。店の位置は地図サービスの登録位置で、数十mずれることがあります。閉店済みの店が残っている場合があります。</p></div>`;
@@ -891,7 +895,41 @@ function renderPoint() {
     bindSeg("segP", v => { state.pRadius = v; const [x, y] = toXY(p.la, p.lo); focusOn(x, y, (v * 5.5) / mPerUnit); render(); });
     $("p-point").querySelectorAll("[data-f]").forEach(b => b.onclick = () => { state.pFilter = +b.dataset.f; render(); draw(); });
     bindRowTip($("ptList"));
+    $("aiCopy").onclick = () => copyText(aiPrompt(p, storesNear(p.la, p.lo, state.pRadius).filter(h => state.pFilter < 0 || SS.M[h.i] === state.pFilter)), $("aiCopyMsg"));
   }
+}
+
+// ---- AI で調べる用のコピー（営業時間・価格帯・評価はこのサイトでは取らず、ユーザーが自分の AI チャットで調べる） ----
+const AI_MAX = 50;
+function aiPrompt(p, hits) {
+  const list = hits.slice(0, AI_MAX);
+  const scope = state.pFilter >= 0 ? `のうち${M[state.pFilter]}の店` : "";
+  return [
+    `以下は「${p.label}」（緯度・経度 ${p.la.toFixed(6)}, ${p.lo.toFixed(6)}）から半径${state.pRadius}m以内の飲食店${scope}の一覧です（近い順に${list.length}店${hits.length > list.length ? `。全${hits.length}店のうち近い${list.length}店` : ""}）。`,
+    "各店について Web で調べ、次の項目を表にまとめてください。",
+    "- 営業時間と定休日",
+    "- 価格帯（昼・夜それぞれの目安）",
+    "- Google マップの評価（★）と口コミの数",
+    "- 公式サイトまたは Google マップの URL",
+    "調べても分からない項目は「不明」とし、推測で埋めないでください。閉店している店は、その旨を書いてください。",
+    "同じ名前の別の店と取り違えないよう、位置（緯度・経度）が一覧と合っているか確かめてください。",
+    "",
+    ["No", "店名", "ジャンル", "指定地点からの距離", "緯度, 経度"].join("\t"),
+    ...list.map((h, k) => [k + 1, SS.n[h.i], genreLabel(h.i), `${Math.round(h.d)}m`, `${SS.la[h.i].toFixed(5)}, ${SS.lo[h.i].toFixed(5)}`].join("\t")),
+  ].join("\n");
+}
+// クリップボードにコピーする。ブラウザが許さないときは、選択した状態の文章を出して手でコピーしてもらう
+async function copyText(text, msgEl) {
+  const done = () => { msgEl.textContent = "コピーしました。お使いの AI チャットに貼り付けてください。AI の調べた結果には誤りや古い情報が含まれることがあるので、必ず確かめてください。"; };
+  try { await navigator.clipboard.writeText(text); done(); return; } catch (e) { /* 下の方法を試す */ }
+  const ta = document.createElement("textarea");
+  ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+  ta.remove();
+  if (ok) { done(); return; }
+  openModal("AIで調べる用の文章", `<p class="muted-t">自動でコピーできなかったので、下の文章をすべて選んでコピーしてください。</p><textarea class="copybox" readonly>${esc(text)}</textarea>`);
+  const box = document.querySelector("#mBody .copybox"); box.focus(); box.select();
 }
 
 // 近隣店の一覧: 行に触れると、店名・ジャンル・距離の全文をポップアップで出し、地図の点を強調する（スマホは行を押す）
