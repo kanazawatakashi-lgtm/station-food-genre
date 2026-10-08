@@ -112,7 +112,7 @@ h3 { font-size: 15px; margin: 0 0 8px; color: var(--ink-2); font-weight: 700; }
 .listhead h3, .lgrp h3 { margin: 0; }
 .muted-t { color: var(--ink-3); font-size: 13px; margin: 0; }
 /* 各タブの一番上の「このページでできること」 */
-.lead { margin: 0; font-size: 15px; color: var(--ink); font-weight: 700; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.lead { margin: 0; font-size: 15px; color: var(--ink); font-weight: 700; padding-block: 12px; padding-inline: 18px; border-bottom: 1px solid var(--rule); }
 .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
 .seg button { font: inherit; font-size: 14px; border: 0; background: var(--panel); color: var(--ink-2); padding: 6px 12px; cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--accent); color: var(--panel); font-weight: 700; }
@@ -231,6 +231,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
       <button class="tab" role="tab" id="t-pass" aria-selected="false" aria-controls="p-pass">乗降客数</button>
     </div>
     <!-- 各ページは「地図（左 2/5）＋内容（右 3/5）」。地図は1つで、どのページでも同じ位置に出す -->
+    <p class="lead" id="pageLead"></p>
     <div class="main" id="mainArea">
       <div class="mapbox" id="mapbox">
         <div class="tools">
@@ -522,17 +523,29 @@ function genreLabel(i) { const f = D.fine[SS.f[i]]; const mi = SS.m[i]; return [
 
 // ---- タブ ----
 const TABS = ["point", "station", "compare", "genre", "pass"];
+// 各ページの「このページでできること」。地図の上（タブのすぐ下）に出す
+const LEADS = {
+  station: "駅のまわりの飲食店の構成と、住む人・働く人の特徴から、エリアの性格をつかみます。",
+  compare: "候補の駅を最大5駅並べて、業態の構成を比べます。",
+  genre: "業態を選ぶと、その業態が少ない駅・多い駅が分かります。",
+  point: "物件のまわりにどんな飲食店が何軒あるか（競合の状況）を調べます。",
+  pass: "駅の利用者数の順位を調べます。",
+};
+
 let pointGo = null;
 function showTab(t) {
   state.tab = t;
   TABS.forEach(x => { $("t-" + x).setAttribute("aria-selected", String(x === t)); $("p-" + x).hidden = x !== t; });
   // 駅比較・ジャンル別は表だけなので地図を出さず、内容を横いっぱいに広げる
+  $("pageLead").textContent = LEADS[t] || "";
   const noMap = t === "compare" || t === "genre";
   $("mainArea").classList.toggle("nomap", noMap); box.hidden = noMap; hideTip();
   svg.classList.toggle("pointmode", t === "point");
   paintStations(); render(); draw();
   // 地点分析を初めて開いたときは、入力欄の初期値（渋谷区渋谷二丁目21番）で分析した状態から始める
   if (t === "point" && !state.point && pointGo) pointGo();
+  // 地点分析に戻ったときは、調べている地点に地図を寄せ直す
+  else if (t === "point" && state.point) { const [x, y] = toXY(state.point.la, state.point.lo); focusOn(x, y, (state.pRadius * 5.5) / mPerUnit); }
   // 各駅分析を開いたときは、選んでいる駅に寄せる（範囲の輪がいちばん外の 1000m まで見える縮尺）
   if (t === "station") { const st = ST[state.sel]; focusOn(st.x, st.y, 3200 / mPerUnit); }
   // 乗降客数を開いたときは、地図をいちばん引いた（23区全体の）縮尺にする
@@ -721,8 +734,7 @@ function renderStation() {
   const rank = state.sel + 1;
   const ss = stationSearch("q1", i => selectStation(i), "駅名（例: 渋谷）");
   const rings = `<div class="seg" role="group" id="segRing" aria-label="分析する範囲（複数選べます）">${RINGS.map(([a, b], k) => `<button type="button" data-k="${k}" aria-pressed="${state.rings[k]}">${a}〜${b}m</button>`).join("")}</div>`;
-  $("p-station").innerHTML = `<p class="lead">駅のまわりの飲食店の構成と、住む人・働く人の特徴から、エリアの性格をつかみます。</p>
-    ${ss.html}
+  $("p-station").innerHTML = `    ${ss.html}
     <div><h2>${esc(s.n)}</h2><p class="muted-t">${esc(s.o)}</p></div>
     <div class="summary"><span class="tag">${s.note ? "駅周辺の特徴（一般的な情報による）" : "駅周辺の特徴"}</span><p>${esc(describe(s))}</p></div>
     <div class="actions">${rings}<button class="btn" id="gtOpen" type="button">ジャンル別構成表</button></div>
@@ -779,8 +791,7 @@ function renderCompare() {
     table = `<div class="tablewrap"><table class="gt"><thead><tr><th>ジャンル</th>${cs.map((s, k) => `<th>${esc(s.n)}<br><button class="chip" data-rm="${k}" type="button" aria-label="${esc(s.n)}を外す">外す</button></th>`).join("")}${metric === "count" ? "" : `<th>23区</th>`}</tr></thead>
       <tbody>${rows}</tbody></table></div>`;
   }
-  $("p-compare").innerHTML = `<p class="lead">候補の駅を最大5駅並べて、業態の構成を比べます。</p>
-    ${ss.html}
+  $("p-compare").innerHTML = `    ${ss.html}
     <div class="actions">${radiusSeg("segR2", D.radii, state.radius)}
       <div class="seg" role="group" id="cmpMetric">${[["share", "構成比"], ["count", "店数"], ["lq", "平均比"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${v === metric}">${l}</button>`).join("")}</div>${metric === "lq" ? help() : ""}
 </div>
@@ -799,8 +810,7 @@ function renderGenre() {
     .filter(x => state.gdir === "low" ? x.exp >= 3 : x.c >= 3);
   list.sort((a, b) => state.gdir === "low" ? a.q - b.q || b.s.p - a.s.p : b.q - a.q);
   const opts = D.majors.slice(0, UNKNOWN_M).map((m, j) => `<optgroup label="${esc(m)}">${MID.map((x, i) => D.midMajor[i] === j ? `<option value="${i}" ${i === g ? "selected" : ""}>${esc(x)}</option>` : "").join("")}</optgroup>`).join("");
-  $("p-genre").innerHTML = `<p class="lead">業態を選ぶと、その業態が少ない駅・多い駅が分かります。</p>
-    <div class="search"><select class="inp" id="gSel" aria-label="ジャンル">${opts}</select>
+  $("p-genre").innerHTML = `    <div class="search"><select class="inp" id="gSel" aria-label="ジャンル">${opts}</select>
       <div class="seg" role="group" id="gDir"><button type="button" data-v="low" aria-pressed="${state.gdir === "low"}">少ない駅</button><button type="button" data-v="high" aria-pressed="${state.gdir === "high"}">多い駅</button></div></div>
     <div class="actions">${radiusSeg("segR3", D.radii, state.radius)}
       <label class="muted-t" for="gMin">乗降客数</label><select class="inp" id="gMin">${[0, 10000, 30000, 100000, 300000].map(v => `<option value="${v}" ${v === state.gmin ? "selected" : ""}>${v ? fmt(v) + "人以上" : "すべて"}</option>`).join("")}</select></div>
@@ -929,8 +939,7 @@ function renderPoint() {
     address: { label: "住所", ph: "区＋町名＋丁目＋番（例: 渋谷区渋谷2-21）", note: "号までは使いません。番が見つからないときは丁目の中心で分析します。" },
     coords: { label: "座標", ph: "例: 35.6974, 139.8266", note: "座標の調べ方: Google マップで調べたい地点を右クリック（スマホは長押し）すると、一番上に「35.6974, 139.8266」のような緯度・経度が出ます。それを押すとコピーされるので、ここに貼り付けてください。" },
   };
-  $("p-point").innerHTML = `<p class="lead">物件のまわりにどんな飲食店が何軒あるか（競合の状況）を調べます。</p>
-    <div class="pin-input">
+  $("p-point").innerHTML = `    <div class="pin-input">
       <h3>物件の所在地を入力</h3>
       <div class="radios" role="radiogroup" aria-label="地点の指定方法">${Object.entries(MODES).map(([k, m]) => `<label for="pm-${k}"><input type="radio" name="pmode" id="pm-${k}" value="${k}" ${k === mode ? "checked" : ""}>${m.label}</label>`).join("")}</div>
       <div class="search"><input id="q4" type="search" value="${esc(state.pInput[mode])}" placeholder="${MODES[mode].ph}" autocomplete="off" inputmode="${mode === "coords" ? "decimal" : "text"}"><button class="btn primary" id="q4-go" type="button">分析</button></div>
@@ -1054,8 +1063,7 @@ function renderPass() {
   const pick = state.passPick;
   const lines = [["jr", "JR"], ["private", "私鉄"], ["subway", "地下鉄"]].map(([k, label]) =>
     `<div class="lgrp"><span>${label}</span>${D.rails.filter(r => r.k === k).map(r => r.n).sort((a, b) => a.localeCompare(b, "ja")).map(x => `<button class="lchip ${k}" type="button" data-line="${esc(x)}" aria-pressed="${x === state.line}">${esc(x)}</button>`).join("")}</div>`).join("");
-  $("p-pass").innerHTML = `<p class="lead">駅の利用者数の順位を調べます。</p>
-    ${pick != null ? `<div class="summary"><span class="tag">選んだ駅</span><p><b>${esc(ST[pick].n)}</b>　${fmt(ST[pick].p)}人/日（${pick + 1}位）　${esc(ST[pick].o)}</p></div>` : ""}
+  $("p-pass").innerHTML = `    ${pick != null ? `<div class="summary"><span class="tag">選んだ駅</span><p><b>${esc(ST[pick].n)}</b>　${fmt(ST[pick].p)}人/日（${pick + 1}位）　${esc(ST[pick].o)}</p></div>` : ""}
     <div><h3>乗降客数の多い駅（1日平均）</h3>
       <div>${ST.slice(0, n).map((s, i) => `<div class="prow" tabindex="0" role="button" data-i="${i}"><span class="r">${i + 1}</span><span class="n">${esc(s.n)}</span><span><div class="pb" style="width:${(s.p / maxP * 100).toFixed(2)}%"></div></span><span class="v">${fmt(s.p)}</span></div>`).join("")}</div>
       <div class="actions" style="margin-top:8px"><button class="btn" id="passAll" type="button">${state.passAll ? "上位30駅だけ表示" : `全${ST.length}駅を表示`}</button></div></div>
