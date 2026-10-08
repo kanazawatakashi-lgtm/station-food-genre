@@ -96,14 +96,20 @@ svg.map.drag { cursor: grabbing; } svg.map.pointmode { cursor: crosshair; }
 .tab { font: inherit; font-weight: 700; font-size: 15px; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--ink-2); padding: 12px 14px 9px; cursor: pointer; white-space: nowrap; }
 .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--pick); }
 @media (max-width: 520px) { .tab { font-size: 13.5px; padding: 11px 6px 8px; letter-spacing: -0.02em; } }
-.pane { padding-block: 16px; padding-inline: 16px; display: grid; gap: 16px; min-width: 0; }
+.pane { padding-block: 18px 24px; padding-inline: 18px; display: grid; gap: 22px; min-width: 0; }
+/* 地点分析の結果のまとまり。まとまりの間をあける */
+#ptBody { display: grid; gap: 22px; }
+.block { display: grid; gap: 10px; }
+.block > h3 { margin: 0; }
+h2 + .muted-t { margin-top: 4px; }
 /* 中の要素が広い表に合わせて広がらないようにする（表は .tablewrap の中で横スクロールさせる） */
 .pane > * { min-width: 0; }
 .search { display: flex; gap: 8px; flex-wrap: wrap; }
 .search input, .search select, select.inp, input.inp { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 10px; min-height: 36px; min-width: 0; }
 .search input { flex: 1 1 12em; }
 h2 { font-family: var(--font-display); font-size: 22px; margin: 0; line-height: 1.3; }
-h3 { font-size: 15px; margin: 0; color: var(--ink-2); font-weight: 700; }
+h3 { font-size: 15px; margin: 0 0 8px; color: var(--ink-2); font-weight: 700; }
+.listhead h3, .lgrp h3 { margin: 0; }
 .muted-t { color: var(--ink-3); font-size: 13px; margin: 0; }
 .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
 .seg button { font: inherit; font-size: 14px; border: 0; background: var(--panel); color: var(--ink-2); padding: 6px 12px; cursor: pointer; }
@@ -115,7 +121,8 @@ h3 { font-size: 15px; margin: 0; color: var(--ink-2); font-weight: 700; }
 .bar { display: flex; height: 16px; border-radius: 4px; overflow: hidden; gap: 2px; background: var(--panel); }
 .bar span { display: block; height: 100%; min-width: 2px; }
 .barrow { display: grid; grid-template-columns: 5.5em 1fr; gap: 8px; align-items: center; font-size: 13px; color: var(--ink-2); }
-.keys { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; }
+.keys { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; margin-top: 8px; }
+.barrow + .barrow { margin-top: 4px; }
 .lq { display: grid; gap: 4px; }
 .lqrow { display: grid; grid-template-columns: minmax(6em, 1fr) 6em 3.5em; gap: 8px; font-size: 14px; align-items: center; padding: 2px 0; border-bottom: 1px solid var(--rule); }
 .lqrow .v { white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
@@ -123,7 +130,7 @@ h3 { font-size: 15px; margin: 0; color: var(--ink-2); font-weight: 700; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 520px) { .two { grid-template-columns: 1fr; } }
 .todo { border: 1px dashed var(--rule); border-radius: 6px; padding: 10px 12px; color: var(--ink-2); font-size: 14px; }
-.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .tablewrap { overflow-x: auto; }
 table { border-collapse: collapse; font-size: 14px; width: 100%; }
 th, td { padding: 6px 8px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -900,11 +907,11 @@ function renderPoint() {
       return `<div class="mgrp"><span class="mh"><i style="background:${GCOL[j]}"></i>${esc(m)} <b class="num">${byM[j]}</b></span><span class="mi">${items}</span></div>`;
     }).join("");
     body = `<div id="ptBody"><div><h2>${esc(p.label)}</h2><p class="muted-t num">${p.la.toFixed(5)}, ${p.lo.toFixed(5)}</p></div>
-      <div class="actions">${radiusSeg("segP", [50, 100, 250], state.pRadius)}</div>
+      <div class="block"><div class="actions">${radiusSeg("segP", [50, 100, 250], state.pRadius)}</div>
       <div class="stats"><div class="stat"><div class="v">${hits.length}</div><div class="l">飲食店（半径${state.pRadius}m）</div></div>
-        ${M.slice(0, UNKNOWN_M).map((m, i) => `<div class="stat"><div class="v" style="color:${GCOL[i]}">${byM[i]}</div><div class="l">${esc(m)}</div></div>`).join("")}</div>
+        ${M.slice(0, UNKNOWN_M).map((m, i) => `<div class="stat"><div class="v" style="color:${GCOL[i]}">${byM[i]}</div><div class="l">${esc(m)}</div></div>`).join("")}</div></div>
       <div><h3>ジャンル別の店数</h3>${midGroups ? `<div class="mgrps">${midGroups}</div>` : `<p class="muted-t">この範囲に飲食店はありません</p>`}</div>
-      <div><div class="listhead"><h3>近隣店の一覧（指定地点から近い順）</h3><a class="gmap" href="https://www.google.com/maps/search/?api=1&query=${p.la.toFixed(6)},${p.lo.toFixed(6)}" target="_blank" rel="noopener">Googleマップでこの地点を開く</a><button class="btn" id="aiCopy" type="button">AIで調べる用にコピー</button></div>
+      <div class="block"><div class="listhead"><h3>近隣店の一覧（指定地点から近い順）</h3><a class="gmap" href="https://www.google.com/maps/search/?api=1&query=${p.la.toFixed(6)},${p.lo.toFixed(6)}" target="_blank" rel="noopener">Googleマップでこの地点を開く</a><button class="btn" id="aiCopy" type="button">AIで調べる用にコピー</button></div>
         <p class="muted-t" id="aiCopyMsg">表示中の店（近い順に最大${AI_MAX}店）を、調べてほしい内容の文と一緒にコピーします。お使いの AI チャットに貼り付けてください。AI の調べた結果には誤りや古い情報が含まれることがあるので、必ず確かめてください。</p>
         <div class="chips" role="group" aria-label="大分類で絞り込む"><button class="chip" type="button" data-f="-1" aria-pressed="${state.pFilter < 0}">すべて</button>${M.map((m, i) => byM[i] && i !== UNKNOWN_M ? `<button class="chip" type="button" data-f="${i}" aria-pressed="${state.pFilter === i}"><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${GCOL[i]};margin-right:4px"></i>${esc(m)}</button>` : "").join("")}</div>
         <div class="list" id="ptList">${shown.map(h => `<div class="srow" data-s="${h.i}" data-d="${Math.round(h.d)}"><i style="background:${GCOL[SS.M[h.i]]}"></i><span class="n">${esc(SS.n[h.i])}</span><span class="g">${esc(genreLabel(h.i))}</span><span class="d">${Math.round(h.d)}m</span></div>`).join("")}</div></div>
