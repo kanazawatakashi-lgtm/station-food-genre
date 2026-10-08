@@ -12,11 +12,11 @@
 出力: docs/app.html（データを埋め込んだ1ファイル。公開ページ用）
       docs/notes.html（留意点・出典・ライセンス文の別ページ。文面は scripts/notes_template.html。公開ページに一緒に載せる）
 
-画面（タブ）:
-- 各駅情報: 駅の特徴（規則で作る文章）、乗降客数、半径 250/500/1000m の店数・ジャンル構成・多い／少ないジャンル
-  （平均比＝LQ、センサス補正後）、住んでいる人・働いている人
-- 地点分析: 駅名・住所・座標・地図のクリックで地点を決め、半径 50/100/250m の店の一覧と分布を出す
-- 比較: 最大5駅のジャンル別構成表を並べる（構成比・店数・平均比）
+画面（タブ。この順）:
+- 地点分析: 住所・座標・地図のクリックで地点を決め、半径 50/100/250m の店の一覧と分布を出す
+- 各駅分析: 駅周辺の特徴（規則で作る文章）、乗降客数、0〜250m・250〜500m・500〜1000m のドーナツ型の範囲（複数選べる）の
+  店数・ジャンル構成・多い／少ないジャンル（平均比＝LQ、センサス補正後）、住んでいる人・働いている人
+- 駅比較: 最大5駅のジャンル別構成表を並べる（構成比・店数・平均比）
 - ジャンル別: 中分類を選ぶと、そのジャンルが少ない（多い）駅を並べ、地図を平均比で塗る
 - 乗降客数: 乗降客数の順位と、路線ごとの強調表示
 """
@@ -40,9 +40,11 @@ MID_MAJOR = {mid: major for major, mid in GROUPS.values()}
 
 
 def load_station_stats():
-    """{駅キー: {半径: {"t": 店数, "tw": 補正後店数, "M": 大分類ごとの件数, "m": 中分類ごとの件数, "q": 中分類の LQ_w}}}"""
+    """{駅キー: {半径: {"t": 店数, "tw": 補正後店数, "M": 大分類ごとの件数, "m": 中分類ごとの件数, "w": 中分類ごとの補正後の件数,
+    "u": 中分類不明の件数, "e": 円が23区の外にかかるか}}}。
+    平均比（LQ_w）は画面側で w から計算する（各駅分析のドーナツ型の範囲は、半径ごとの値の引き算で作るため）。"""
     def empty(edge=0):
-        return {"t": 0, "tw": 0.0, "M": [0] * len(MAJOR_ORDER), "m": [0] * len(MID_ORDER), "q": [None] * len(MID_ORDER),
+        return {"t": 0, "tw": 0.0, "M": [0] * len(MAJOR_ORDER), "m": [0] * len(MID_ORDER), "w": [0.0] * len(MID_ORDER),
                 "u": 0, "e": edge}
 
     out = {}
@@ -59,7 +61,7 @@ def load_station_stats():
             else:
                 i = MID_ORDER.index(row["mid"])
                 st["m"][i] = n
-                st["q"][i] = round(float(row["LQ_w"]), 2) if row["LQ_w"] else None
+                st["w"][i] = float(row["count_w"] or 0)
     # 円の中に飲食店が1軒もない半径は、station_table.py の表に行が無い（辰巳・舎人公園の 250m など）。
     # 画面が半径を切り替えたときに止まらないよう、0 店の値で埋める
     edge = {r: {row["station"]: int(row["near_edge"] or 0) for row in csv.DictReader(
@@ -69,6 +71,7 @@ def load_station_stats():
             st.setdefault(r, empty(edge[r].get(key, 0)))
         for v in st.values():
             v["tw"] = round(v["tw"], 1)
+            v["w"] = [round(x, 2) for x in v["w"]]
     return out
 
 
@@ -214,7 +217,7 @@ def main():
     # 23区全体の構成比（センサス補正後、分からない店を除いた分母）
     known_M = sum(v for k, v in zip(MAJOR_ORDER, base_M) if k != UNKNOWN)
     base = {"M": [round(v / known_M, 4) if k != UNKNOWN else None for k, v in zip(MAJOR_ORDER, base_M)],
-            "m": [round(v / sum(base_m), 4) for v in base_m],
+            "m": [round(v / sum(base_m), 6) for v in base_m],
             "rawM": [round(v / sum(x for k, x in zip(MAJOR_ORDER, raw_M) if k != UNKNOWN), 4) if k != UNKNOWN else None
                      for k, v in zip(MAJOR_ORDER, raw_M)],
             "rawm": [round(v / sum(raw_m), 4) for v in raw_m]}

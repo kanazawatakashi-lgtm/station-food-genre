@@ -42,13 +42,15 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-body); 
 header { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; }
 h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(22px, 2.6vw, 28px); margin: 0; letter-spacing: 0.02em; }
 .num { font-variant-numeric: tabular-nums; }
-.main { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+.app { overflow: clip; min-width: 0; }
+.wrap > * { min-width: 0; }
+.main { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); align-items: start; }
 @media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr); } }
 .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; }
 
 /* 地図 */
-.mapbox { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 8px); overflow: hidden; }
-@media (max-width: 900px) { .mapbox { position: relative; top: 0; } }
+.mapbox { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 8px); overflow: hidden; border-right: 1px solid var(--rule); }
+@media (max-width: 900px) { .mapbox { position: relative; top: 0; border-right: 0; border-bottom: 1px solid var(--rule); } }
 .tools { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; pointer-events: none; z-index: 2; }
 .tools > * { pointer-events: auto; }
 .layers { display: flex; gap: 10px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 4px 10px; font-size: 13px; }
@@ -92,6 +94,7 @@ svg.map.drag { cursor: grabbing; } svg.map.pointmode { cursor: crosshair; }
 .tabs { display: flex; border-bottom: 1px solid var(--rule); overflow-x: auto; }
 .tab { font: inherit; font-weight: 700; font-size: 15px; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--ink-2); padding: 12px 14px 9px; cursor: pointer; white-space: nowrap; }
 .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--pick); }
+@media (max-width: 520px) { .tab { font-size: 13.5px; padding: 11px 6px 8px; letter-spacing: -0.02em; } }
 .pane { padding-block: 16px; padding-inline: 16px; display: grid; gap: 16px; min-width: 0; }
 /* 中の要素が広い表に合わせて広がらないようにする（表は .tablewrap の中で横スクロールさせる） */
 .pane > * { min-width: 0; }
@@ -209,40 +212,43 @@ table.gt tr.unk td { color: var(--ink-3); }
     <h1>飲食出店ナビ・東京23区版</h1>
   </header>
 
-  <div class="main">
-    <div class="card mapbox" id="mapbox">
-      <div class="tools">
-        <div class="layers" role="group" aria-label="路線の表示">
-          <label for="lyJr"><input id="lyJr" type="checkbox" checked><span class="sw jr"></span>JR</label>
-          <label for="lyPrivate"><input id="lyPrivate" type="checkbox" checked><span class="sw private"></span>私鉄</label>
-          <label for="lySub"><input id="lySub" type="checkbox" checked><span class="sw subway"></span>地下鉄</label>
-        </div>
-        <div class="zoom">
-          <button class="btn" id="zin" type="button" aria-label="拡大">＋</button>
-          <button class="btn" id="zout" type="button" aria-label="縮小">－</button>
-          <button class="btn" id="zreset" type="button">全体</button>
-        </div>
-      </div>
-      <svg class="map" id="map" role="img" aria-label="23区の駅と飲食店の地図">
-        <g id="gW"></g><g id="gWN"></g><g id="gR"></g><g id="gC"></g><g id="gP"></g><g id="gL"></g><g id="gRL"></g>
-      </svg>
-      <div class="legend" id="legend"></div>
-      <div class="tip" id="tip" hidden></div>
+  <div class="card app">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="t-point" aria-selected="true" aria-controls="p-point">地点分析</button>
+      <button class="tab" role="tab" id="t-station" aria-selected="false" aria-controls="p-station">各駅分析</button>
+      <button class="tab" role="tab" id="t-compare" aria-selected="false" aria-controls="p-compare">駅比較</button>
+      <button class="tab" role="tab" id="t-genre" aria-selected="false" aria-controls="p-genre">ジャンル別</button>
+      <button class="tab" role="tab" id="t-pass" aria-selected="false" aria-controls="p-pass">乗降客数</button>
     </div>
-
-    <div class="card panel">
-      <div class="tabs" role="tablist">
-        <button class="tab" role="tab" id="t-station" aria-selected="true" aria-controls="p-station">各駅情報</button>
-        <button class="tab" role="tab" id="t-point" aria-selected="false" aria-controls="p-point">地点分析</button>
-        <button class="tab" role="tab" id="t-compare" aria-selected="false" aria-controls="p-compare">比較</button>
-        <button class="tab" role="tab" id="t-genre" aria-selected="false" aria-controls="p-genre">ジャンル別</button>
-        <button class="tab" role="tab" id="t-pass" aria-selected="false" aria-controls="p-pass">乗降客数</button>
+    <!-- 各ページは「地図（左 2/5）＋内容（右 3/5）」。地図は1つで、どのページでも同じ位置に出す -->
+    <div class="main">
+      <div class="mapbox" id="mapbox">
+        <div class="tools">
+          <div class="layers" role="group" aria-label="路線の表示">
+            <label for="lyJr"><input id="lyJr" type="checkbox" checked><span class="sw jr"></span>JR</label>
+            <label for="lyPrivate"><input id="lyPrivate" type="checkbox" checked><span class="sw private"></span>私鉄</label>
+            <label for="lySub"><input id="lySub" type="checkbox" checked><span class="sw subway"></span>地下鉄</label>
+          </div>
+          <div class="zoom">
+            <button class="btn" id="zin" type="button" aria-label="拡大">＋</button>
+            <button class="btn" id="zout" type="button" aria-label="縮小">－</button>
+            <button class="btn" id="zreset" type="button">全体</button>
+          </div>
+        </div>
+        <svg class="map" id="map" role="img" aria-label="23区の駅と飲食店の地図">
+          <g id="gW"></g><g id="gWN"></g><g id="gR"></g><g id="gC"></g><g id="gP"></g><g id="gL"></g><g id="gRL"></g>
+        </svg>
+        <div class="legend" id="legend"></div>
+        <div class="tip" id="tip" hidden></div>
       </div>
-      <section class="pane" id="p-station" role="tabpanel" aria-labelledby="t-station"></section>
-      <section class="pane" id="p-compare" role="tabpanel" aria-labelledby="t-compare" hidden></section>
-      <section class="pane" id="p-genre" role="tabpanel" aria-labelledby="t-genre" hidden></section>
-      <section class="pane" id="p-pass" role="tabpanel" aria-labelledby="t-pass" hidden></section>
-      <section class="pane" id="p-point" role="tabpanel" aria-labelledby="t-point" hidden></section>
+
+      <div class="panel">
+        <section class="pane" id="p-point" role="tabpanel" aria-labelledby="t-point"></section>
+        <section class="pane" id="p-station" role="tabpanel" aria-labelledby="t-station" hidden></section>
+        <section class="pane" id="p-compare" role="tabpanel" aria-labelledby="t-compare" hidden></section>
+        <section class="pane" id="p-genre" role="tabpanel" aria-labelledby="t-genre" hidden></section>
+        <section class="pane" id="p-pass" role="tabpanel" aria-labelledby="t-pass" hidden></section>
+      </div>
     </div>
   </div>
 
@@ -274,6 +280,31 @@ const svg = $("map"), box = $("mapbox"), tip = $("tip");
 // 初期表示の駅は駅名で指す（乗降客数データの版が変わると駅の番号が変わることがあるため）。同名の駅は乗降客数の多い方
 // 「○○駅」の形の呼び方。路線名を添えた駅は「浅草駅（つくばエクスプレス）」のように、かっこの前に「駅」を入れる
 const ekiName = s => s.n.includes("（") ? s.n.replace("（", "駅（") : `${s.n}駅`;
+// 平均比（LQ_w）＝ 補正後の中分類の割合 ÷ 23区の補正後の割合。店が0軒の中分類は 0倍（範囲に飲食店が無ければ出さない）
+function withLQ(r) { const kw = r.w.reduce((a, b) => a + b, 0); r.q = r.w.map((w, i) => kw > 0 && D.base.m[i] ? (w / kw) / D.base.m[i] : null); return r; }
+ST.forEach(s => D.radii.forEach(R => withLQ(s.r[String(R)])));
+// 各駅分析の範囲（ドーナツ型）。複数選ぶと合わせた範囲になる（0〜250m と 250〜500m で 0〜500m）
+const RINGS = [[0, 250], [250, 500], [500, 1000]];
+function ringLabel(sel) {
+  const spans = [];
+  RINGS.forEach(([a, b], k) => { if (!sel[k]) return; const last = spans[spans.length - 1]; if (last && last[1] === a) last[1] = b; else spans.push([a, b]); });
+  return spans.map(([a, b]) => `${a}〜${b}m`).join("・");
+}
+function ringStats(s, sel = state.rings) {
+  const Z = () => ({ t: 0, tw: 0, M: M.map(() => 0), m: MID.map(() => 0), w: MID.map(() => 0), u: 0, e: 0 });
+  const acc = Z(); let pop = null, km2 = 0;
+  RINGS.forEach(([a, b], k) => {
+    if (!sel[k]) return;
+    const o = s.r[String(b)], i = a ? s.r[String(a)] : Z();
+    acc.t += o.t - i.t; acc.tw += o.tw - i.tw; acc.u += o.u - i.u; acc.e = acc.e || o.e;
+    o.M.forEach((v, j) => acc.M[j] += v - i.M[j]); o.m.forEach((v, j) => acc.m[j] += v - i.m[j]); o.w.forEach((v, j) => acc.w[j] += v - i.w[j]);
+    const po = s.pop[String(b)], pi = a ? s.pop[String(a)] : null;
+    if (po) { pop = pop || po.map(() => 0); po.forEach((v, j) => pop[j] += v - (pi ? pi[j] : 0)); }
+    km2 += Math.PI * (b * b - a * a) / 1e6;
+  });
+  acc.w = acc.w.map(v => Math.max(0, v)); acc.tw = Math.max(0, acc.tw);  // 小数の引き算の誤差
+  return Object.assign(withLQ(acc), { pop, km2, label: ringLabel(sel) });
+}
 const stByName = n => { const i = ST.findIndex(s => s.n === n); return i < 0 ? null : i; };
 
 // 座標 → 地図座標（Python 側の xy と同じ式）
@@ -360,6 +391,8 @@ const railEls = D.rails.map(r => el("path", { d: r.d, class: `rl ${r.k}` }, gR))
 });
 const maxP = ST[0].p;
 const R = p => Math.max(1.6, 26 * Math.sqrt(p / maxP));
+// 円の大きさ: 乗降客数タブでは乗降客数に合わせる。ほかのタブでは全駅同じ大きさ（画面上で一定。選んだ駅は少し大きく）
+const stR = (i, px) => state.tab === "pass" ? R(ST[i].p) : ((state.tab === "station" && i === state.sel) || (state.tab === "compare" && state.cmp.includes(i)) ? 7 : 4.5) * px;
 const circles = ST.map((s, i) => el("circle", { cx: s.x, cy: s.y, r: R(s.p), class: "st" }, gC));
 const labels = ST.map(s => { const t = el("text", { x: s.x, y: s.y, class: "lbl" }, gL); t.textContent = s.n; return t; });
 
@@ -386,7 +419,7 @@ function draw() {
     const forced = zoom >= 3 && (i === state.sel || state.cmp.includes(i));
     let on = (s.p >= minP || forced) && !(state.tab === "point" && zoom > 25);
     if (on) {
-      const y = s.y - R(s.p) - 4 * px, w = s.n.length * 13 * px, h = 15 * px;
+      const y = s.y - stR(i, px) - 4 * px, w = s.n.length * 13 * px, h = 15 * px;
       const box = { x0: s.x - w / 2, x1: s.x + w / 2, y0: y - h, y1: y + 2 * px };
       if (!forced && placed.some(b => b.x0 < box.x1 && box.x0 < b.x1 && b.y0 < box.y1 && box.y0 < b.y1)) on = false;
       else { placed.push(box); t.setAttribute("font-size", 13 * px); t.setAttribute("stroke-width", 3.5 * px); t.setAttribute("y", y); }
@@ -396,8 +429,9 @@ function draw() {
   gWN.querySelectorAll("text").forEach(t => t.setAttribute("font-size", 12 * px));
   gWN.style.display = zoom > 8 ? "none" : "";
   drawRailLabels(px);
-  // 拡大したときは駅の円を輪郭だけにして、店や地図を隠さない
-  gC.classList.toggle("zoomed", zoom > 10);
+  circles.forEach((c, i) => c.setAttribute("r", stR(i, px)));
+  // 乗降客数タブで拡大したときは、大きな駅の円を輪郭だけにして、店や地図を隠さない
+  gC.classList.toggle("zoomed", state.tab === "pass" && zoom > 10);
   drawPoint();
 }
 
@@ -433,7 +467,7 @@ svg.addEventListener("pointerleave", e => { if (e.pointerType === "mouse") hideT
 
 function nearestStation(cx, cy) {
   const p = toMap(cx, cy), px = unitPx(); let best = -1, bd = Infinity;
-  ST.forEach((s, i) => { const d = Math.hypot(s.x - p.x, s.y - p.y), reach = Math.max(R(s.p), 9 * px); if (d <= reach && d / reach < bd) { bd = d / reach; best = i; } });
+  ST.forEach((s, i) => { const d = Math.hypot(s.x - p.x, s.y - p.y), reach = Math.max(stR(i, px), 9 * px); if (d <= reach && d / reach < bd) { bd = d / reach; best = i; } });
   return best;
 }
 function nearestStore(cx, cy) {
@@ -447,10 +481,11 @@ function hover(e) {
   if (si >= 0) { placeTip(`<b>${esc(SS.n[si])}</b><div class="s">${esc(genreLabel(si))}</div>`, e); return; }
   const i = nearestStation(e.clientX, e.clientY);
   if (i < 0) { hideTip(); return; }
-  const s = ST[i], r = s.r[String(state.radius)] || s.r["1000"];
+  const s = ST[i], r = state.tab === "station" ? ringStats(s) : s.r[String(state.radius)];
+  const lab = state.tab === "station" ? r.label : `${state.radius}m圏`;
   let extra = "";
   if (state.tab === "genre" && state.genre >= 0) { const q = r.q[state.genre]; extra = `<div class="s">${esc(MID[state.genre])}: ${r.m[state.genre]}店・平均比 ${q == null ? "—" : q.toFixed(2) + "倍"}</div>`; }
-  placeTip(`<b>${esc(s.n)}</b><div class="s">乗降客数 ${fmt(s.p)}人/日・${state.radius}m圏 ${fmt(r.t)}店</div>${extra}`, e);
+  placeTip(`<b>${esc(s.n)}</b><div class="s">乗降客数 ${fmt(s.p)}人/日・${lab} ${fmt(r.t)}店</div>${extra}`, e);
 }
 function placeTip(html, e) {
   tip.innerHTML = html; tip.hidden = false;
@@ -470,20 +505,22 @@ function tap(e) {
 }
 
 // ---- 状態 ----
-const state = { pInput: { station: "渋谷", address: "東京都渋谷区渋谷二丁目21番", coords: "35.65927130491232, 139.70365490123814" }, tab: "station", sel: stByName("渋谷") ?? 0, radius: 1000, cmp: [], genre: MID.indexOf("ラーメン"), gdir: "low", gmin: 30000, point: null, pRadius: 100, pFilter: -1 };
+const state = { pInput: { address: "東京都渋谷区渋谷二丁目21番", coords: "35.65927130491232, 139.70365490123814" }, pMode: "address", rings: [true, true, true], tab: "point", sel: stByName("渋谷") ?? 0, radius: 1000, cmp: [], genre: MID.indexOf("ラーメン"), gdir: "low", gmin: 30000, point: null, pRadius: 100, pFilter: -1 };
 
 function genreLabel(i) { const f = D.fine[SS.f[i]]; const mi = SS.m[i]; return [M[SS.M[i]], mi >= 0 ? MID[mi] : "中分類不明", f && f !== (mi >= 0 ? MID[mi] : "") ? f : ""].filter(Boolean).join(" ／ "); }
 
 // ---- タブ ----
-const TABS = ["station", "point", "compare", "genre", "pass"];
+const TABS = ["point", "station", "compare", "genre", "pass"];
 let pointGo = null;
 function showTab(t) {
   state.tab = t;
   TABS.forEach(x => { $("t-" + x).setAttribute("aria-selected", String(x === t)); $("p-" + x).hidden = x !== t; });
   svg.classList.toggle("pointmode", t === "point");
   paintStations(); render(); draw();
-  // 地点分析を初めて開いたときは、入力欄の初期値（渋谷駅）で分析した状態から始める
+  // 地点分析を初めて開いたときは、入力欄の初期値（渋谷区渋谷二丁目21番）で分析した状態から始める
   if (t === "point" && !state.point && pointGo) pointGo();
+  // 各駅分析を開いたときは、選んでいる駅に寄せる（範囲の輪がいちばん外の 1000m まで見える縮尺）
+  if (t === "station") { const st = ST[state.sel]; focusOn(st.x, st.y, 3200 / mPerUnit); }
   // 乗降客数を開いたときは、地図をいちばん引いた（23区全体の）縮尺にする
   if (t === "pass") { vb = { ...full }; draw(); }
   // ジャンル別を初めて開いたときは、渋谷駅の周辺（およそ半径3km）を表示する
@@ -519,7 +556,7 @@ function legend() {
   const L = $("legend");
   if (state.tab === "genre") { L.innerHTML = `<span>${esc(MID[state.genre])} の平均比（${state.radius}m圏）${help()}</span><span>少ない 0.5倍</span><span class="ramp"></span><span>2倍 多い</span><span>灰色の円: 23区平均並み</span>`; return; }
   if (state.tab === "point") { L.innerHTML = M.map((m, i) => `<span class="key"><i style="background:${GCOL[i]}"></i>${esc(m)}</span>`).join("") + `<span>地図をクリックすると、その地点で分析します</span>`; return; }
-  L.innerHTML = `<span>円の大きさ＝1日平均乗降客数</span><span>${state.tab === "compare" ? "円を押すと比較に追加" : "円を押すと駅を選べます"}</span>`;
+  L.innerHTML = `<span>${state.tab === "compare" ? "駅の円を押すと比較に追加" : "駅の円を押すと駅を選べます"}</span>${state.tab === "station" ? `<span>点線の輪: 分析する範囲（${ringLabel(state.rings)}）</span>` : ""}`;
   if (state.tab === "pass") L.innerHTML = `<span>円の大きさ＝1日平均乗降客数</span><span>円を押すと駅を選べます。路線を選ぶとその路線を強調します</span>`;
 }
 
@@ -562,10 +599,8 @@ function ageBar(ages) {
   const rest = Math.max(0, 1 - ages.reduce((a, b) => a + b, 0));
   return `<div class="bar">${ages.map((a, i) => `<span style="width:${a * 100}%;background:var(--a${i})" title="${AGES[i][1]} ${pct(a)}"></span>`).join("")}<span style="width:${rest * 100}%;background:var(--a6)" title="年齢不詳 ${pct(rest)}"></span></div>`;
 }
-function popBlock(s) {
-  const p = s.pop[String(state.radius)];
-  if (!p || !D.popCols.length) return `<div class="todo"><b>人口・年齢層</b>（準備中）<br>国勢調査の地域メッシュ統計を取り込むと、ここに${state.radius}m圏の人口・年齢構成が出ます。</div>`;
-  const km2 = Math.PI * (state.radius / 1000) ** 2;
+function popBlock(p, km2, label) {
+  if (!p || !D.popCols.length) return "";
   const f = popFacts(p, km2), a = D.popArea ? popFacts(D.popArea, D.areaKm2) : null;
   const cmp = (x, y, fmtf) => a ? `<span class="muted-t">23区 ${fmtf(y)}</span>` : "";
   const few = f.pop < FEW_RESIDENTS, share = v => few ? "—" : pct(v);
@@ -578,7 +613,7 @@ function popBlock(s) {
     </div></div>
     ${few ? `<p class="muted-t">この範囲に住む人は${fmt(f.pop)}人と少ないため、割合（1人世帯・外国人・年齢構成）と「働く人 ÷ 住む人」は出していません。</p>` : `
     <div><h3>年齢構成</h3>
-      <div class="barrow"><span>${state.radius}m圏</span>${ageBar(f.ages)}</div>
+      <div class="barrow"><span>この範囲</span>${ageBar(f.ages)}</div>
       ${a ? `<div class="barrow"><span>23区平均</span>${ageBar(a.ages)}</div>` : ""}
       <div class="keys">${AGES.map(([, l], i) => `<span class="key"><i style="background:var(--a${i})"></i>${l} <b class="num">${pct(f.ages[i])}</b></span>`).join("")}<span class="key"><i style="background:var(--a6)"></i>年齢不詳</span></div>
     </div>`}
@@ -667,40 +702,47 @@ function describe(s) {
 }
 function selectStation(i, scroll = true) {
   state.sel = i; paintStations(); render();
-  const s = ST[i]; if (scroll) focusOn(s.x, s.y, full.w / 7); else draw();
+  const s = ST[i]; if (scroll) focusOn(s.x, s.y, 3200 / mPerUnit); else draw();
 }
 function stationSearch(id, onPick, placeholder) {
   return { html: `<div class="search"><input id="${id}" type="search" list="${id}-dl" placeholder="${placeholder}" autocomplete="off"><datalist id="${id}-dl">${ST.map(s => `<option value="${esc(s.n)}">`).join("")}</datalist><button class="btn" id="${id}-go" type="button">表示</button></div>`,
     bind() { const go = () => { const v = $(id).value.trim().replace(/駅$/, ""); if (!v) return; let i = ST.findIndex(s => s.n === v); if (i < 0) i = ST.findIndex(s => s.n.includes(v)); if (i >= 0) onPick(i); else $(id).setCustomValidity("見つかりません"), $(id).reportValidity(); }; $(id + "-go").onclick = go; $(id).addEventListener("keydown", e => { $(id).setCustomValidity(""); if (e.key === "Enter") go(); }); } };
 }
 function renderStation() {
-  const s = ST[state.sel], r = s.r[String(state.radius)];
+  const s = ST[state.sel], r = ringStats(s), lab = r.label;
   const rank = state.sel + 1;
   const ss = stationSearch("q1", i => selectStation(i), "駅名（例: 渋谷）");
+  const rings = `<div class="seg" role="group" id="segRing" aria-label="分析する範囲（複数選べます）">${RINGS.map(([a, b], k) => `<button type="button" data-k="${k}" aria-pressed="${state.rings[k]}">${a}〜${b}m</button>`).join("")}</div>`;
   $("p-station").innerHTML = `${ss.html}
     <div><h2>${esc(s.n)}</h2><p class="muted-t">${esc(s.o)}</p></div>
     <div class="summary"><span class="tag">${s.note ? "駅周辺の特徴（一般的な情報による）" : "駅周辺の特徴"}</span><p>${esc(describe(s))}</p></div>
-    <div class="actions">${radiusSeg("segR", D.radii, state.radius)}<button class="btn" id="toCmp" type="button">比較分析</button><button class="btn" id="toPoint" type="button">地点分析</button><button class="btn" id="gtOpen" type="button">ジャンル別構成表</button></div>
+    <div class="actions">${rings}<button class="btn" id="toCmp" type="button">比較分析</button><button class="btn" id="toPoint" type="button">地点分析</button><button class="btn" id="gtOpen" type="button">ジャンル別構成表</button></div>
+    <p class="muted-t">分析する範囲: <b>${lab}</b>（駅からの距離。複数選ぶと合わせた範囲になります）</p>
     <div class="stats">
       <div class="stat"><div class="v">${fmt(s.p)}</div><div class="l">乗降客数（人/日）・${rank}位</div></div>
-      <div class="stat"><div class="v">${fmt(r.t)}</div><div class="l">飲食店（${state.radius}m圏）</div></div>
+      <div class="stat"><div class="v">${fmt(r.t)}</div><div class="l">飲食店（${lab}）</div></div>
       <div class="stat"><div class="v">${(r.tw / s.p * 10000).toFixed(1)}</div><div class="l">乗降客1万人あたり店数（補正後）${help("per10k")}</div></div>
     </div>
     <div><h3>ジャンル構成（大分類）${help("majorShare")}</h3>
-      <div class="barrow"><span>${state.radius}m圏</span>${majorBar(r.M)}</div>
+      <div class="barrow"><span>この範囲</span>${majorBar(r.M)}</div>
       <div class="barrow"><span>23区平均</span>${baseBar()}</div>
       ${majorKeys(r.M)}
-      ${r.e ? `<p class="muted-t">この駅の${state.radius}m圏の一部は23区の外（隣の市や海・運河など）にかかります。区の外の店はデータに含まれないため、店の数が少なめに出ることがあります。</p>` : ""}
+      ${r.e ? `<p class="muted-t">この範囲の一部は23区の外（隣の市や海・運河など）にかかります。区の外の店はデータに含まれないため、店の数が少なめに出ることがあります。</p>` : ""}
     </div>
     <div class="two"><div><h3>多いジャンル（平均比が高い）</h3>${lqList(features(r, "hi"), "目立って多いジャンルはありません")}</div>
       <div><h3>少ないジャンル（平均比が低い）</h3>${lqList(features(r, "lo"), "目立って少ないジャンルはありません")}</div></div>
-    ${popBlock(s)}
+    ${popBlock(r.pop, r.km2, lab)}
 `;
   ss.bind();
-  bindSeg("segR", v => { state.radius = v; paintStations(); render(); });
+  // 範囲のボタンは何個でも押せる。全部外すことはできない
+  $("segRing").querySelectorAll("button").forEach(btn => btn.onclick = () => {
+    const k = +btn.dataset.k, next = state.rings.slice(); next[k] = !next[k];
+    if (!next.some(Boolean)) return;
+    state.rings = next; paintStations(); render(); draw();
+  });
   $("toCmp").onclick = () => { addCompare(state.sel); showTab("compare"); };
   $("toPoint").onclick = () => { showTab("point"); setPoint(s.la, s.lo, ekiName(s)); };
-  $("gtOpen").onclick = () => openModal(`${ekiName(s)} ジャンル別構成表（${state.radius}m圏）`, genreTable(r));
+  $("gtOpen").onclick = () => openModal(`${ekiName(s)} ジャンル別構成表（${lab}）`, genreTable(r));
 }
 
 // ---- 比較 ----
@@ -788,6 +830,14 @@ function setPoint(la, lo, label) {
 }
 function drawPoint() {
   gP.innerHTML = "";
+  if (state.tab === "station") {
+    // 各駅分析: 選んだ範囲（ドーナツ型）を描く。つながった範囲は1つの輪にまとめる
+    const s = ST[state.sel], spans = [];
+    RINGS.forEach(([a, b], k) => { if (!state.rings[k]) return; const last = spans[spans.length - 1]; if (last && last[1] === a) last[1] = b; else spans.push([a, b]); });
+    const circ = rr => rr > 0 ? `M${s.x - rr},${s.y}a${rr},${rr} 0 1,0 ${2 * rr},0a${rr},${rr} 0 1,0 ${-2 * rr},0Z` : "";
+    spans.forEach(([a, b]) => el("path", { d: circ(b / mPerUnit) + circ(a / mPerUnit), class: "ring", "fill-rule": "evenodd" }, gP));
+    pointHits = []; return;
+  }
   if (state.tab !== "point" || !state.point) { pointHits = []; return; }
   const { la, lo } = state.point, [x, y] = toXY(la, lo), px = unitPx();
   el("circle", { cx: x, cy: y, r: state.pRadius / mPerUnit, class: "ring" }, gP);
@@ -840,7 +890,7 @@ function parseCoords(v) {
 }
 function renderPoint() {
   const p = state.point;
-  let body = `<div class="todo">上の欄に駅名・住所・座標を入れるか、地図をクリックしてください。</div>`;
+  let body = `<div class="todo">上の欄に住所か座標を入れるか、地図をクリックしてください。</div>`;
   if (p) {
     const hits = storesNear(p.la, p.lo, state.pRadius);
     // 大分類ごとに、中分類の店数を数える（中分類が分からない店は -1）
@@ -867,16 +917,15 @@ function renderPoint() {
       <p class="muted-t">地図上の濃い点が範囲内の店、薄い点が範囲のすぐ外の店です。店の位置は地図サービスの登録位置で、数十mずれることがあります。閉店済みの店が残っている場合があります。</p></div>`;
   }
   // 地点の決め方: 駅名・住所・座標から選ぶ
-  const mode = state.pMode || "station";
+  const mode = state.pMode || "address";
   const MODES = {
-    station: { label: "駅名", ph: "駅名（例: 渋谷）", note: "" },
     address: { label: "住所", ph: "区＋町名＋丁目＋番（例: 渋谷区渋谷2-21）", note: "号までは使いません。番が見つからないときは丁目の中心で分析します。" },
     coords: { label: "座標", ph: "例: 35.6974, 139.8266", note: "座標の調べ方: Google マップで調べたい地点を右クリック（スマホは長押し）すると、一番上に「35.6974, 139.8266」のような緯度・経度が出ます。それを押すとコピーされるので、ここに貼り付けてください。" },
   };
   $("p-point").innerHTML = `<div class="pin-input">
       <h3>調べたい地点を入力</h3>
       <div class="radios" role="radiogroup" aria-label="地点の指定方法">${Object.entries(MODES).map(([k, m]) => `<label for="pm-${k}"><input type="radio" name="pmode" id="pm-${k}" value="${k}" ${k === mode ? "checked" : ""}>${m.label}</label>`).join("")}</div>
-      <div class="search"><input id="q4" type="search" ${mode === "station" ? 'list="q1-dl2"' : ""} value="${esc(state.pInput[mode])}" placeholder="${MODES[mode].ph}" autocomplete="off" inputmode="${mode === "coords" ? "decimal" : "text"}"><datalist id="q1-dl2">${ST.map(s => `<option value="${esc(s.n)}">`).join("")}</datalist><button class="btn primary" id="q4-go" type="button">分析</button></div>
+      <div class="search"><input id="q4" type="search" value="${esc(state.pInput[mode])}" placeholder="${MODES[mode].ph}" autocomplete="off" inputmode="${mode === "coords" ? "decimal" : "text"}"><button class="btn primary" id="q4-go" type="button">分析</button></div>
       ${MODES[mode].note ? `<p class="muted-t">${MODES[mode].note}</p>` : ""}
     </div>${body}`;
   $("p-point").querySelectorAll('input[name="pmode"]').forEach(r => r.onchange = () => { state.pMode = r.value; render(); $("q4").focus(); });
@@ -885,9 +934,7 @@ function renderPoint() {
   const go = () => {
     const v = $("q4").value.trim(); if (!v) return;
     if (mode === "coords") { const c = parseCoords(v); return c ? setPoint(c[0], c[1], "指定した地点") : fail("「35.6974, 139.8266」の形で、23区内の座標を入れてください"); }
-    if (mode === "address") { const g = geocode(v); return g ? setPoint(g.la, g.lo, `${g.label}（${g.prec}）`) : fail("住所が見つかりません。「区＋町名＋丁目＋番」の形で入れてください（23区内）"); }
-    const n = v.replace(/駅$/, ""); let i = ST.findIndex(s => s.n === n); if (i < 0) i = ST.findIndex(s => s.n.includes(n));
-    return i >= 0 ? setPoint(ST[i].la, ST[i].lo, ekiName(ST[i])) : fail("駅が見つかりません（23区内の駅名を入れてください）");
+    const g = geocode(v); return g ? setPoint(g.la, g.lo, `${g.label}（${g.prec}）`) : fail("住所が見つかりません。「区＋町名＋丁目＋番」の形で入れてください（23区内）");
   };
   pointGo = go;
   $("q4-go").onclick = go; $("q4").addEventListener("keydown", e => { $("q4").setCustomValidity(""); if (e.key === "Enter") go(); });
@@ -1020,6 +1067,6 @@ function render() {
 
 // 比較の初期表示: 渋谷と成城学園前
 state.cmp = ["渋谷", "成城学園前"].map(stByName).filter(i => i != null);
-paintStations(); render(); draw();
+showTab("point");
 window.addEventListener("resize", draw);
 </script>
