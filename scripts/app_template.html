@@ -323,7 +323,6 @@ const HELP = {
   dayNight: ["働く人 ÷ 住む人の説明", `<p>「働く人 ÷ 住む人」が大きいほど、昼間に人が集まる街（ランチ需要が大きい）です。</p>`],
   work: ["従業者数の説明", `<p>従業者数は事業所で働く人の数で、通学者や買い物客は含みません。</p>`],
   majorShare: ["構成比の分母の説明", `<h4>構成比の分母</h4><p>大分類（和食・洋食など）の構成比は、大分類まで分かった店だけを分母にして計算しています。大分類も分からない店は除いています。</p><h4>大分類</h4><ul class="plain">${M.slice(0, UNKNOWN_M).map((m, i) => `<li><span class="swatch" style="background:${GCOL[i]}"></span>${esc(m)}</li>`).join("")}</ul>`],
-  per10k: ["乗降客1万人あたり店数の説明", `<p>地図サービスの店数を国の統計（経済センサス）の水準に補正した店数を、1日平均乗降客数で割り、1万人あたりにした値です。左の「飲食店」は補正前の件数なので、それを乗降客数で割った値とは一致しません。円が重なる駅は同じ店を数えるため、小さい駅ほど大きく出ます。</p>`],
   office: ["オフィス・商業系の説明", `<p>オフィス・商業系は、情報通信・卸売小売・金融保険・不動産・専門サービス・その他サービス（警備・ビル管理・派遣など）の合計です。</p>`],
 };
 const help = (k = "lq") => `<button class="help" type="button" aria-label="${HELP[k][0]}" aria-expanded="false" data-help="${k}">?</button>`;
@@ -716,13 +715,8 @@ function renderStation() {
   $("p-station").innerHTML = `${ss.html}
     <div><h2>${esc(s.n)}</h2><p class="muted-t">${esc(s.o)}</p></div>
     <div class="summary"><span class="tag">${s.note ? "駅周辺の特徴（一般的な情報による）" : "駅周辺の特徴"}</span><p>${esc(describe(s))}</p></div>
-    <div class="actions">${rings}<button class="btn" id="toCmp" type="button">比較分析</button><button class="btn" id="toPoint" type="button">地点分析</button><button class="btn" id="gtOpen" type="button">ジャンル別構成表</button></div>
+    <div class="actions">${rings}<button class="btn" id="gtOpen" type="button">ジャンル別構成表</button></div>
     <p class="muted-t">分析する範囲: <b>${lab}</b>（駅からの距離。複数選ぶと合わせた範囲になります）</p>
-    <div class="stats">
-      <div class="stat"><div class="v">${fmt(s.p)}</div><div class="l">乗降客数（人/日）・${rank}位</div></div>
-      <div class="stat"><div class="v">${fmt(r.t)}</div><div class="l">飲食店（${lab}）</div></div>
-      <div class="stat"><div class="v">${(r.tw / s.p * 10000).toFixed(1)}</div><div class="l">乗降客1万人あたり店数（補正後）${help("per10k")}</div></div>
-    </div>
     <div><h3>ジャンル構成（大分類）${help("majorShare")}</h3>
       <div class="barrow"><span>この範囲</span>${majorBar(r.M)}</div>
       <div class="barrow"><span>23区平均</span>${baseBar()}</div>
@@ -731,6 +725,10 @@ function renderStation() {
     </div>
     <div class="two"><div><h3>多いジャンル（平均比が高い）</h3>${lqList(features(r, "hi"), "目立って多いジャンルはありません")}</div>
       <div><h3>少ないジャンル（平均比が低い）</h3>${lqList(features(r, "lo"), "目立って少ないジャンルはありません")}</div></div>
+    <div class="stats">
+      <div class="stat"><div class="v">${fmt(s.p)}</div><div class="l">乗降客数（人/日）・${rank}位</div></div>
+      <div class="stat"><div class="v">${fmt(r.t)}</div><div class="l">飲食店（${lab}）</div></div>
+    </div>
     ${popBlock(r.pop, r.km2, lab)}
 `;
   ss.bind();
@@ -740,8 +738,6 @@ function renderStation() {
     if (!next.some(Boolean)) return;
     state.rings = next; paintStations(); render(); draw();
   });
-  $("toCmp").onclick = () => { addCompare(state.sel); showTab("compare"); };
-  $("toPoint").onclick = () => { showTab("point"); setPoint(s.la, s.lo, ekiName(s)); };
   $("gtOpen").onclick = () => openModal(`${ekiName(s)} ジャンル別構成表（${lab}）`, genreTable(r));
 }
 
